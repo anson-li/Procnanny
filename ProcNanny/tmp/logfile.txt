@@ -1,9 +1,0 @@
-[Sat Oct  3 12:31:33 2015] Info: Initializing monitoring of process 'testa' (PID 22340).
-[Sat Oct  3 12:31:33 2015] Info: Initializing monitoring of process 'testb' (PID 22341).
-[Sat Oct  3 12:31:33 2015] Info: Initializing monitoring of process 'testc' (PID 22343).
-[Sat Oct  3 12:31:33 2015] Info: Initializing monitoring of process 'testc' (PID 22342).
-[Sat Oct  3 12:31:38 2015] Action: PID 22340 (testa) killed after exceeding 5 seconds.
-[Sat Oct  3 12:31:38 2015] Action: PID 22341 (testb) killed after exceeding 5 seconds.
-[Sat Oct  3 12:31:38 2015] Action: PID 22343 (testc) killed after exceeding 5 seconds.
-[Sat Oct  3 12:31:38 2015] Action: PID 22342 (testc) killed after exceeding 5 seconds.
-[Sat Oct  3 12:31:38 2015] Info: Exiting. 4 process(es) killed.
