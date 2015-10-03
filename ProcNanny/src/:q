@@ -1,0 +1,173 @@
+#include <stdio.h>   /* printf, stderr, fprintf */
+#include <sys/types.h> /* pid_t */
+#include <unistd.h>  /* _exit, fork */
+#include <stdlib.h>  /* exit */
+#include <errno.h>   /* errno */
+#include <string.h>
+#include <time.h>
+
+void writedis(char* data);
+
+int main(int c, char *argv[])
+{
+
+    pid_t  pid;
+    FILE* f;
+    FILE* file = fopen ( argv[1], "r" );
+    int counter = 0;
+    int timeVar = 0;
+    char test[128][100]; //array of strings //length is 10! figure out how to realloc!
+
+    if (file != NULL) {
+        char line [1000];
+        while (fgets(line, sizeof line, file) != NULL) { /* read a line from a file */
+            fprintf(stdout,"%s",line); //print the file contents on stdout.
+            if (counter == 0) {
+                timeVar = atoi(line);
+            }
+            else {
+                //test = realloc(test, counter * char[100].sizeof);
+                strcpy(test[counter - 1], strtok(line, "\n"));
+            }
+            counter++;
+        }
+    }
+    fclose(file);
+
+    printf("*Processing Begins*\n");
+    printf("Length: %d\n", timeVar);
+    printf("Data:\n");
+
+    int i;
+    for (i = 0; i < counter; i++) {
+	pid = fork();
+	if (test[i][0] != '\0') { 
+            printf("Application Testing: %s\n", test[i]);
+            if ( ( f = popen( test[i], "r" ) ) == NULL ) {
+                // notice that each file can only process one call.
+	        // however, we need to instantiate enough pipes so that 
+	        // all the functions can be properly acted upon.
+ 	        // therefore, can consider piping 
+	        perror( "popen" );
+                printf("ERROR: POPEN FAILED.\n");
+            } else {
+                printf("POPEN SUCCESS:\n");
+	        char str[80];
+	        char buffer[80];
+                if (pid == 0) { // child process
+		    int n;
+		    n = sprintf(buffer, "%d", getpid()); 
+                    printf("Child PID = %d\n", getpid());
+                
+		    strcpy(str, "Info: Initializing monitoring of process '");
+                    strcat(str, test[i]);
+                    strcat(str, "' (PID");
+                    strcat(str, buffer);
+		    strcat(str, ")");
+		    writedis(str);
+        
+		    printf("Child Process is sleeping for %d seconds\n", timeVar);
+		    sleep(timeVar);    
+		
+		    printf("Child Process is completed - pipe is closed.\n");	
+		    printf("CHILD PROCESS CONCLUDED\n\n");
+
+	            pclose(f);		
+	
+	        } else if (pid > 0) { // parent process
+                    printf("Parent Process - beginning next part...\n\n");
+		    
+                }
+		pclose(f);
+            }
+	}	
+    }
+    // code taken from http://stackoverflow.com/questions/11888528/how-to-take-command-line-argument-in-codeblock-10-05
+    printf("*operations have concluded for this child process.*\n");
+    // write each line to a char** array ... first line is the number, second line+ is the applications
+    /*
+    pid = fork();
+    // fork returns two processes ; first one returns the pid ....
+    if (pid == -1)
+    {
+        /* Error:
+         * When fork() returns -1, an error happened
+         * (for example, number of processes reached the limit).
+         *
+        fprintf(stderr, "can't fork, error %d\n", errno);
+        exit(EXIT_FAILURE);
+    }
+    else if (pid == 0)
+    {
+        /* Child process:
+         * When fork() returns 0, we are in
+         * the child process.
+         *
+        int  j;
+        for (j = 0; j < 3; j++)
+        {
+            printf("child: %d\n", j);
+            sleep(1);
+        }
+        _exit(0);  /* Note that we do not use exit() *
+    }
+    else
+    {
+        /* When fork() returns a positive number, we are in the parent process
+         * (the fork return value is the PID of the newly created child process)
+         * Again we count up to ten.
+         
+        int  i;
+        for (i = 0; i < 3; i++)
+        {
+            printf("parent: %d\n", i);
+            sleep(1);
+        }
+        exit(0);
+    }*/
+    return 0;
+}
+
+int processChild() {
+ // in this section, the child is processed.
+ // for each child, sleep for the time_var allotted.
+ // once the time_var is properly set, then return a true val.
+ // if failed preemptively, return value and close pipe. 
+ 
+    return 1;
+}
+
+void writedis(char* data) {
+    FILE* file= fopen ( "../tmp/logfile.txt", "w" );
+    time_t ltime;
+    time(&ltime); 
+    fprintf(file, "[%s] %s", ctime(&ltime), data);
+    fclose(file);
+}
+
+/* PROCESS
+* Find the .config file which stores the data sets used.
+* Parse the first string as the time (in seconds) that the programs should run for (use sleep?)
+* Parse the second + strings in a char** array (or char* array...)
+* For each string, run a //grep ls// to find the application (probably done in another manner.)
+* Popen each application and fork it (thereby allowing a child process to monitor it)
+* Let the child sleep for the allotted time.
+* When the child wakes, kill the program and return a confirmation to the main process.
+    * Write the process result to a file which contains the time and the code.
+* Once all the child processes are completed, end the program.
+
+*/
+
+/* HINTS
+* grep - finds the application (grep 'application')
+* ps - lists all the processes...
+* ps | grep <application_name> - finds the application process as searched by the application name (in ps scope)
+* ls | grep <application_name> - finds the application process (in ls scope)
+* getenv?
+* popen vs fopen... https://www.linkedin.com/grp/post/1627067-59930495
+    * you use a popen to open a fork() ? ...
+* ** REMEMBER TO KILL ALL THE PROCESSES YOU'RE SUPPOSED TO....
+
+* time[NULL] // check the ctime_r 
+* getENV
+*/
