@@ -43,7 +43,7 @@ int main(int c, char *argv[])
     FILE* file = fopen ( argv[1], "r" );
 
     if (file == NULL) {
-        printf("Nanny.config file presented was not found. Program exiting...");
+        printf("ERROR: Nanny.config file presented was not found. Program exiting...");
     	exit(EXIT_FAILURE);  
     }
 
@@ -77,7 +77,7 @@ int main(int c, char *argv[])
 
     for (i = 0; i < counter; i++) {
 	if (test[i][0] != '\0') { 
-            printf("Application Testing: %s\n", test[i]);
+            //printf("Application Testing: %s\n", test[i]);
 	    char grepip[1000];
 	    strcpy(grepip, "pgrep ");
 	    strcat(grepip, test[i]);
@@ -114,7 +114,7 @@ int main(int c, char *argv[])
 			sprintf(timeStr, "%d", timeVar);
 			int killresult = kill(pidint, SIGKILL);
 			if (killresult == 0) {
-			    printf("You killed the process (PID: %d) (Application: %s)\n", pidint, test[i] );
+			    //printf("You killed the process (PID: %d) (Application: %s)\n", pidint, test[i] );
 			    strcpy(str, "Action: PID ");
                 	    strcat(str, pidval);
                 	    strcat(str, " (");
@@ -125,7 +125,7 @@ int main(int c, char *argv[])
 			    writedis(str);
        
 			} else if (killresult == -1) {
-			    printf("ERROR: Process already killed (PID: %d) (Application: %s)\n", pidint, test[i] );
+			    //printf("ERROR: Process already killed (PID: %d) (Application: %s)\n", pidint, test[i] );
 			}
 			exit(EXIT_SUCCESS); 
 		    } 
@@ -133,7 +133,7 @@ int main(int c, char *argv[])
 
 		if (haspid == 0) {
 		    char noProcess[150];
-		    printf("No processes found for %s.\n", test[i]);
+		    //printf("No processes found for %s.\n", test[i]);
 		    strcpy(noProcess, "Info: No '");
 		    strcat(noProcess, test[i]);
 		    strcat(noProcess, "' processes found.");
@@ -144,7 +144,7 @@ int main(int c, char *argv[])
 	}	
     }
 
-    printf("Total processes monitored: %d\n", totalProcessCounter);
+    //printf("Total processes monitored: %d\n", totalProcessCounter);
     int k; 
     int status;
     char strresult[250];    
@@ -160,7 +160,7 @@ int main(int c, char *argv[])
     strcat(strresult, " process(es) killed.");
     writedis(strresult); 
 
-    printf("*operations have concluded for this process (all iterations have gone through).*\n");
+    //printf("*operations have concluded for this process (all iterations have gone through).*\n");
     return 0;
 }
 
