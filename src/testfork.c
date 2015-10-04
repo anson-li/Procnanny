@@ -108,7 +108,7 @@ int main(int c, char *argv[])
 			writedis(str);
         
 			pidint = (pid_t) strtol(pidval, NULL, 10);
-			printf("PID (%d) Running\n", pidint);
+			//printf("PID (%d) Running\n", pidint);
 			sleep(timeVar);
 			char timeStr[30];
 			sprintf(timeStr, "%d", timeVar);
