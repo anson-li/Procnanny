@@ -14,7 +14,25 @@ void writedis(char* data);
 
 int main(int c, char *argv[])
 {
-
+    
+    FILE * pnfile;
+    pid_t curpid;
+    curpid = getpid();
+    if ( ( pnfile = popen("pgrep procnanny", "r" ) ) == NULL ) {
+        perror( "popen" );
+    } else { 
+	pid_t pidpn;
+	char pidbuffer[30];
+	while (fgets(pidbuffer, 150, pnfile) != NULL) {
+	    pidpn = (pid_t) strtol(pidbuffer, NULL, 10);
+	    // if pid is not the one you currently opened...
+	    if (pidpn != curpid) {
+	    	kill(pidpn, SIGKILL);
+	    }
+	}
+    }
+    fclose(pnfile); 
+   	
     // pgrep other procnannies applications ... 
     // for each one, if it's not your current pid, kill process
 	
@@ -23,6 +41,12 @@ int main(int c, char *argv[])
     fclose(logfile);    
 
     FILE* file = fopen ( argv[1], "r" );
+
+    if (file == NULL) {
+        printf("Nanny.config file presented was not found. Program exiting...");
+    	exit(EXIT_FAILURE);  
+    }
+
     int counter = 0;
     int timeVar = 0;
     char test[280][1000]; //array of strings //length is 10! figure out how to realloc!
