@@ -148,13 +148,18 @@ int main(int c, char *argv[])
     int k; 
     int status;
     char strresult[250];    
+    int signum = 0;
  
     for (k = 0; k < totalProcessCounter; k++) {
 	wait(&status);
+	printf("Status value: %d\n", status);
+	if(status == 0) {
+	    signum = signum + 1;
+	}
     }
 	
     char strTPC[30];
-    sprintf(strTPC, "%d", totalProcessCounter);
+    sprintf(strTPC, "%d", signum);
     strcpy(strresult, "Info: Exiting. ");
     strcat(strresult, strTPC);
     strcat(strresult, " process(es) killed.");

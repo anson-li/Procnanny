@@ -1,0 +1,6 @@
+[Tue Oct 27 11:31:15 2015] Info: Initializing monitoring of process 'testa' (PID 2402).
+[Tue Oct 27 11:31:15 2015] Info: Initializing monitoring of process 'testb' (PID 2401).
+[Tue Oct 27 11:31:15 2015] Info: No 'testc' processes found.
+[Tue Oct 27 11:31:20 2015] Action: PID 2402 (testa) killed after exceeding 5 seconds.
+[Tue Oct 27 11:31:20 2015] Action: PID 2401 (testb) killed after exceeding 5 seconds.
+[Tue Oct 27 11:31:20 2015] Info: Exiting. 2 process(es) killed.
