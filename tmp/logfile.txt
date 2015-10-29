@@ -1,9 +1,0 @@
-[Sat Oct  3 18:12:53 2015] Info: Initializing monitoring of process 'testa' (PID 3104).
-[Sat Oct  3 18:12:53 2015] Info: Initializing monitoring of process 'testb' (PID 3105).
-[Sat Oct  3 18:12:53 2015] Info: Initializing monitoring of process 'testc' (PID 3107).
-[Sat Oct  3 18:12:53 2015] Info: Initializing monitoring of process 'testc' (PID 3106).
-[Sat Oct  3 18:12:58 2015] Action: PID 3104 (testa) killed after exceeding 5 seconds.
-[Sat Oct  3 18:12:58 2015] Action: PID 3105 (testb) killed after exceeding 5 seconds.
-[Sat Oct  3 18:12:58 2015] Action: PID 3107 (testc) killed after exceeding 5 seconds.
-[Sat Oct  3 18:12:58 2015] Action: PID 3106 (testc) killed after exceeding 5 seconds.
-[Sat Oct  3 18:12:58 2015] Info: Exiting. 4 process(es) killed.

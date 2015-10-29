@@ -1,6 +1,9 @@
-[Tue Oct 27 11:31:15 2015] Info: Initializing monitoring of process 'testa' (PID 2402).
-[Tue Oct 27 11:31:15 2015] Info: Initializing monitoring of process 'testb' (PID 2401).
-[Tue Oct 27 11:31:15 2015] Info: No 'testc' processes found.
-[Tue Oct 27 11:31:20 2015] Action: PID 2402 (testa) killed after exceeding 5 seconds.
-[Tue Oct 27 11:31:20 2015] Action: PID 2401 (testb) killed after exceeding 5 seconds.
-[Tue Oct 27 11:31:20 2015] Info: Exiting. 2 process(es) killed.
+[Thu Oct 29 13:33:03 2015] Info: Initializing monitoring of process 'testa' (PID 5530).
+[Thu Oct 29 13:33:03 2015] Info: Initializing monitoring of process 'testa' (PID 5527).
+[Thu Oct 29 13:33:03 2015] Info: Initializing monitoring of process 'testb' (PID 5528).
+[Thu Oct 29 13:33:03 2015] Info: Initializing monitoring of process 'testc' (PID 5529).
+[Thu Oct 29 13:33:06 2015] Action: PID 5529 (testc) killed after exceeding 3 seconds.
+[Thu Oct 29 13:33:09 2015] Action: PID 5528 (testb) killed after exceeding 6 seconds.
+[Thu Oct 29 13:33:12 2015] Action: PID 5530 (testa) killed after exceeding 9 seconds.
+[Thu Oct 29 13:33:12 2015] Action: PID 5527 (testa) killed after exceeding 9 seconds.
+[Thu Oct 29 13:33:12 2015] Info: Exiting. 4 process(es) killed.
