@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <sys/ioctl.h>
 #include "memwatch.h"
 
 void genericOP(char* data);
@@ -19,6 +20,13 @@ void initProcOP(char * appdata, char * pidval );
 void deleteProcnannies();
 void getParentPID();
 void initialisationOP();
+void write_to_pipe(int file, char * data);
+void read_from_pipe(int file);
+
+#define READ 0
+#define WRITE 1 
+#define CHILD 0
+#define PARENT 1
 
 static int parentPID; 
 static int SHFLAG = 0;
@@ -28,32 +36,12 @@ static void catch_function(int signo) {
 	// then hangup
 	// if not ignore 
 	puts("At this point you should kill all child processes... ");
+	exit(EXIT_FAILURE);
 }
 
 static void ignore_function(int signo ) { 
-	puts("Hangup!");
-	printf("Parent ID Recognised: %d\n", parentPID);
-	SHFLAG = 1;
-	printf("SHFLAG: %d\n", SHFLAG);
-	
-	/*
-	"you cant pass anything thru here :( "
-	"so you have to put the polling in the main funciton, not here. .... . ."
-	"only things you can manipulate thru here are globals "
-	"make everyrhing a global? :o flags? "
-	"my wait statement is wait(&status) ... it doesnt work now LOL"
-	" i have to set polling status on that instead, and check on the flag change? to reread the file?"
-
-	"ALSO! if i reread the file do i add all the new processes ? that means that i have to do comparators vs. all"
-	" of the func names right? ><'' "
-	"that means that if you wanted to monitor a diplicate process you couldnt do so (w/ different pid)... is that "
-	"the corrrect processs flow?"
-
-	"you keep track of the process ids that you're currently monitoring and if "
-	"you reread the config file you recheck all proceses - if the process is in the list of already monitored processes, you"
-	"skip to the next one "
-	"also check every 5s via <<pipe>>"
-	*/
+	puts("SHFlag set.");
+	SHFLAG = 1;	
 }
 
 int main(int c, char *argv[]) {
@@ -89,7 +77,7 @@ int main(int c, char *argv[]) {
 	int countval = 0;
 
 	if (file != NULL) {
-		char line [1000];
+		char line[100];
 		while (fgets(line, sizeof line, file) != NULL) { /* read a line from a file */
 			// reads sample text: testa 120
 			strcpy(test[counter - 1], strtok(line, "\n"));
@@ -114,7 +102,7 @@ int main(int c, char *argv[]) {
 	int i;
 	int totalProcessCounter = 0;
 	pid_t pid; 
-	int fd[counter][2];
+	int fd[counter][2][2];
 
 
 	for (i = 0; i < counter; i++) {
@@ -130,7 +118,11 @@ int main(int c, char *argv[]) {
 				pid_t pidint;
 				int haspid = 0;
 
-				if (pipe(fd[i]) < 0) {
+				if (pipe(fd[i][PARENT]) < 0) {
+					printf("ERROR: ProcNanny cannot create pipe. Program exiting...");
+					exit(EXIT_FAILURE); 
+				}
+				if (pipe(fd[i][CHILD]) < 0) {
 					printf("ERROR: ProcNanny cannot create pipe. Program exiting...");
 					exit(EXIT_FAILURE); 
 				}
@@ -142,10 +134,16 @@ int main(int c, char *argv[]) {
 				 		fprintf(stderr, "can't fork, error %d\n", errno);
 						exit(EXIT_FAILURE);
 					} else if (pid > 0) { // parent process
+						close(fd[i][CHILD][WRITE]);
+						close(fd[i][PARENT][READ]);
 						totalProcessCounter = totalProcessCounter + 1;;
-						// close(fd[i][0]); // fd[i][0] needs to read the child kill process.
 					} else if (pid == 0 ) { // child process
-						// close(fd[i][1]); // fd[i][1] needs to write the child kill process.
+						childMonitoring:
+						close(fd[i][PARENT][WRITE]); 
+						close(fd[i][CHILD][READ]);
+
+						printf("this is 1\n");
+
 						strtok(pidval, "\n");
 						initProcOP(appdata[i], pidval);
 
@@ -153,26 +151,40 @@ int main(int c, char *argv[]) {
 						int sleepLeft = timedata[i];
 						while(sleepLeft > 0) {
 							printf("Process %s is running with %d seconds left.\n", pidval, sleepLeft);
-							if (SHFLAG == 1) {
-								consoleOP("SHFLAG VAL 1 RECOGNISED.");
-								// not a good way of doing it (not for multiple values ...)
-								// find a way to do it using i/o pipes.
-								// eg. constantly poll for fd[x][0] == -1 
-								// if it's that then close everything there!
-							}
+							
 							sleep(5);
 							sleepLeft = sleepLeft - 5;
 						}
 						char timeStr[30];
 						sprintf(timeStr, "%d", timedata[i]);
+						char prntChild[150];
 						int killresult = kill(pidint, SIGKILL);
 							if (killresult == 0) {
 								//printf("You killed the process (PID: %d) (Application: %s)\n", pidint, test[i] );
 								pidKilledOP(pidval, appdata[i], timeStr);
+								sprintf(prntChild, "1 %s", pidval);
 							} else if (killresult == -1) {
 								//printf("ERROR: Process already killed (PID: %d) (Application: %s)\n", pidint, test[i] );
+							  sprintf(prntChild, "0 %s", pidval);
 							}
-							exit(EXIT_SUCCESS); 
+							consoleOP("Process monitoring complete.");
+							write_to_pipe(fd[i][CHILD][WRITE], prntChild);
+							
+							int count = 0;
+							int signum = 0;
+							char buff[1000];
+							bzero(buff, 1000);
+  						char byte = 0;
+
+							while (read(fd[i][PARENT][READ], &byte, 1) == 1) {
+								if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
+									buff[0] = byte;
+									if (read(fd[i][PARENT][READ], buff+1, count) == count) {
+										printf("%s\n", buff);
+									}
+								}
+							}
+							goto waitingProc;
 						} 
 					}
 					if (haspid == 0) {
@@ -181,65 +193,133 @@ int main(int c, char *argv[]) {
 				}		
 			}
 			pclose(f[i]);
-			close(fd[i][0]);
-			close(fd[i][1]);
 		}
 	}	
 
-	// if hangup signal is presented, reread the config and print output
-	// * don't do anything yet.
-	// kill -1 PIDVAL
-  if (signal(SIGHUP, ignore_function) == SIG_ERR) {
-		/*
-		consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");    
-    file = fopen ( argv[1], "r" );
+  if (signal(SIGHUP, ignore_function) == SIG_ERR) {}
 
-		if (file != NULL) {
-			char line [1000];
-			while (fgets(line, sizeof line, file) != NULL) { // read a line from a file 
-				// reads sample text: testa 120
-				strcpy(test[counter - 1], strtok(line, "\n"));
-				pch = strtok (test[counter-1]," ,.-");
-				while (pch != NULL) {
-					if (countval == 0) {
-						strcpy(appdata[counter], pch);
-						countval++;
-					} else if (countval == 1) {
-						timedata[counter] = atoi(pch);
-						countval = 0;
-						break;
-					}
-					pch = strtok (NULL, " ,.-");
-				}
-				counter++;
-			}
-		}
-		fclose(file);
-		*/
-  }
-
-	//printf("Total processes monitored: %d\n", totalProcessCounter);
-	int k; 
-	int status;
+	int k = 0; 
 	int signum = 0;
-	//int l;
- 
-	for (k = 0; k < totalProcessCounter; k++) {
-		wait(&status);
-		printf("Status value: %d\n", status);
-		if(status == 0) {
-			signum = signum + 1;
-		}
+	char buff[1000];
+	bzero(buff, 1000);
+  char byte = 0;
+  int count = 0;
+  int h = 0;
+
+	int pidchange;
+	int pidstatus;
+	char * bch;
+	int countvalb = 0;
+	int countProcCompleted = 0;
+
+	printf("The totalProcessCounter is: %d\n", totalProcessCounter);
+	if (totalProcessCounter == 0) {
+		goto completeProcess;
 	}
 
+	while(1) {
+		//for (k = 0; k < totalProcessCounter; k++) {
+		while (read(fd[k][CHILD][READ], &byte, 1) == 1) {
+			// if the ioctl is -1 then switch to the next k value...
+			printf("K value is: %d\n", k);
+			if (SHFLAG == 1) {
+				consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
+				genericOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
+				/*
+				file = fopen ( argv[1], "r" );
+				if (file != NULL) {
+					char line [1000];
+					while (fgets(line, sizeof line, file) != NULL) { // read a line from a file 
+						// reads sample text: testa 120
+						strcpy(test[counter - 1], strtok(line, "\n"));
+						pch = strtok (test[counter-1]," ,.-");
+						while (pch != NULL) {
+							if (countval == 0) {
+								strcpy(appdata[counter], pch);
+								countval++;
+							} else if (countval == 1) {
+								timedata[counter] = atoi(pch);
+								countval = 0;
+								break;
+							}
+							pch = strtok (NULL, " ,.-");
+						}
+						counter++;
+					}
+				}
+				fclose(file);
+				*/
+				char switchProc[1000];
+				for (h = 0; h < totalProcessCounter; h++) {
+					sprintf(switchProc, "1 PROCNAME");
+					write_to_pipe(fd[h][PARENT][WRITE], switchProc);
+				}
+				SHFLAG = 0;
+			}
+			if (ioctl(fd[k][CHILD][READ], FIONREAD, &count) == -1) {
+				buff[0] = byte;
+				if (k < totalProcessCounter) {
+					k++;
+				} else {
+					k = 0;
+				}
+			} else if (ioctl(fd[k][CHILD][READ], FIONREAD, &count) != -1) {
+      	//buff = malloc(count+1);
+      	//bzero(buff, count+1);
+        buff[0] = byte;
+        countProcCompleted++;
+        if (read(fd[k][CHILD][READ], buff+1, count) == count) {
+					bch = strtok (buff," ,.-");
+					while (bch != NULL) {
+						printf("BCH: %s\n", bch);
+						if (countvalb == 0) {
+							pidstatus = atoi(bch);
+							printf("PIDSTATUS: %d\n", pidstatus);
+							countvalb++;
+						} else if (countvalb == 1) {
+							pidchange = atoi(bch);
+							printf("PIDCHANGE: %d\n", pidchange);
+							countvalb = 0;
+						}
+						bch = strtok (NULL, " ,.-");
+					}
+        }
+        if (totalProcessCounter == countProcCompleted) {
+        	goto completeProcess;
+        }
+        k++;
+      }
+    }
+	}
+
+	completeProcess:
+	consoleOP("Operations have concluded for this process (all iterations have gone through).");
+
+	waitingProc:
 	for (k = 0; k < totalProcessCounter; k++) {
-		close(fd[k][0]);
-		close(fd[k][1]);
+		close(fd[k][PARENT][READ]);
+		close(fd[k][PARENT][WRITE]);
+		close(fd[k][CHILD][READ]);
+		close(fd[k][CHILD][WRITE]);
 	}
 	
 	killProcessOP(signum);
-	//printf("*operations have concluded for this process (all iterations have gone through).*\n");
 	return 0;
+}
+
+void write_to_pipe (int file, char* data)
+{
+  write(file, data, strlen(data));
+}
+
+void read_from_pipe (int file)
+{
+  FILE *stream;
+  int c;
+  stream = fdopen (file, "r");
+  while ((c = fgetc (stream)) != EOF)
+    putchar (c);
+  fclose (stream);
 }
 
 void deleteProcnannies() {
@@ -333,7 +413,7 @@ void initProcOP(char * appdata, char * pidval ) {
 
 void initialisationOP() {
 	char strPID[1000];
-	sprintf(strPID, "ProcNanny initialised with PID %d.", parentPID);
+	sprintf(strPID, "Info: Parent process is PID  %d.", parentPID);
 	consoleOP(strPID);
 	return;
 }
