@@ -1,6 +1,5 @@
-[Sun Nov  8 16:27:25 2015] Info: Initializing monitoring of process 'testa' (PID 13301).
-[Sun Nov  8 16:27:25 2015] Info: No 'testb' processes found.
-[Sun Nov  8 16:27:25 2015] Info: No 'testc' processes found.
-[Sun Nov  8 16:27:55 2015] Action: PID 13301 (testa) killed after exceeding 30 seconds.
-[Sun Nov  8 16:27:55 2015] Info: Exiting. 0 process(es) killed.
-[Sun Nov  8 16:27:55 2015] Info: Exiting. 0 process(es) killed.
+[Mon Nov  9 09:12:20 2015] Info: Initializing monitoring of process 'testa' (PID 14545).
+[Mon Nov  9 09:12:20 2015] Info: Initializing monitoring of process 'testb' (PID 14546).
+[Mon Nov  9 09:12:20 2015] Info: Initializing monitoring of process 'testc' (PID 14547).
+[Mon Nov  9 09:12:50 2015] Action: PID 14545 (testa) killed after exceeding 30 seconds.
+[Mon Nov  9 09:12:55 2015] Info: Exiting. 1 process(es) killed.

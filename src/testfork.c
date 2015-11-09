@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <sys/ioctl.h>
+#include <fcntl.h>
 #include "memwatch.h"
 
 void genericOP(char* data);
@@ -142,17 +143,33 @@ int main(int c, char *argv[]) {
 						close(fd[i][PARENT][WRITE]); 
 						close(fd[i][CHILD][READ]);
 
-						printf("this is 1\n");
+					  int count = 0;
+						int signum = 0;
+						char buff[1000];
+						bzero(buff, 1000);
+  					char byte = 0;
 
 						strtok(pidval, "\n");
 						initProcOP(appdata[i], pidval);
 
 						pidint = (pid_t) strtol(pidval, NULL, 10);
+						fcntl(fd[i][PARENT][READ], F_SETFL, O_NONBLOCK);
+
 						int sleepLeft = timedata[i];
 						while(sleepLeft > 0) {
 							printf("Process %s is running with %d seconds left.\n", pidval, sleepLeft);
-							
 							sleep(5);
+							// Need to start the reading at every 5s break; if its (-1) then end the program, if its new pid then clear pid and 
+							// write to inform the child is busy.
+							if (read(fd[i][PARENT][READ], &byte, 1) == 1) {
+								if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1)
+	            	{
+	            		buff[0] = byte;
+	            		if (read(fd[i][PARENT][READ], buff+1, count) == count) {
+	            			printf("BUFF VALUE: %s\n", buff);
+	            		}
+	            	}
+	            }
 							sleepLeft = sleepLeft - 5;
 						}
 						char timeStr[30];
@@ -169,12 +186,6 @@ int main(int c, char *argv[]) {
 							}
 							consoleOP("Process monitoring complete.");
 							write_to_pipe(fd[i][CHILD][WRITE], prntChild);
-							
-							int count = 0;
-							int signum = 0;
-							char buff[1000];
-							bzero(buff, 1000);
-  						char byte = 0;
 
 							while (read(fd[i][PARENT][READ], &byte, 1) == 1) {
 								if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
@@ -198,7 +209,7 @@ int main(int c, char *argv[]) {
 
   if (signal(SIGHUP, ignore_function) == SIG_ERR) {}
 
-	int k = 0; 
+	int k; 
 	int signum = 0;
 	char buff[1000];
 	bzero(buff, 1000);
@@ -217,28 +228,36 @@ int main(int c, char *argv[]) {
 		goto completeProcess;
 	}
 
+	for (k = 0; k < totalProcessCounter; k++ ) {
+		fcntl(fd[k][CHILD][READ], F_SETFL, O_NONBLOCK);
+	}
+
+	k = 0;
 	while(1) {
 		//for (k = 0; k < totalProcessCounter; k++) {
-		while (read(fd[k][CHILD][READ], &byte, 1) == 1) {
+		while (SHFLAG == 1 || read(fd[k][CHILD][READ], &byte, 1) == 1) {
 			// if the ioctl is -1 then switch to the next k value...
 			printf("K value is: %d\n", k);
 			if (SHFLAG == 1) {
 				consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
 				genericOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
-				/*
-				file = fopen ( argv[1], "r" );
-				if (file != NULL) {
+				FILE* file2 = fopen ( argv[1], "r" );
+				file2 = fopen ( argv[1], "r" );
+				counter = totalProcessCounter + 1;
+				if (file2 != NULL) {
 					char line [1000];
-					while (fgets(line, sizeof line, file) != NULL) { // read a line from a file 
+					while (fgets(line, sizeof line, file2) != NULL) { // read a line from a file 
 						// reads sample text: testa 120
 						strcpy(test[counter - 1], strtok(line, "\n"));
 						pch = strtok (test[counter-1]," ,.-");
 						while (pch != NULL) {
 							if (countval == 0) {
 								strcpy(appdata[counter], pch);
+								printf("Appdata new: %s\n", appdata[counter]);
 								countval++;
 							} else if (countval == 1) {
 								timedata[counter] = atoi(pch);
+								printf("Timedata new: %d\n", timedata[counter]);
 								countval = 0;
 								break;
 							}
@@ -248,13 +267,15 @@ int main(int c, char *argv[]) {
 					}
 				}
 				fclose(file);
-				*/
 				char switchProc[1000];
 				for (h = 0; h < totalProcessCounter; h++) {
 					sprintf(switchProc, "1 PROCNAME");
 					write_to_pipe(fd[h][PARENT][WRITE], switchProc);
 				}
+				printf("process completed\n");
 				SHFLAG = 0;
+			} else {
+				printf("SHFLAG = 0;...\n");
 			}
 			if (ioctl(fd[k][CHILD][READ], FIONREAD, &count) == -1) {
 				buff[0] = byte;
@@ -275,6 +296,10 @@ int main(int c, char *argv[]) {
 						if (countvalb == 0) {
 							pidstatus = atoi(bch);
 							printf("PIDSTATUS: %d\n", pidstatus);
+							if (pidstatus == 1) {
+								printf("SIGNUM++\n");
+								signum++;
+							}
 							countvalb++;
 						} else if (countvalb == 1) {
 							pidchange = atoi(bch);
@@ -294,6 +319,7 @@ int main(int c, char *argv[]) {
 
 	completeProcess:
 	consoleOP("Operations have concluded for this process (all iterations have gone through).");
+	killProcessOP(signum);
 
 	waitingProc:
 	for (k = 0; k < totalProcessCounter; k++) {
@@ -303,7 +329,6 @@ int main(int c, char *argv[]) {
 		close(fd[k][CHILD][WRITE]);
 	}
 	
-	killProcessOP(signum);
 	return 0;
 }
 
