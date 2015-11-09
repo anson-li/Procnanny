@@ -1,3 +1,15 @@
+/**
+*	Processes still need to be completed:
+* Terminate procnanny only after SIGINT is called: https://eclass.srv.ualberta.ca/mod/forum/discuss.php?d=560748
+    IF SIGINT is called, then set a flag that makes procnanny terminate on read w/ the number of processes killed up to that pt.
+    Send kill signal to the children; don't make them exit on their own. Make this an IPC as well
+		THIS ONE IS DONE.
+* Add *NEW* functionality to nanny.config and call it to run: https://eclass.srv.ualberta.ca/mod/page/view.php?id=1653150
+    IF the process was already logged don't test it.
+    IF the process is new, check if any child process can handle it; if all child processes return busy fork again...
+    IF a child process is polling then make it monitor the old process.
+**/
+
 #include <stdio.h>   /* printf, stderr, fprintf */
 #include <sys/types.h> /* pid_t */
 #include <unistd.h>  /* _exit, fork */
@@ -31,13 +43,15 @@ void read_from_pipe(int file);
 
 static int parentPID; 
 static int SHFLAG = 0;
+static int SIFLAG = 0;
 
 static void catch_function(int signo) {
 	// if get_pid() is equal to the global variable (parent)
 	// then hangup
 	// if not ignore 
-	puts("At this point you should kill all child processes... ");
-	exit(EXIT_FAILURE);
+	//exit(EXIT_FAILURE);
+	puts("SIFLAG set.");
+	SIFLAG = 1;
 }
 
 static void ignore_function(int signo ) { 
@@ -161,15 +175,26 @@ int main(int c, char *argv[]) {
 							sleep(5);
 							// Need to start the reading at every 5s break; if its (-1) then end the program, if its new pid then clear pid and 
 							// write to inform the child is busy.
-							if (read(fd[i][PARENT][READ], &byte, 1) == 1) {
+							while (read(fd[i][PARENT][READ], &byte, 1) == 1) {
 								if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1)
 	            	{
 	            		buff[0] = byte;
+	            		char printWrite[150];
 	            		if (read(fd[i][PARENT][READ], buff+1, count) == count) {
-	            			printf("BUFF VALUE: %s\n", buff);
+	            			int charbuf = atoi(buff);
+	            			printf("charbuf: %d\n", charbuf);
+	            			if (charbuf == 1) {
+											printf("1 found, skipping to next one.\n");
+											sprintf(printWrite, "2");
+	            				write_to_pipe(fd[i][CHILD][WRITE], printWrite);
+										} else if (charbuf == -1) {
+											printf("Process terminated.\n");
+											exit(EXIT_FAILURE);
+	            			}
 	            		}
 	            	}
 	            }
+	            // inform busy
 							sleepLeft = sleepLeft - 5;
 						}
 						char timeStr[30];
@@ -187,11 +212,19 @@ int main(int c, char *argv[]) {
 							consoleOP("Process monitoring complete.");
 							write_to_pipe(fd[i][CHILD][WRITE], prntChild);
 
+							int ops;
+							ops = fcntl(fd[i][PARENT][READ],F_GETFL); // reenable blocking
+							fcntl(fd[i][PARENT][READ], F_SETFL, ops & ~O_NONBLOCK);
 							while (read(fd[i][PARENT][READ], &byte, 1) == 1) {
 								if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
 									buff[0] = byte;
 									if (read(fd[i][PARENT][READ], buff+1, count) == count) {
-										printf("%s\n", buff);
+										int bufval = atoi(buff);
+										printf("Buff read for new process: %d\n", bufval);
+										if (bufval == -1) {
+											printf(":(\n");
+											goto waitingProc;
+										}
 									}
 								}
 							}
@@ -203,7 +236,7 @@ int main(int c, char *argv[]) {
 					noProcessOP(appdata[i]);
 				}		
 			}
-			pclose(f[i]);
+			//pclose(f[i]);
 		}
 	}	
 
@@ -232,15 +265,27 @@ int main(int c, char *argv[]) {
 		fcntl(fd[k][CHILD][READ], F_SETFL, O_NONBLOCK);
 	}
 
+	parentMonitoring:
 	k = 0;
 	while(1) {
+		if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
+			printf("Statement completed?\n");
+			for (k = 0; k < totalProcessCounter; k++ ) {
+				k++;
+				char failState[150];
+				sprintf(failState, "-1");
+				write_to_pipe(fd[k][PARENT][WRITE], failState);
+			}
+      goto completeProcess;
+    }
 		//for (k = 0; k < totalProcessCounter; k++) {
 		while (SHFLAG == 1 || read(fd[k][CHILD][READ], &byte, 1) == 1) {
 			// if the ioctl is -1 then switch to the next k value...
-			printf("K value is: %d\n", k);
-			if (SHFLAG == 1) {
+			if (SHFLAG == 1) { // REREAD FILE
+				int validChild = 0;
 				consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
 				genericOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
+				// if there's a new program then search, so search w/ respect to the current appname list
 				FILE* file2 = fopen ( argv[1], "r" );
 				file2 = fopen ( argv[1], "r" );
 				counter = totalProcessCounter + 1;
@@ -250,12 +295,23 @@ int main(int c, char *argv[]) {
 						// reads sample text: testa 120
 						strcpy(test[counter - 1], strtok(line, "\n"));
 						pch = strtok (test[counter-1]," ,.-");
+						int validAppData = 0;
 						while (pch != NULL) {
 							if (countval == 0) {
-								strcpy(appdata[counter], pch);
-								printf("Appdata new: %s\n", appdata[counter]);
+								int m;
+								for (m = 0; m < totalProcessCounter; m++) {
+									validAppData = 0;
+									if (strcmp(appdata[m], pch) != 0) {
+										printf("Duplicate function '%s' already exists; ignoring this one.\n", pch);
+										validAppData = 1;
+									} 
+								}
+								if (validAppData == 0) {
+									strcpy(appdata[counter], pch);
+									printf("Appdata new: %s\n", appdata[counter]);
+								}
 								countval++;
-							} else if (countval == 1) {
+							} else if (countval == 1 && validAppData == 9) {
 								timedata[counter] = atoi(pch);
 								printf("Timedata new: %d\n", timedata[counter]);
 								countval = 0;
@@ -268,9 +324,35 @@ int main(int c, char *argv[]) {
 				}
 				fclose(file);
 				char switchProc[1000];
+				char buff2[1000];
+				bzero(buff2, 1000);
+  			char byte2 = 0;
+  			int count2 = 0;
+
 				for (h = 0; h < totalProcessCounter; h++) {
-					sprintf(switchProc, "1 PROCNAME");
+					h = h + 1; // sync w child process?
+					printf("h value: %d\n", h);
+					sprintf(switchProc, "1");
 					write_to_pipe(fd[h][PARENT][WRITE], switchProc);
+					int ops;
+					ops = fcntl(fd[h][CHILD][READ],F_GETFL); // reenable blocking
+					fcntl(fd[h][CHILD][READ], F_SETFL, ops & ~O_NONBLOCK);
+			  	while (read(fd[h][CHILD][READ], &byte2, 1) == 1) {
+						if (ioctl(fd[h][CHILD][READ], FIONREAD, &count2) != -1) {
+							buff2[0] = byte2;
+							if (read(fd[h][CHILD][READ], buff2+1, count2) == count2) {
+								printf("buff2 value: %s\n", buff2);
+								int tmpinitval = atoi(buff2);
+								if (tmpinitval == 2) {
+									printf("2 found, skipping to next one.\n");
+								} else if (tmpinitval == 0) {
+									printf("using this child process to begin next process\n");
+								}
+								fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
+							}
+						}
+					}
+					printf("escaped\n");
 				}
 				printf("process completed\n");
 				SHFLAG = 0;
@@ -288,7 +370,6 @@ int main(int c, char *argv[]) {
       	//buff = malloc(count+1);
       	//bzero(buff, count+1);
         buff[0] = byte;
-        countProcCompleted++;
         if (read(fd[k][CHILD][READ], buff+1, count) == count) {
 					bch = strtok (buff," ,.-");
 					while (bch != NULL) {
@@ -297,8 +378,11 @@ int main(int c, char *argv[]) {
 							pidstatus = atoi(bch);
 							printf("PIDSTATUS: %d\n", pidstatus);
 							if (pidstatus == 1) {
+								countProcCompleted++;
 								printf("SIGNUM++\n");
 								signum++;
+							} else if (pidstatus == 0) {
+        				countProcCompleted++;
 							}
 							countvalb++;
 						} else if (countvalb == 1) {
@@ -309,10 +393,17 @@ int main(int c, char *argv[]) {
 						bch = strtok (NULL, " ,.-");
 					}
         }
-        if (totalProcessCounter == countProcCompleted) {
-        	goto completeProcess;
+        
+        if (countProcCompleted == totalProcessCounter) {
+          //printf("Countproccompleted: %d; totalProcessCounter: %d\n", countProcCompleted, totalProcessCounter);
+          //printf("Completion via max process outcome.\n");
+        	//goto completeProcess;
+        	goto parentMonitoring;
         }
         k++;
+      }
+      if (countProcCompleted == totalProcessCounter) {
+        goto parentMonitoring;
       }
     }
 	}
@@ -320,6 +411,7 @@ int main(int c, char *argv[]) {
 	completeProcess:
 	consoleOP("Operations have concluded for this process (all iterations have gone through).");
 	killProcessOP(signum);
+	return 0;
 
 	waitingProc:
 	for (k = 0; k < totalProcessCounter; k++) {

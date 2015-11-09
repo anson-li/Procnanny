@@ -1,5 +1,6 @@
-[Mon Nov  9 09:12:20 2015] Info: Initializing monitoring of process 'testa' (PID 14545).
-[Mon Nov  9 09:12:20 2015] Info: Initializing monitoring of process 'testb' (PID 14546).
-[Mon Nov  9 09:12:20 2015] Info: Initializing monitoring of process 'testc' (PID 14547).
-[Mon Nov  9 09:12:50 2015] Action: PID 14545 (testa) killed after exceeding 30 seconds.
-[Mon Nov  9 09:12:55 2015] Info: Exiting. 1 process(es) killed.
+[Mon Nov  9 14:36:58 2015] Info: No 'testa' processes found.
+[Mon Nov  9 14:36:58 2015] Info: Initializing monitoring of process 'testb' (PID 17929).
+[Mon Nov  9 14:36:58 2015] Info: No 'testc' processes found.
+[Mon Nov  9 14:37:19 2015] Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.
+[Mon Nov  9 14:37:33 2015] Action: PID 17929 (testb) killed after exceeding 31 seconds.
+[Mon Nov  9 14:38:51 2015] Info: Exiting. 1 process(es) killed.
