@@ -161,6 +161,7 @@ int main(int c, char *argv[]) {
 						close(fd[i][CHILD][READ]);
 
 					  int count = 0;
+						int signum = 0;
 						char buff[1000];
 						bzero(buff, 1000);
   					char byte = 0;
@@ -190,7 +191,7 @@ int main(int c, char *argv[]) {
 	            			int charbuf = atoi(buff);
 	            			printf("charbuf: %d\n", charbuf);
 	            			if (charbuf == 1) {
-											printf("1 found, skipping to next one. i = %d\n", i);
+											printf("1 found, skipping to next one.\n");
 											sprintf(printWrite, "2"); // sends for onwait process
 	            				write_to_pipe(fd[i][CHILD][WRITE], printWrite);
 										} else if (charbuf == -1) {
@@ -206,32 +207,19 @@ int main(int c, char *argv[]) {
 						char timeStr[30];
 						sprintf(timeStr, "%d", timedata[i]);
 						char prntChild[150];
-						printf("pidint: %d\n", pidint);
 						int killresult = kill(pidint, SIGKILL);
 						if (killresult == 0) {
 							//printf("You killed the process (PID: %d) (Application: %s)\n", pidint, test[i] );
-<<<<<<< HEAD
-							//pidKilledOP(pidval, appProcessed, timeStr);
-							sprintf(prntChild, "1 %s %s %s", pidval, appProcessed, timeStr);
-=======
 							pidKilledOP(pidval, appdata[i], timeStr);
 							sprintf(prntChild, "1 %s", pidval);
->>>>>>> parent of b3efc46... Basic functionality completed, bugfixing
 						} else if (killresult == -1) {
 							//printf("ERROR: Process already killed (PID: %d) (Application: %s)\n", pidint, test[i] );
 						  sprintf(prntChild, "0 %s", pidval);
 						}
-						printf("%s\n", prntChild);
 						consoleOP("Process monitoring complete.");
-<<<<<<< HEAD
-						pollingChild:;
-						//pclose(f[i]);
-						printf("i child is: %d\n", i);
-=======
->>>>>>> parent of b3efc46... Basic functionality completed, bugfixing
 						write_to_pipe(fd[i][CHILD][WRITE], prntChild); // writing to parent that is polling
-						printf("Write succeeded at i = %d\n", i);
 						int ops;
+						printf("i child is: %d\n", i);
 						ops = fcntl(fd[i][PARENT][READ],F_GETFL); // reenable blocking
 						fcntl(fd[i][PARENT][READ], F_SETFL, ops & ~O_NONBLOCK); 
 						while (SIFLAG == 1 || read(fd[i][PARENT][READ], &byte, 1) == 1) {
@@ -254,52 +242,6 @@ int main(int c, char *argv[]) {
 										sprintf(prntReady, "0"); // sends for onwait process
             				write_to_pipe(fd[i][CHILD][WRITE], prntReady);
             				// NEEDS TO WAIT @ THIS POINT
-<<<<<<< HEAD
-            				printf("I value initial: %d\n", i);
-            				while (read(fd[i][PARENT][READ], &byte, 1) == 1) {
-            					buff[0] = byte;
-											if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
-												buff[0] = byte;
-												if (read(fd[i][PARENT][READ], buff+1, count) == count) {
-													printf("I value second: %d\n", i);
-													char * bch;
-													int countvalb = 0;
-													// read the buff value
-													// parse buff into 2 parts;
-													printf("%s\n", buff);
-													bch = strtok (buff," ,.-");
-													while (bch != NULL) {
-														if (countvalb == 0) {
-															strcpy(appProcessed, bch);
-															printf("NEW app to be processed: %s\n", appProcessed);
-															countvalb++;
-														} else if (countvalb == 1) {
-															timeProcessed = atoi(bch);
-															printf("NEW time to be processed: %d\n", timeProcessed);
-															bzero(bch, 1000);
-															countvalb = 0;
-															strcpy(grepip, "pgrep ");
-															strcat(grepip, appProcessed);
-															printf("i value before opening is: %d\n", i);
-															if ( ( f[i] = popen( grepip, "r" ) ) == NULL ) {
-																perror( "popen" );
-															} else {
-																if (fgets(pidval, 150, f[i]) != NULL) {
-																	printf("pidval: %s\n", pidval);
-																	goto childMonitoring;
-																} else {
-																	noProcessOP(appdata[i]);
-																	goto pollingChild;
-																}
-															}
-														}
-														bch = strtok (NULL, " ,.-");
-													}
-												}
-											}
-										}
-=======
->>>>>>> parent of b3efc46... Basic functionality completed, bugfixing
 									}
 								}
 							}
@@ -323,6 +265,7 @@ int main(int c, char *argv[]) {
   int count = 0;
   int h = 0;
 
+	int pidchange;
 	int pidstatus;
 	char * bch;
 	int countvalb = 0;
@@ -333,17 +276,12 @@ int main(int c, char *argv[]) {
 		goto completeProcess;
 	}
 
-	parentMonitoring:;
 	for (k = 0; k < totalProcessCounter; k++ ) {
 		fcntl(fd[k][CHILD][READ], F_SETFL, O_NONBLOCK);
 	}
 
-<<<<<<< HEAD
-=======
 	parentMonitoring:
->>>>>>> parent of b3efc46... Basic functionality completed, bugfixing
 	k = 0;
-	printf("im here now\n");
 	while(1) {
 		if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
 			printf("Statement completed?\n");
@@ -359,18 +297,8 @@ int main(int c, char *argv[]) {
 			sigintProcnannies();
       goto completeProcess;
     }
-<<<<<<< HEAD
-    if (k < totalProcessCounter) {
-			k++;
-		} else {
-			k = 0;
-		}
-		if (SHFLAG == 1 || read(fd[k][CHILD][READ], &byte, 1) == 1) {
-			printf("K value now is: %d\n", k);
-=======
 		//for (k = 0; k < totalProcessCounter; k++) {
 		while (SHFLAG == 1 || read(fd[k][CHILD][READ], &byte, 1) == 1) {
->>>>>>> parent of b3efc46... Basic functionality completed, bugfixing
 			// if the ioctl is -1 then switch to the next k value...
 			if (SHFLAG == 1) { // REREAD FILE
 				int validChild = 0;
@@ -391,12 +319,6 @@ int main(int c, char *argv[]) {
 					char line [1000];
 					while (fgets(line, sizeof line, file2) != NULL) { // read a line from a file 
 						// reads sample text: testa 120
-<<<<<<< HEAD
-						validChild = 0;
-						counter = totalProcessCounter + 1;
-						printf("LINE READ FROM FILE: %s\n", line);
-=======
->>>>>>> parent of b3efc46... Basic functionality completed, bugfixing
 						strcpy(test2[counter - 1], strtok(line, "\n"));
 						printf("Test2: %s\n", test2[counter - 1]);
 						pch = strtok (test2[counter-1]," ,.-");
@@ -424,40 +346,6 @@ int main(int c, char *argv[]) {
 								//  this is where you query, because everything is cleared.
 								for (h = 0; h < totalProcessCounter; h++) {
 									//h = h + 1; // sync w child process?
-<<<<<<< HEAD
-									if (validChild == 0) {
-										sprintf(switchProc, "1");
-										write_to_pipe(fd[h][PARENT][WRITE], switchProc);
-										// just print 1
-										int ops;
-										ops = fcntl(fd[h][CHILD][READ],F_GETFL); // reenable blocking
-										fcntl(fd[h][CHILD][READ], F_SETFL, ops & ~O_NONBLOCK);
-								  	while (read(fd[h][CHILD][READ], &byte2, 1) == 1) {
-								  		printf("PASS ONE\n");
-								  		buff2[0] = byte2;
-											if (ioctl(fd[h][CHILD][READ], FIONREAD, &count2) != -1) {
-												printf("PASS TWO\n");
-												if (read(fd[h][CHILD][READ], buff2+1, count2) == count2) {
-													//buff2[0] = byte2;
-													printf("PASS THREE: buff2 = %s\n", buff2);
-													int tmpinitval = atoi(buff2);
-													if (tmpinitval == 2) {
-														printf("2 found, skipping to next one.\n");
-													} else if (tmpinitval == 0) {
-														printf("using this child process to begin next process\n");
-														// pass all the variables required here.
-														// the child can: a. pass the variables and simply open a new process to monitor, or
-														// b. reset the process UP THERE and rerun the forked process - which is probably better imo...
-														char idToMonitor[150];
-														sprintf(idToMonitor, "%s %d", appdata[counter], timedata[counter]);
-														write_to_pipe(fd[h][PARENT][WRITE], idToMonitor);
-														validChild = 1;
-														fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
-													} else {
-														printf("? tmpinitval = %d\n", tmpinitval);
-													}
-													fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
-=======
 									sprintf(switchProc, "1");
 									write_to_pipe(fd[h][PARENT][WRITE], switchProc);
 									int ops;
@@ -477,7 +365,6 @@ int main(int c, char *argv[]) {
 													//sprintf(idToMonitor, "%s %d", appdata[counter], timedata[counter]);
 													//write_to_pipe(fd[h][PARENT][WRITE], idToMonitor);
 													validChild = 1;
->>>>>>> parent of b3efc46... Basic functionality completed, bugfixing
 												}
 												fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
 											}
@@ -485,74 +372,15 @@ int main(int c, char *argv[]) {
 									}
 								}
 
-<<<<<<< HEAD
-								if (validChild == 0) {
-									// FORK PROCESS HERE @ THIS POINT. HAVE TO FORK...?
-									// set the i value (counter val) as the one you're using
-									// fork here; the child is redirected to the child process UP THERE
-									// the parent is just going to pass and do nothing i guess.
-									totalProcessCounter++;
-									i = counter - 1; // FIXME: dependent
-									char grepip[1000];
-									strcpy(grepip, "pgrep ");
-									strcat(grepip, appdata[counter]);
-									printf("grepip: %s\n", grepip);
-									if ( ( f[counter] = popen( grepip, "r" ) ) == NULL ) {
-										perror( "popen" );
-									} else {
-										char pidval[150];
-										bzero(pidval, 150);
-
-										printf("counter = %d\n", counter);
-
-										if (pipe(fd[i][PARENT]) < 0) {
-											printf("ERROR: ProcNanny cannot create pipe. Program exiting...");
-											exit(EXIT_FAILURE); 
-										}
-										if (pipe(fd[i][CHILD]) < 0) {
-											printf("ERROR: ProcNanny cannot create pipe. Program exiting...");
-											exit(EXIT_FAILURE); 
-										}
-										
-										while (fgets(pidval, 150, f[counter]) != NULL) {
-											pid = fork();
-											if (pid < 0) { // error process
-										 		fprintf(stderr, "can't fork, error %d\n", errno);
-												exit(EXIT_FAILURE);
-
-											} else if (pid > 0) { // parent process
-
-												close(fd[i][CHILD][WRITE]);
-												close(fd[i][PARENT][READ]);
-												//totalProcessCounter = totalProcessCounter + 1;
-												fcntl(fd[i][CHILD][READ], F_SETFL, O_NONBLOCK);
-
-											} else if (pid == 0 ) { // child process
-
-												signal(SIGINT, fail_function);
-
-												strcpy(appProcessed, appdata[counter]);
-												timeProcessed = timedata[counter];
-
-												close(fd[i][PARENT][WRITE]); 
-												close(fd[i][CHILD][READ]);
-
-												goto childMonitoring;
-											}
-										}
-									}
-								}
-=======
 								countval = 0;
 								break;
->>>>>>> parent of b3efc46... Basic functionality completed, bugfixing
 							}
 							pch = strtok (NULL, " ,.-");
 						}
 						if (validChild = 0) {
 							// FORK PROCESS HERE @ THIS POINT. HAVE TO FORK...?
 						}
-						//counter++;
+						counter++;
 					}
 				}
 				fclose(file2);
@@ -601,10 +429,6 @@ int main(int c, char *argv[]) {
         buff[0] = byte;
         if (read(fd[k][CHILD][READ], buff+1, count) == count) {
 					bch = strtok (buff," ,.-");
-					char procCompleted[150];
-					char timeStr[30];
-					char pidval[30];
-					int verifyComplete = 0;
 					while (bch != NULL) {
 						printf("BCH: %s\n", bch);
 						if (countvalb == 0) {
@@ -614,43 +438,22 @@ int main(int c, char *argv[]) {
 								countProcCompleted++;
 								printf("SIGNUM++\n");
 								signum++;
-								verifyComplete = 1;
 							} else if (pidstatus == 0) {
         				countProcCompleted++;
 							}
 							countvalb++;
-<<<<<<< HEAD
-						} else if (countvalb == 1 && verifyComplete == 1) {
-							strcpy(pidval, bch);
-							countvalb++;
-						} else if (countvalb == 2 && verifyComplete == 1) {
-							strcpy(procCompleted, bch);
-							int p;
-							for (p = 0; p < (sizeof(appdata) / sizeof(appdata[0])); p++) {
-								if (strcmp(appdata[p], procCompleted) == 0) { //matches
-									printf("%s matched with database, removed.\n", appdata[p]);
-									strcpy(appdata[p], "");
-								}
-							}
-							countvalb++;
-						} else if (countvalb == 3 && verifyComplete == 1) {
-							strcpy(timeStr, bch);
-							pidKilledOP(pidval, procCompleted, timeStr);
-							printf("pidkilled is written.");
-=======
 						} else if (countvalb == 1) {
 							pidchange = atoi(bch);
 							printf("PIDCHANGE: %d\n", pidchange);
->>>>>>> parent of b3efc46... Basic functionality completed, bugfixing
 							countvalb = 0;
-						} 
+						}
 						bch = strtok (NULL, " ,.-");
 					}
         }        
         if (countProcCompleted == totalProcessCounter) {
         	goto parentMonitoring;
         }
-        //k++;
+        k++;
       }
       if (countProcCompleted == totalProcessCounter) {
         goto parentMonitoring;
