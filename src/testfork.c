@@ -31,6 +31,7 @@ void pidKilledOP(char * pidval, char * appdata, char * timeStr);
 void noProcessOP(char * appdata);
 void initProcOP(char * appdata, char * pidval );
 void deleteProcnannies();
+void sigintProcnannies();
 void getParentPID();
 void initialisationOP();
 void write_to_pipe(int file, char * data);
@@ -45,13 +46,17 @@ static int parentPID;
 static int SHFLAG = 0;
 static int SIFLAG = 0;
 
+char test[280][1000]; //array of strings //length is 10! figure out how to realloc!
+char appdata[280][1000];
+int timedata[280];
+
 static void catch_function(int signo) {
-	// if get_pid() is equal to the global variable (parent)
-	// then hangup
-	// if not ignore 
-	//exit(EXIT_FAILURE);
 	puts("SIFLAG set.");
 	SIFLAG = 1;
+}
+
+static void fail_function(int signo) {
+	exit(EXIT_FAILURE);
 }
 
 static void ignore_function(int signo ) { 
@@ -64,10 +69,8 @@ int main(int c, char *argv[]) {
 	// for each one, if it's not your current pid, kill process
 	// there's a key combination which sends a hangup 
 	/* DO THIS AT THE BEGINNING OF THE ASSIGNMENT*/
-	if (signal(SIGINT, catch_function) == SIG_ERR) {
-    fputs("An error occurred while setting a signal handler.\n", stderr);
-    return EXIT_FAILURE;
-  }
+	signal(SIGHUP, ignore_function);
+	signal(SIGINT, catch_function);
 
 	deleteProcnannies();
 	getParentPID();
@@ -85,9 +88,6 @@ int main(int c, char *argv[]) {
 	}
 
 	int counter = 0;
-	char test[280][1000]; //array of strings //length is 10! figure out how to realloc!
-	char appdata[280][1000];
-	int timedata[280];
 	char * pch; 
 	int countval = 0;
 
@@ -153,6 +153,9 @@ int main(int c, char *argv[]) {
 						close(fd[i][PARENT][READ]);
 						totalProcessCounter = totalProcessCounter + 1;;
 					} else if (pid == 0 ) { // child process
+
+						signal(SIGINT, fail_function);
+
 						childMonitoring:
 						close(fd[i][PARENT][WRITE]); 
 						close(fd[i][CHILD][READ]);
@@ -175,7 +178,11 @@ int main(int c, char *argv[]) {
 							sleep(5);
 							// Need to start the reading at every 5s break; if its (-1) then end the program, if its new pid then clear pid and 
 							// write to inform the child is busy.
-							while (read(fd[i][PARENT][READ], &byte, 1) == 1) {
+							while (SIFLAG == 1 || read(fd[i][PARENT][READ], &byte, 1) == 1) {
+								if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
+									sigintProcnannies();
+      						goto completeProcess;
+    						}
 								if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1)
 	            	{
 	            		buff[0] = byte;
@@ -185,7 +192,7 @@ int main(int c, char *argv[]) {
 	            			printf("charbuf: %d\n", charbuf);
 	            			if (charbuf == 1) {
 											printf("1 found, skipping to next one.\n");
-											sprintf(printWrite, "2");
+											sprintf(printWrite, "2"); // sends for onwait process
 	            				write_to_pipe(fd[i][CHILD][WRITE], printWrite);
 										} else if (charbuf == -1) {
 											printf("Process terminated.\n");
@@ -201,37 +208,48 @@ int main(int c, char *argv[]) {
 						sprintf(timeStr, "%d", timedata[i]);
 						char prntChild[150];
 						int killresult = kill(pidint, SIGKILL);
-							if (killresult == 0) {
-								//printf("You killed the process (PID: %d) (Application: %s)\n", pidint, test[i] );
-								pidKilledOP(pidval, appdata[i], timeStr);
-								sprintf(prntChild, "1 %s", pidval);
-							} else if (killresult == -1) {
-								//printf("ERROR: Process already killed (PID: %d) (Application: %s)\n", pidint, test[i] );
-							  sprintf(prntChild, "0 %s", pidval);
-							}
-							consoleOP("Process monitoring complete.");
-							write_to_pipe(fd[i][CHILD][WRITE], prntChild);
-
-							int ops;
-							ops = fcntl(fd[i][PARENT][READ],F_GETFL); // reenable blocking
-							fcntl(fd[i][PARENT][READ], F_SETFL, ops & ~O_NONBLOCK);
-							while (read(fd[i][PARENT][READ], &byte, 1) == 1) {
-								if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
-									buff[0] = byte;
-									if (read(fd[i][PARENT][READ], buff+1, count) == count) {
-										int bufval = atoi(buff);
-										printf("Buff read for new process: %d\n", bufval);
-										if (bufval == -1) {
-											printf(":(\n");
-											goto waitingProc;
-										}
+						if (killresult == 0) {
+							//printf("You killed the process (PID: %d) (Application: %s)\n", pidint, test[i] );
+							pidKilledOP(pidval, appdata[i], timeStr);
+							sprintf(prntChild, "1 %s", pidval);
+						} else if (killresult == -1) {
+							//printf("ERROR: Process already killed (PID: %d) (Application: %s)\n", pidint, test[i] );
+						  sprintf(prntChild, "0 %s", pidval);
+						}
+						consoleOP("Process monitoring complete.");
+						write_to_pipe(fd[i][CHILD][WRITE], prntChild); // writing to parent that is polling
+						int ops;
+						printf("i child is: %d\n", i);
+						ops = fcntl(fd[i][PARENT][READ],F_GETFL); // reenable blocking
+						fcntl(fd[i][PARENT][READ], F_SETFL, ops & ~O_NONBLOCK); 
+						while (SIFLAG == 1 || read(fd[i][PARENT][READ], &byte, 1) == 1) {
+							if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
+								sigintProcnannies();
+      					goto completeProcess;
+    					}
+							if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
+								buff[0] = byte;
+								if (read(fd[i][PARENT][READ], buff+1, count) == count) {
+									int bufval = atoi(buff);
+									printf("Buff read for new process: %d\n", bufval);
+									if (bufval == -1) {
+										printf(":(\n");
+										goto waitingProc;
+									} else if (bufval == 1) {
+										// new process started!
+										char prntReady[150];
+										printf("this one is free!.\n");
+										sprintf(prntReady, "0"); // sends for onwait process
+            				write_to_pipe(fd[i][CHILD][WRITE], prntReady);
+            				// NEEDS TO WAIT @ THIS POINT
 									}
 								}
 							}
-							goto waitingProc;
-						} 
-					}
-					if (haspid == 0) {
+						}
+						goto waitingProc;
+					} 
+				}
+				if (haspid == 0) {
 					//printf("No processes found for %s.\n", test[i]);
 					noProcessOP(appdata[i]);
 				}		
@@ -239,9 +257,6 @@ int main(int c, char *argv[]) {
 			//pclose(f[i]);
 		}
 	}	
-
-  if (signal(SIGHUP, ignore_function) == SIG_ERR) {}
-
 	int k; 
 	int signum = 0;
 	char buff[1000];
@@ -270,12 +285,16 @@ int main(int c, char *argv[]) {
 	while(1) {
 		if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
 			printf("Statement completed?\n");
+			/*
 			for (k = 0; k < totalProcessCounter; k++ ) {
-				k++;
-				char failState[150];
-				sprintf(failState, "-1");
-				write_to_pipe(fd[k][PARENT][WRITE], failState);
+				//k++;
+				//char failState[150];
+				//sprintf(failState, "-1");
+				//write_to_pipe(fd[k][PARENT][WRITE], failState);
+				//kill(pidlist[k], SIGINT);
 			}
+			*/
+			sigintProcnannies();
       goto completeProcess;
     }
 		//for (k = 0; k < totalProcessCounter; k++) {
@@ -283,25 +302,34 @@ int main(int c, char *argv[]) {
 			// if the ioctl is -1 then switch to the next k value...
 			if (SHFLAG == 1) { // REREAD FILE
 				int validChild = 0;
+				char switchProc[1000];
+				char buff2[1000];
+				bzero(buff2, 1000);
+  			char byte2 = 0;
+  			char test2[280][1000];
+  			int count2 = 0;
+
 				consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
 				genericOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
 				// if there's a new program then search, so search w/ respect to the current appname list
 				FILE* file2 = fopen ( argv[1], "r" );
-				file2 = fopen ( argv[1], "r" );
 				counter = totalProcessCounter + 1;
+
 				if (file2 != NULL) {
 					char line [1000];
 					while (fgets(line, sizeof line, file2) != NULL) { // read a line from a file 
 						// reads sample text: testa 120
-						strcpy(test[counter - 1], strtok(line, "\n"));
-						pch = strtok (test[counter-1]," ,.-");
+						strcpy(test2[counter - 1], strtok(line, "\n"));
+						printf("Test2: %s\n", test2[counter - 1]);
+						pch = strtok (test2[counter-1]," ,.-");
 						int validAppData = 0;
 						while (pch != NULL) {
 							if (countval == 0) {
 								int m;
 								for (m = 0; m < totalProcessCounter; m++) {
 									validAppData = 0;
-									if (strcmp(appdata[m], pch) != 0) {
+									printf("Comparison between two values: Test2: %s; Appdata: %s\n", pch, appdata[m]);
+									if (strcmp(appdata[m], pch) == 0) {
 										printf("Duplicate function '%s' already exists; ignoring this one.\n", pch);
 										validAppData = 1;
 									} 
@@ -311,24 +339,53 @@ int main(int c, char *argv[]) {
 									printf("Appdata new: %s\n", appdata[counter]);
 								}
 								countval++;
-							} else if (countval == 1 && validAppData == 9) {
+							} else if (countval == 1 && validAppData == 0) {
 								timedata[counter] = atoi(pch);
 								printf("Timedata new: %d\n", timedata[counter]);
+
+								//  this is where you query, because everything is cleared.
+								for (h = 0; h < totalProcessCounter; h++) {
+									//h = h + 1; // sync w child process?
+									sprintf(switchProc, "1");
+									write_to_pipe(fd[h][PARENT][WRITE], switchProc);
+									int ops;
+									ops = fcntl(fd[h][CHILD][READ],F_GETFL); // reenable blocking
+									fcntl(fd[h][CHILD][READ], F_SETFL, ops & ~O_NONBLOCK);
+									printf("h val parent is: %d\n", h);
+							  	while (read(fd[h][CHILD][READ], &byte2, 1) == 1) {
+										if (ioctl(fd[h][CHILD][READ], FIONREAD, &count2) != -1) {
+											buff2[0] = byte2;
+											if (read(fd[h][CHILD][READ], buff2+1, count2) == count2) {
+												printf("buff2 value: %s\n", buff2);
+												int tmpinitval = atoi(buff2);
+												if (tmpinitval == 2) {
+													printf("2 found, skipping to next one.\n");
+												} else if (tmpinitval == 0) {
+													printf("using this child process to begin next process\n");
+													//sprintf(idToMonitor, "%s %d", appdata[counter], timedata[counter]);
+													//write_to_pipe(fd[h][PARENT][WRITE], idToMonitor);
+													validChild = 1;
+												}
+												fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
+											}
+										}
+									}
+								}
+
 								countval = 0;
 								break;
 							}
 							pch = strtok (NULL, " ,.-");
 						}
+						if (validChild = 0) {
+							// FORK PROCESS HERE @ THIS POINT. HAVE TO FORK...?
+						}
 						counter++;
 					}
 				}
-				fclose(file);
-				char switchProc[1000];
-				char buff2[1000];
-				bzero(buff2, 1000);
-  			char byte2 = 0;
-  			int count2 = 0;
+				fclose(file2);
 
+				/*
 				for (h = 0; h < totalProcessCounter; h++) {
 					h = h + 1; // sync w child process?
 					printf("h value: %d\n", h);
@@ -337,6 +394,7 @@ int main(int c, char *argv[]) {
 					int ops;
 					ops = fcntl(fd[h][CHILD][READ],F_GETFL); // reenable blocking
 					fcntl(fd[h][CHILD][READ], F_SETFL, ops & ~O_NONBLOCK);
+					printf("h val parent is: %d\n", h);
 			  	while (read(fd[h][CHILD][READ], &byte2, 1) == 1) {
 						if (ioctl(fd[h][CHILD][READ], FIONREAD, &count2) != -1) {
 							buff2[0] = byte2;
@@ -352,9 +410,8 @@ int main(int c, char *argv[]) {
 							}
 						}
 					}
-					printf("escaped\n");
 				}
-				printf("process completed\n");
+				*/
 				SHFLAG = 0;
 			} else {
 				printf("SHFLAG = 0;...\n");
@@ -392,12 +449,8 @@ int main(int c, char *argv[]) {
 						}
 						bch = strtok (NULL, " ,.-");
 					}
-        }
-        
+        }        
         if (countProcCompleted == totalProcessCounter) {
-          //printf("Countproccompleted: %d; totalProcessCounter: %d\n", countProcCompleted, totalProcessCounter);
-          //printf("Completion via max process outcome.\n");
-        	//goto completeProcess;
         	goto parentMonitoring;
         }
         k++;
@@ -407,6 +460,8 @@ int main(int c, char *argv[]) {
       }
     }
 	}
+
+	//printf("Heyo sombrero\n");
 
 	completeProcess:
 	consoleOP("Operations have concluded for this process (all iterations have gone through).");
@@ -457,6 +512,33 @@ void deleteProcnannies() {
 			}
 		}
 		fclose(pnfile); 
+		return;
+}
+
+void sigintProcnannies() {
+		FILE * pnfile;
+		pid_t curpid;
+		int killPID = 0;
+		curpid = getpid();
+		if ( ( pnfile = popen("pgrep procnanny", "r" ) ) == NULL ) {
+				perror( "popen" );
+		} else { 
+			pid_t pidpn;
+			char pidbuffer[30];
+			while (fgets(pidbuffer, 150, pnfile) != NULL) {
+				pidpn = (pid_t) strtol(pidbuffer, NULL, 10);
+				// if pid is not the one you currently opened...
+				if (pidpn != curpid) {
+					killPID++;
+					kill(pidpn, SIGINT);
+				}
+			}
+		}
+		fclose(pnfile); 
+		char printNum[150];
+		sprintf(printNum, "Info: Caught SIGINT. Exiting cleanly. %d process(es) killed.", killPID);
+		consoleOP(printNum);
+		genericOP(printNum);
 		return;
 }
 
