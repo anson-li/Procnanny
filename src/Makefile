@@ -1,5 +1,5 @@
 procnanny: testfork.c
-	gcc -Wall -DMEMWATCH -DMW_STDIO -o procnanny testfork.c memwatch.c
+	gcc -Wall -DMEMWATCH -DMW_STDIO -g -o procnanny testfork.c memwatch.c
 clean:
 	rm -f procnanny *.o core
 #testfork: testfork.c
