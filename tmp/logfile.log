@@ -1,8 +1,8 @@
-[Tue Nov 10 18:21:54 2015] Info: Initializing monitoring of process 'testa' (PID 31039).
-[Tue Nov 10 18:21:59 2015] Action: PID 31039 (testa) killed after exceeding 3 seconds.
-[Tue Nov 10 18:22:06 2015] Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.
-[Tue Nov 10 18:22:06 2015] Info: Initializing monitoring of process 'testa' (PID 31061).
-[Tue Nov 10 18:22:06 2015] Info: Initializing monitoring of process 'testb' (PID 31040).
-[Tue Nov 10 18:22:11 2015] Action: PID 31061 (testa) killed after exceeding 3 seconds.
-[Tue Nov 10 18:22:11 2015] Action: PID 31040 (testb) killed after exceeding 5 seconds.
-[Tue Nov 10 18:22:17 2015] Info: Caught SIGINT. Exiting cleanly. 2 process(es) killed.
+[Tue Nov 10 18:50:58 2015] Info: Initializing monitoring of process 'testa' (PID 31318).
+[Tue Nov 10 18:50:59 2015] Info: Initializing monitoring of process 'testb' (PID 31319).
+[Tue Nov 10 18:51:03 2015] Action: PID 31318 (testa) killed after exceeding 3 seconds.
+[Tue Nov 10 18:51:04 2015] Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.
+[Tue Nov 10 18:51:04 2015] Info: No 'testa' processes found.
+[Tue Nov 10 18:51:09 2015] Action: PID 31319 (testb) killed after exceeding 6 seconds.
+[Tue Nov 10 18:51:09 2015] Info: Caught SIGINT. Exiting cleanly. 2 process(es) killed.
+[Tue Nov 10 18:51:09 2015] Info: Exiting. 2 process(es) killed.

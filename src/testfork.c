@@ -518,6 +518,7 @@ int main(int c, char *argv[]) {
 
 	completeProcess:
 	//consoleOP("Operations have concluded for this process (all iterations have gone through).");
+	killProcessOP(signum);
 	return 0;
 
 	waitingProc:

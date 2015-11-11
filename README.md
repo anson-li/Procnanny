@@ -1,4 +1,4 @@
-# CMPUT 291 Assignment 1 - PROCNANNY
+# CMPUT 291 Assignment 2 - PROCNANNY
 Procnanny is an application in which processes are monitored and killed if it exceeds a predetermined time limit. If a program exceeds its time limit, it is killed. The resulting data and information is stored within the logfile.
 
 ## Name & Descriptor:
@@ -22,10 +22,13 @@ Procnanny is an application in which processes are monitored and killed if it ex
 * ../src/ contains all the processing data
 * ../test/ contains all of the test applications. There are three in total - the sole purpose of these test applications is to be killed by the procnanny application.
 
+## How to call reread:
+* kill -HUP 30124 (pid value to insert)
+
 ## Hints / notes for Assignment 2:
 * Have to pipe, then fork after the pipe is created.
-* fd[0] is always the read,
-* fd[1] is always the write.
+* fd[CHILD][READ] is always the read,
+* fd[CHILD][WRITE] is always the write.
 * We have to use this process to communicate changes; whether or not it's to check if the system is running, or to check if the system should terminate. Permanently polling system?
 * Duplicate gives you three different functions (read the manpage for dup2 for more information):
 	* if you give your file descriptor, then your duplicate will create a copy of the file descriptor with the lowest number of descriptor (file of 1).
