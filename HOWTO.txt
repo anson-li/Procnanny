@@ -1,0 +1,8 @@
+GOTO SSH amli@ohaton.cs.ualberta.ca 
+
+Use um11.cs.ualberta.ca
+	um12.cs.ualberta.ca
+
+and SSH to lab machines to complete the program processes. Connect via socket 'sheerness.cs.ualberta.ca'?
+Do this by doing SSH amli@ohaton.cs.ualberta.ca | SSH um12 
+OR SSH um12@cs.ualberta.ca
