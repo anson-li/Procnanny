@@ -15,7 +15,7 @@
 #define	SERVNAME	"sheerness.cs.ualberta.ca"
 #define MY_PORT		2222
 
-main() 
+int main(int c, char *argv[]) 
 {
 	struct	sockaddr_in	server;
 	struct	hostent		*host;

@@ -34,8 +34,7 @@ read_from_client (int filedes)
     }
 }
 
-int
-main (void)
+int main (int c, char *argv[])
 {
   extern int make_socket (uint16_t port);
   int sock;
