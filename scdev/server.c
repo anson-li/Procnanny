@@ -96,10 +96,9 @@ int main (int c)
   fd_set active_fd_set, read_fd_set; //two active sets that will be monitored
   int i;
   struct sockaddr_in clientname;
-  printf("4\n");
   size_t size;
-
-  printf("debuggery");
+  printf("ddd\n");
+  printf("debuggery\n");
   // Create the socket and set it up to accept connections.
   sock = make_socket (PORT);
   if (listen (sock, 1) < 0)
