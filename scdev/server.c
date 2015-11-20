@@ -17,6 +17,7 @@
 /* machine.                                                        */
 /* --------------------------------------------------------------- */
 
+/*
 #define	SERVNAME	"sheerness.cs.ualberta.ca"
 #define PORT    2222
 #define MAXMSG  512
@@ -25,8 +26,8 @@ int make_socket (uint16_t port)
 {
   int sock;
   struct sockaddr_in name;
-
-  /* Create the socket. */
+  
+  // create socket
   printf("Init process...");
   sock = socket (PF_INET, SOCK_STREAM, 0);
   if (sock < 0)
@@ -35,7 +36,7 @@ int make_socket (uint16_t port)
       exit (EXIT_FAILURE);
     }
 
-  /* Give the socket a name. */
+  // name socket
   name.sin_family = AF_INET;
   name.sin_port = htons (port);
   name.sin_addr.s_addr = htonl (INADDR_ANY);
@@ -56,24 +57,24 @@ int read_from_client (int filedes)
   nbytes = read (filedes, buffer, MAXMSG);
   if (nbytes < 0)
     {
-      /* Read error. */
       perror ("read");
       exit (EXIT_FAILURE);
     }
   else if (nbytes == 0)
-    /* End-of-file. */
+    // End of file
     return -1;
   else
     {
-      /* Data read. */
+      // data read
       fprintf (stderr, "Server: got message: `%s'\n", buffer);
       return 0;
     }
-}
+}*/
 
 int main (int c)
 {
   printf("eh");
+  /*
   extern int make_socket (uint16_t port);
   int sock;
   fd_set active_fd_set, read_fd_set; //two active sets that will be monitored
@@ -82,7 +83,7 @@ int main (int c)
   size_t size;
 
   printf("debuggery");
-  /* Create the socket and set it up to accept connections. */
+  // Create the socket and set it up to accept connections.
   sock = make_socket (PORT);
   if (listen (sock, 1) < 0)
     {
@@ -90,13 +91,13 @@ int main (int c)
       exit (EXIT_FAILURE);
     }
 
-  /* Initialize the set of active sockets. */
+  // Initialize the set of active sockets.
   FD_ZERO (&active_fd_set); 
   FD_SET (sock, &active_fd_set);
   printf("You made it on the server! beginning process...");
   while (1)
     {
-      /* Block until input arrives on one or more active sockets. */
+      // Block until input arrives on one or more active sockets.
       read_fd_set = active_fd_set;
       if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) 
         {
@@ -104,13 +105,13 @@ int main (int c)
           exit (EXIT_FAILURE);
         }
 
-      /* Service all the sockets with input pending. */
+      // Service all the sockets with input pending.
       for (i = 0; i < FD_SETSIZE; ++i)	// // calls select on the socket / so blocked until the socket gets the flag.
         if (FD_ISSET (i, &read_fd_set))
           {
             if (i == sock)
               {
-                /* Connection request on original socket. */
+                /* Connection request on original socket.
                 int new; // use this one to accept to the socket to talk to the existing client
                 size = sizeof (clientname);
                 new = accept (sock,
@@ -129,7 +130,7 @@ int main (int c)
               }
             else
               {
-                /* Data arriving on an already-connected socket. */
+                /* Data arriving on an already-connected socket.
                 if (read_from_client (i) < 0)
                   {
                     close (i);
@@ -137,5 +138,5 @@ int main (int c)
                   }
               }
           }
-    }
+    } */
 }
