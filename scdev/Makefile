@@ -4,7 +4,7 @@ procnanny.server: server.c
 procnanny.client: client.c
 	gcc -Wall -DMEMWATCH -DMW_STDIO -o procnanny.client client.c memwatch.c
 clean:
-	rm -f procnanny *.o core
+	rm -f procnanny.server procnanny.client *.o core
 #testfork: testfork.c
 #replace with gcc -o -Wall -g testfork testfork.c
 #./testfork
