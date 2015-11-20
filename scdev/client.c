@@ -16,7 +16,7 @@
 #define MY_PORT		2222
 
 int main(int ic, char *argv[]) 
-{
+{	
 	struct	sockaddr_in	server;
 	struct	hostent		*host;
 	int s;
@@ -26,6 +26,7 @@ int main(int ic, char *argv[])
 	host = gethostbyname (SERVNAME);
 	printf("Get here...");
 
+	/*
 	if (host == NULL) {
 		perror ("Client: cannot get host description");
 		exit(1);
@@ -58,4 +59,5 @@ int main(int ic, char *argv[])
 			putchar (c);
 		}
 	}
+	*/
 }
