@@ -71,8 +71,9 @@ int read_from_client (int filedes)
     }
 }
 
-int main (void)
+int main (int c)
 {
+  printf("eh");
   extern int make_socket (uint16_t port);
   int sock;
   fd_set active_fd_set, read_fd_set; //two active sets that will be monitored
