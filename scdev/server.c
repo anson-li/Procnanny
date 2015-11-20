@@ -23,6 +23,7 @@ int make_socket (uint16_t port)
   struct sockaddr_in name;
 
   /* Create the socket. */
+  printf("Init process...");
   sock = socket (PF_INET, SOCK_STREAM, 0);
   if (sock < 0)
     {
