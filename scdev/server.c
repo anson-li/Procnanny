@@ -9,6 +9,7 @@
 
 #define SERVNAME  "sheerness.cs.ualberta.ca"
 #define PORT   2222
+#define MAXMSG 512
 
 int
 read_from_client (int filedes)
