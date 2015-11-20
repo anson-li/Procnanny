@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#define SERVNAME  "sheerness.cs.ualberta.ca"
+#define SERVNAME  "sheerness"
 #define PORT   2222
 #define MAXMSG 512
 

@@ -12,7 +12,7 @@
 /* This is a sample client for the "remote login" server */
 /* ----------------------------------------------------- */
 
-#define	SERVNAME	"sheerness.cs.ualberta.ca"
+#define	SERVNAME	"sheerness"
 #define MY_PORT		2222
 
 int main(int ic, char *argv[]) 
