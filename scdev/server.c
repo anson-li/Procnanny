@@ -17,7 +17,7 @@
 /* machine.                                                        */
 /* --------------------------------------------------------------- */
 
-/*
+
 #define	SERVNAME	"sheerness.cs.ualberta.ca"
 #define PORT    2222
 #define MAXMSG  512
@@ -69,12 +69,11 @@ int read_from_client (int filedes)
       fprintf (stderr, "Server: got message: `%s'\n", buffer);
       return 0;
     }
-}*/
+}
 
 int main (int c)
 {
-  printf("eh");
-  /*
+  
   extern int make_socket (uint16_t port);
   int sock;
   fd_set active_fd_set, read_fd_set; //two active sets that will be monitored
@@ -111,7 +110,7 @@ int main (int c)
           {
             if (i == sock)
               {
-                /* Connection request on original socket.
+                // Connection request on original socket.
                 int new; // use this one to accept to the socket to talk to the existing client
                 size = sizeof (clientname);
                 new = accept (sock,
@@ -130,7 +129,7 @@ int main (int c)
               }
             else
               {
-                /* Data arriving on an already-connected socket.
+                // Data arriving on an already-connected socket.
                 if (read_from_client (i) < 0)
                   {
                     close (i);
@@ -138,5 +137,5 @@ int main (int c)
                   }
               }
           }
-    } */
+    }
 }
