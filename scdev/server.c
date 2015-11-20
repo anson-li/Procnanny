@@ -2,6 +2,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <netdb.h>
 
 /* --------------------------------------------------------------- */
 /* This  is  a simple "login server" that accepts connections from */
@@ -9,54 +13,97 @@
 /* machine.                                                        */
 /* --------------------------------------------------------------- */
 
-#define MY_PORT		2222	/* Master socket port number */
+#define	SERVNAME	"sheerness.cs.ualberta.ca"
+#define PORT    2222
+#define MAXMSG  512
 
-int client;
-
-main() 
+int
+read_from_client (int filedes)
 {
-	int	sock, fromlength;
-	struct	sockaddr_in	master, from;
+  char buffer[MAXMSG];
+  int nbytes;
 
-	/* Create master socket to await connections */
-	sock = socket (AF_INET, SOCK_STREAM, 0);
-	if (sock < 0) {
-		perror ("Server: cannot open master socket");
-		exit (1);
-	}
-
-	master.sin_family = AF_INET;
-	master.sin_addr.s_addr = INADDR_ANY;
-	master.sin_port = htons (MY_PORT);
-
-	/* Bind the port to the master socket */
-	if (bind (sock, (struct sockaddr*) &master, sizeof (master))) {
-		perror ("Server: cannot bind master socket");
-		exit (1);
-	}
-
-	listen (sock, 5);
-
-	while (1) {
-		/* The main loop */
-		client = accept (sock, (struct sockaddr*) & from, & fromlength);
-		if (client < 0) {
-			perror ("Server: accept failed");
-			continue;
-		}
-                if (fork ())
-			close (client);
-		else {
-			close (sock);
-			server ();
-			exit (0);
-		}
-	}
+  nbytes = read (filedes, buffer, MAXMSG);
+  if (nbytes < 0)
+    {
+      /* Read error. */
+      perror ("read");
+      exit (EXIT_FAILURE);
+    }
+  else if (nbytes == 0)
+    /* End-of-file. */
+    return -1;
+  else
+    {
+      /* Data read. */
+      fprintf (stderr, "Server: got message: `%s'\n", buffer);
+      return 0;
+    }
 }
 
-server () {
+int main (void)
+{
+  extern int make_socket (uint16_t port);
+  int sock;
+  fd_set active_fd_set, read_fd_set; //two active sets that will be monitored
+  int i;
+  struct sockaddr_in clientname;
+  size_t size;
 
-	close (0); close (1); close (2);
-	dup2 (client, 0); dup2 (client, 1); dup2 (client, 2);
-	system ("csh");
+  /* Create the socket and set it up to accept connections. */
+  sock = make_socket (PORT);
+  if (listen (sock, 1) < 0)
+    {
+      perror ("listen");
+      exit (EXIT_FAILURE);
+    }
+
+  /* Initialize the set of active sockets. */
+  FD_ZERO (&active_fd_set); 
+  FD_SET (sock, &active_fd_set);
+
+  while (1)
+    {
+      /* Block until input arrives on one or more active sockets. */
+      read_fd_set = active_fd_set;
+      if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) 
+        {
+          perror ("select");
+          exit (EXIT_FAILURE);
+        }
+
+      /* Service all the sockets with input pending. */
+      for (i = 0; i < FD_SETSIZE; ++i)	// // calls select on the socket / so blocked until the socket gets the flag.
+        if (FD_ISSET (i, &read_fd_set))
+          {
+            if (i == sock)
+              {
+                /* Connection request on original socket. */
+                int new; // use this one to accept to the socket to talk to the existing client
+                size = sizeof (clientname);
+                new = accept (sock,
+                              (struct sockaddr *) &clientname,
+                              &size);
+                if (new < 0)
+                  {
+                    perror ("accept");
+                    exit (EXIT_FAILURE);
+                  }
+                fprintf (stderr,
+                         "Server: connect from host %s, port %hd.\n", // get the actual connection
+                         inet_ntoa (clientname.sin_addr),
+                         ntohs (clientname.sin_port));
+                FD_SET (new, &active_fd_set);
+              }
+            else
+              {
+                /* Data arriving on an already-connected socket. */
+                if (read_from_client (i) < 0)
+                  {
+                    close (i);
+                    FD_CLR (i, &active_fd_set);
+                  }
+              }
+          }
+    }
 }
