@@ -5,6 +5,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <stdio.h>
+#include <errno.h>   /* errno */
+
 
 /* ----------------------------------------------------- */
 /* This is a sample client for the "remote login" server */
