@@ -26,12 +26,11 @@ int main(int ic, char *argv[])
 	host = gethostbyname (SERVNAME);
 	printf("Get here...");
 
-	/*
 	if (host == NULL) {
 		perror ("Client: cannot get host description");
 		exit(1);
 	}
-
+	/*
 	s = socket (AF_INET, SOCK_STREAM, 0);
 
 	if (s < 0) {
@@ -60,4 +59,5 @@ int main(int ic, char *argv[])
 		}
 	}
 	*/
+	return 0;
 }
