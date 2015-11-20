@@ -22,15 +22,17 @@ int main(int ic, char *argv[])
 	int s;
 	char c;
 
-	printf("Beginning child process...");
+	printf("Beginning child process...\n");
 	host = gethostbyname (SERVNAME);
-	printf("Get here...");
+	printf("Get here...\n");
 
 	if (host == NULL) {
 		perror ("Client: cannot get host description");
 		exit(1);
 	}
-	/*
+
+	printf(host);
+	/
 	s = socket (AF_INET, SOCK_STREAM, 0);
 
 	if (s < 0) {
@@ -47,6 +49,9 @@ int main(int ic, char *argv[])
 		perror ("Producer: cannot connect to server");
 		exit(1);
 	}
+
+	printf("Made it to fork...");
+	/*
 	if (fork ()) {
 		while (1) {
 			c = getchar ();
