@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <netdb.h>
+#include <sys/types.h>
+#include <signal.h>
+#include <unistd.h>  /* _exit, fork */
+
 
 /* --------------------------------------------------------------- */
 /* This  is  a simple "login server" that accepts connections from */
