@@ -74,10 +74,13 @@ int read_from_client (int filedes)
 int main (int c)
 {
   
+  printf("1\n");
   extern int make_socket (uint16_t port);
+  printf("2\n");
   int sock;
   fd_set active_fd_set, read_fd_set; //two active sets that will be monitored
   int i;
+  printf("3\n");
   struct sockaddr_in clientname;
   size_t size;
 
