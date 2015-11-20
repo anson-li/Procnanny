@@ -32,7 +32,7 @@ int main(int ic, char *argv[])
 	}
 
 	printf(host);
-	/
+	
 	s = socket (AF_INET, SOCK_STREAM, 0);
 
 	if (s < 0) {
