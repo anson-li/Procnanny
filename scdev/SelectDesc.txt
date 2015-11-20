@@ -12,3 +12,5 @@ Use FD_SET to set the read or write for the select. Basically, the fd_set is an 
 You HAVE to always let your server wait online, and wait for the other processes to connect.
 
 You have to use a new socket (generated) to communicate to teh parent at every new 'client' that logs. You can't let the client 'fill' the socket because then you have to wait for the next parent - however, splitting it is fine.
+
+ex. ret(integer) = select(maxdesc{int}, &read_from{reads from standard input}, NULL, NULL. &tv{struct}); <- blocks from standard input until it can read from it.

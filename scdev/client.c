@@ -24,6 +24,7 @@ int main(int ic, char *argv[])
 
 	printf("Beginning child process...");
 	host = gethostbyname (SERVNAME);
+	printf("Get here...");
 
 	if (host == NULL) {
 		perror ("Client: cannot get host description");
