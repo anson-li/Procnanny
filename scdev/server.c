@@ -80,6 +80,7 @@ int main (void)
   struct sockaddr_in clientname;
   size_t size;
 
+  printf("debuggery");
   /* Create the socket and set it up to accept connections. */
   sock = make_socket (PORT);
   if (listen (sock, 1) < 0)
