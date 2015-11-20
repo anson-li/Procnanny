@@ -1,72 +1,17 @@
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <netdb.h>
 #include <sys/types.h>
-#include <signal.h>
-#include <unistd.h>  /* _exit, fork */
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 
+#define SERVNAME  "sheerness.cs.ualberta.ca"
+#define PORT   2222
 
-/* --------------------------------------------------------------- */
-/* This  is  a simple "login server" that accepts connections from */
-/* remote clients and, for each client, opens a shell on the local */
-/* machine.                                                        */
-/* --------------------------------------------------------------- */
-
-
-#define	SERVNAME	"sheerness.cs.ualberta.ca"
-#define PORT    2222
-#define MAXMSG  512
-
-void init_sockaddr (struct sockaddr_in *name,
-               const char *hostname,
-               uint16_t port)
-{
-  struct hostent *hostinfo;
-
-  name->sin_family = AF_INET;
-  name->sin_port = htons (port);
-  hostinfo = gethostbyname (hostname);
-  if (hostinfo == NULL) 
-    {
-      fprintf (stderr, "Unknown host %s.\n", hostname);
-      exit (EXIT_FAILURE);
-    }
-  name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
-}
-
-int make_socket (uint16_t port)
-{
-  int sock;
-  struct sockaddr_in name;
-  
-  // create socket
-  printf("Init process...");
-  sock = socket (PF_INET, SOCK_STREAM, 0);
-  if (sock < 0)
-    {
-      perror ("socket");
-      exit (EXIT_FAILURE);
-    }
-
-  // name socket
-  name.sin_family = AF_INET;
-  name.sin_port = htons (port);
-  name.sin_addr.s_addr = htonl (INADDR_ANY);
-  if (bind (sock, (struct sockaddr *) &name, sizeof (name)) < 0)
-    {
-      perror ("bind");
-      exit(EXIT_FAILURE);
-    }
-
-  return sock;
-}
-
-int read_from_client (int filedes)
+int
+read_from_client (int filedes)
 {
   char buffer[MAXMSG];
   int nbytes;
@@ -74,32 +19,32 @@ int read_from_client (int filedes)
   nbytes = read (filedes, buffer, MAXMSG);
   if (nbytes < 0)
     {
+      /* Read error. */
       perror ("read");
       exit (EXIT_FAILURE);
     }
   else if (nbytes == 0)
-    // End of file
+    /* End-of-file. */
     return -1;
   else
     {
-      // data read
+      /* Data read. */
       fprintf (stderr, "Server: got message: `%s'\n", buffer);
       return 0;
     }
 }
 
-int main (int c)
+int
+main (void)
 {
-  
   extern int make_socket (uint16_t port);
   int sock;
-  fd_set active_fd_set, read_fd_set; //two active sets that will be monitored
+  fd_set active_fd_set, read_fd_set;
   int i;
   struct sockaddr_in clientname;
   size_t size;
-  printf("ddd\n");
-  printf("debuggery\n");
-  // Create the socket and set it up to accept connections.
+
+  /* Create the socket and set it up to accept connections. */
   sock = make_socket (PORT);
   if (listen (sock, 1) < 0)
     {
@@ -107,28 +52,28 @@ int main (int c)
       exit (EXIT_FAILURE);
     }
 
-  // Initialize the set of active sockets.
-  FD_ZERO (&active_fd_set); 
+  /* Initialize the set of active sockets. */
+  FD_ZERO (&active_fd_set);
   FD_SET (sock, &active_fd_set);
-  printf("You made it on the server! beginning process...");
+
   while (1)
     {
-      // Block until input arrives on one or more active sockets.
+      /* Block until input arrives on one or more active sockets. */
       read_fd_set = active_fd_set;
-      if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) 
+      if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0)
         {
           perror ("select");
           exit (EXIT_FAILURE);
         }
 
-      // Service all the sockets with input pending.
-      for (i = 0; i < FD_SETSIZE; ++i)	// // calls select on the socket / so blocked until the socket gets the flag.
+      /* Service all the sockets with input pending. */
+      for (i = 0; i < FD_SETSIZE; ++i)
         if (FD_ISSET (i, &read_fd_set))
           {
             if (i == sock)
               {
-                // Connection request on original socket.
-                int new; // use this one to accept to the socket to talk to the existing client
+                /* Connection request on original socket. */
+                int new;
                 size = sizeof (clientname);
                 new = accept (sock,
                               (struct sockaddr *) &clientname,
@@ -139,14 +84,14 @@ int main (int c)
                     exit (EXIT_FAILURE);
                   }
                 fprintf (stderr,
-                         "Server: connect from host %s, port %hd.\n", // get the actual connection
+                         "Server: connect from host %s, port %hd.\n",
                          inet_ntoa (clientname.sin_addr),
                          ntohs (clientname.sin_port));
                 FD_SET (new, &active_fd_set);
               }
             else
               {
-                // Data arriving on an already-connected socket.
+                /* Data arriving on an already-connected socket. */
                 if (read_from_client (i) < 0)
                   {
                     close (i);
