@@ -22,6 +22,23 @@
 #define PORT    2222
 #define MAXMSG  512
 
+void init_sockaddr (struct sockaddr_in *name,
+               const char *hostname,
+               uint16_t port)
+{
+  struct hostent *hostinfo;
+
+  name->sin_family = AF_INET;
+  name->sin_port = htons (port);
+  hostinfo = gethostbyname (hostname);
+  if (hostinfo == NULL) 
+    {
+      fprintf (stderr, "Unknown host %s.\n", hostname);
+      exit (EXIT_FAILURE);
+    }
+  name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
+}
+
 int make_socket (uint16_t port)
 {
   int sock;
@@ -74,14 +91,12 @@ int read_from_client (int filedes)
 int main (int c)
 {
   
-  printf("1\n");
   extern int make_socket (uint16_t port);
-  printf("2\n");
   int sock;
   fd_set active_fd_set, read_fd_set; //two active sets that will be monitored
   int i;
-  printf("3\n");
   struct sockaddr_in clientname;
+  printf("4\n");
   size_t size;
 
   printf("debuggery");
