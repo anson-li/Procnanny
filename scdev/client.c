@@ -20,6 +20,7 @@ main()
 	int s;
 	char c;
 
+	printf("Beginning child process...");
 	host = gethostbyname (SERVNAME);
 
 	if (host == NULL) {

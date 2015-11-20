@@ -86,7 +86,7 @@ int main (void)
   /* Initialize the set of active sockets. */
   FD_ZERO (&active_fd_set); 
   FD_SET (sock, &active_fd_set);
-
+  printf("You made it on the server! beginning process...");
   while (1)
     {
       /* Block until input arrives on one or more active sockets. */
