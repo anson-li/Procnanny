@@ -27,14 +27,14 @@ main()
 
 	if (host == NULL) {
 		perror ("Client: cannot get host description");
-		exit(EXIT_FAILURE);
+		exit(1);
 	}
 
 	s = socket (AF_INET, SOCK_STREAM, 0);
 
 	if (s < 0) {
 		perror ("Client: cannot open socket");
-		exit(EXIT_FAILURE);
+		exit(1);
 	}
 
 	bzero (&server, sizeof (server));
@@ -44,7 +44,7 @@ main()
 
 	if (connect (s, (struct sockaddr*) & server, sizeof (server))) {
 		perror ("Producer: cannot connect to server");
-		exit(EXIT_FAILURE);
+		exit(1);
 	}
 	if (fork ()) {
 		while (1) {

@@ -42,7 +42,7 @@ int make_socket (uint16_t port)
   if (bind (sock, (struct sockaddr *) &name, sizeof (name)) < 0)
     {
       perror ("bind");
-      exit (EXIT_FAILURE);
+      exit(EXIT_FAILURE);
     }
 
   return sock;
