@@ -83,19 +83,19 @@ int main (int c, char *argv[])
 
   /* Create the socket and set it up to accept connections. */
   sock = make_socket (PORT);
-  printf("returning to main processes");
+  printf("returning to main processes\n");
   if (listen (sock, 1) < 0)
     {
       perror ("listen");
       exit (EXIT_FAILURE);
     }
 
-  printf("initialising set of active sockets");
+  printf("initialising set of active sockets\n");
   /* Initialize the set of active sockets. */
   FD_ZERO (&active_fd_set);
   FD_SET (sock, &active_fd_set);
 
-  printf("Everything is initialised.");
+  printf("Everything is initialised.\n");
   while (1)
     {
       /* Block until input arrives on one or more active sockets. */
