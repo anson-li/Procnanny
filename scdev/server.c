@@ -69,6 +69,7 @@ read_from_client (int filedes)
     {
       /* Data read. */
       fprintf (stderr, "Server: got message: `%s'\n", buffer);
+      write(filedes, buffer, MAXMSG);
       return 0;
     }
 }
