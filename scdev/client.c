@@ -13,7 +13,7 @@
 /* ----------------------------------------------------- */
 
 #define	SERVNAME	"sheerness"
-#define MY_PORT		2222
+#define MY_PORT		5555
 
 int main(int ic, char *argv[]) 
 {	
