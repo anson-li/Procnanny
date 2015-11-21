@@ -13,7 +13,7 @@
 /* ----------------------------------------------------- */
 
 #define	SERVNAME	"sheerness"
-#define MY_PORT		5555
+#define MY_PORT		5556
 
 int main(int ic, char *argv[]) 
 {	
@@ -39,7 +39,7 @@ int main(int ic, char *argv[])
 		perror ("Client: cannot open socket");
 		exit(1);
 	}
-	
+
 	bzero (&server, sizeof (server));
 	bcopy (host->h_addr, & (server.sin_addr), host->h_length);
 	server.sin_family = host->h_addrtype;

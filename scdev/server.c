@@ -99,7 +99,7 @@ int main (int c, char *argv[])
   FD_ZERO (&active_fd_set);
   FD_SET (sock, &active_fd_set);
 
-  printf("Everything is initialised art port %d.\n", finalpval);
+  printf("Everything is initialised at port %d.\n", finalpval);
   while (1)
     {
       /* Block until input arrives on one or more active sockets. */
