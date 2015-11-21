@@ -78,7 +78,7 @@ int main (int c, char *argv[])
 {
   extern int make_socket (uint16_t port);
   int sock;
-  fd_set active_fd_set, read_fd_set;
+  fd_set active_fd_set, read_fd_set, write_fd_set;
   int i;
   struct sockaddr_in clientname;
   size_t size;
@@ -98,7 +98,8 @@ int main (int c, char *argv[])
     {
       /* Block until input arrives on one or more active sockets. */
       read_fd_set = active_fd_set;
-      if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
+      write_fd_set = active_fd_set;
+      if (select (FD_SETSIZE, &read_fd_set, &write_fd_set, NULL, NULL) < 0) {
         perror ("select");
         exit (EXIT_FAILURE);
       }
