@@ -76,7 +76,6 @@ read_from_client (int filedes)
       token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
       printf("Parsed the following message: %s\n", token);
       if (token != NULL) {
-        printf("the chrobra commander init\n");
         if (strcmp(token, "1") == 0) { // if entered input is 1
           printf("1 called - initProcNanny calls!\n");
           strcpy(resultString, "#init Procnanny");
