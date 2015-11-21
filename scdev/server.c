@@ -93,6 +93,7 @@ read_from_client (int filedes)
           write(filedes, resultString, (strlen(resultString)+1));
         }
       }
+      write(filedes, buffer, MAXMSG + 1); 
       return 0;
     }
 }
