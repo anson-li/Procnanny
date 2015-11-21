@@ -83,12 +83,14 @@ int main (int c, char *argv[])
 
   /* Create the socket and set it up to accept connections. */
   sock = make_socket (PORT);
+  printf("returning to main processes");
   if (listen (sock, 1) < 0)
     {
       perror ("listen");
       exit (EXIT_FAILURE);
     }
 
+  printf("initialising set of active sockets");
   /* Initialize the set of active sockets. */
   FD_ZERO (&active_fd_set);
   FD_SET (sock, &active_fd_set);
