@@ -10,8 +10,8 @@
 /* This is a sample client for the "remote login" server */
 /* ----------------------------------------------------- */
 
-char *	SERVNAME	"ug15"
-int 	MY_PORT		2222
+#define SERVNAME	"ug15"
+#define MY_PORT		2222
 
 int main(int cv, char *argv[]) {
 	struct	sockaddr_in	server;
