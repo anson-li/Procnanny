@@ -8,7 +8,7 @@
 #include <netdb.h>
 
 #define SERVNAME  "sheerness"
-#define PORT   2222
+#define PORT   5555
 #define MAXMSG 512
 
 int make_socket (uint16_t port)
