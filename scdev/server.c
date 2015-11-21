@@ -77,14 +77,16 @@ read_from_client (int filedes)
       printf("Parsed the following message: %s\n", token);
       if (strcmp(token, "1") == 0) { // if entered input is 1
         strcpy(resultString, "#init Procnanny");
+        write(filedes, resultString, (strlen(resultString)+1));
       }
       if (strcmp(token, "2") == 0) { // if entered input is 1
         strcpy(resultString, "#sigint Procnanny");
+        write(filedes, resultString, (strlen(resultString)+1));
       }
       if (strcmp(token, "3") == 0) { // if entered input is 1
         strcpy(resultString, "#sighup Procnanny");
+        write(filedes, resultString, (strlen(resultString)+1));
       }
-      write(filedes, token, (strlen(token)+1));
       return 0;
     }
 }
