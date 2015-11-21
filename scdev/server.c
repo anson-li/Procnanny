@@ -99,7 +99,7 @@ int main (int c, char *argv[])
       /* Block until input arrives on one or more active sockets. */
       read_fd_set = active_fd_set;
       write_fd_set = active_fd_set;
-      if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
+      if (select (FD_SETSIZEc + 1, &read_fd_set, &write_fd_set, NULL, NULL) < 0) {
         perror ("select");
         exit (EXIT_FAILURE);
       }
@@ -107,7 +107,7 @@ int main (int c, char *argv[])
       /* Service all the sockets with input pending. */
       for (i = 0; i < FD_SETSIZE; ++i)
         //printf("FD is set\n");
-        if (FD_ISSET (i, &read_fd_set))
+        if (FD_ISSET (i, &read_fd_set) && FD_ISSET (i, &write_fd_set))
           {
           //printf("finding sock\n");
             if (i == sock)
