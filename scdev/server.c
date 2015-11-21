@@ -94,13 +94,16 @@ int main (int c, char *argv[])
   FD_ZERO (&active_fd_set);
   FD_SET (sock, &active_fd_set);
 
+  printf("entering wait loop");
   while (1)
     {
       /* Block until input arrives on one or more active sockets. */
       read_fd_set = active_fd_set;
       if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
-          perror ("select");
-          exit (EXIT_FAILURE);
+        perror ("select");
+        exit (EXIT_FAILURE);
+      } else {
+        printf("select made");
       }
       printf("Connection made!");
       /* Service all the sockets with input pending. */
