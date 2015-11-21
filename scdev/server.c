@@ -10,7 +10,7 @@
 #define SERVNAME  "sheerness"
 #define MAXMSG 512
 
-#define PORT   5555
+#define PORT   5556
 int finalpval;
 
 int make_socket (uint16_t port)
