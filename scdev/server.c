@@ -17,12 +17,20 @@ int make_socket (uint16_t port)
   struct sockaddr_in name;
 
   /* Create the socket. */
+  /*
   sock = socket (PF_INET, SOCK_STREAM, 0);
   if (sock < 0)
     {
       perror ("socket");
       exit (EXIT_FAILURE);
     }
+    */
+  sock = socket (AF_INET, SOCK_STREAM, 0);
+  if (sock < 0) {
+    perror ("Server: cannot open master socket");
+    cleanup();
+                exit (1);
+        }
 
   /* Give the socket a name. */
   name.sin_family = AF_INET;
