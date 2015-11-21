@@ -37,7 +37,7 @@ int make_socket (uint16_t port)
   name.sin_family = AF_INET;
   name.sin_port = htons (port);
   name.sin_addr.s_addr = htonl (INADDR_ANY);
-  printf("binding socket\n")
+  printf("binding socket\n");
   if (bind (sock, (struct sockaddr *) &name, sizeof (name)) < 0)
     {
       perror ("bind");
