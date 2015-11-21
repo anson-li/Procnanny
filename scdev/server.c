@@ -28,9 +28,8 @@ int make_socket (uint16_t port)
   sock = socket (AF_INET, SOCK_STREAM, 0);
   if (sock < 0) {
     perror ("Server: cannot open master socket");
-    cleanup();
-                exit (1);
-        }
+    exit (1);
+  }
 
   /* Give the socket a name. */
   name.sin_family = AF_INET;
@@ -90,6 +89,7 @@ int main (int c, char *argv[])
   FD_ZERO (&active_fd_set);
   FD_SET (sock, &active_fd_set);
 
+  printf("Everything is initialised.");
   while (1)
     {
       /* Block until input arrives on one or more active sockets. */
