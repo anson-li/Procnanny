@@ -83,18 +83,21 @@ int main (int c, char *argv[])
   size_t size;
 
   /* Create the socket and set it up to accept connections. */
+  printf("making socket init\n");
   sock = make_socket (PORT);
+  printf("making socket final\n");
   if (listen (sock, 1) < 0)
     {
       perror ("listen");
       exit (EXIT_FAILURE);
     }
 
+  printf("init active sockets\n");
   /* Initialize the set of active sockets. */
   FD_ZERO (&active_fd_set);
   FD_SET (sock, &active_fd_set);
 
-  printf("entering wait loop");
+  printf("entering wait loop\n");
   while (1)
     {
       /* Block until input arrives on one or more active sockets. */
@@ -103,9 +106,9 @@ int main (int c, char *argv[])
         perror ("select");
         exit (EXIT_FAILURE);
       } else {
-        printf("select made");
+        printf("select made\n");
       }
-      printf("Connection made!");
+      printf("Connection made!\n");
       /* Service all the sockets with input pending. */
       for (i = 0; i < FD_SETSIZE; ++i)
         if (FD_ISSET (i, &read_fd_set))
