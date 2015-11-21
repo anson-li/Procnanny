@@ -55,7 +55,7 @@ int
 read_from_client (int filedes)
 {
   char buffer[MAXMSG];
-  char token[MAXMSG];
+  char * token;
   int nbytes;
 
   nbytes = read (filedes, buffer, MAXMSG);
