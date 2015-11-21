@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <string.h>
 
 #define SERVNAME  "ug15"
 // have to change servname dynamically
@@ -70,7 +71,7 @@ read_from_client (int filedes)
       /* Data read. */
       fprintf (stderr, "Server: got message: `%s'\n", buffer);
       char * token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
-      printf("Parsed the following message: %s\n" + token);
+      printf("Parsed the following message: %s\n", token);
       write(filedes, token, (strlen(token)+1));
       return 0;
     }
