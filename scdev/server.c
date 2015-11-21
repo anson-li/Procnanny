@@ -111,12 +111,13 @@ int main (int c, char *argv[])
       printf("Connection made!\n");
       /* Service all the sockets with input pending. */
       for (i = 0; i < FD_SETSIZE; ++i)
-        printf("FD is set\n");
+        //printf("FD is set\n");
         if (FD_ISSET (i, &read_fd_set))
           {
-          printf("finding sock\n");
+          //printf("finding sock\n");
             if (i == sock)
               {
+                printf("Connection made on new socket");
                 /* Connection request on original socket. */
                 int new;
                 size = sizeof (clientname);
