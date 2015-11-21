@@ -99,7 +99,7 @@ int main (int c, char *argv[])
       /* Block until input arrives on one or more active sockets. */
       read_fd_set = active_fd_set;
       write_fd_set = active_fd_set;
-      if (select (FD_SETSIZE, &read_fd_set, &write_fd_set, NULL, NULL) < 0) {
+      if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
         perror ("select");
         exit (EXIT_FAILURE);
       }
