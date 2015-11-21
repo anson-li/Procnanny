@@ -10,15 +10,16 @@
 /* This is a sample client for the "remote login" server */
 /* ----------------------------------------------------- */
 
-#define	SERVNAME	"sheerness"
-#define MY_PORT		5558
+char *	SERVNAME	"ug15"
+int 	MY_PORT		2222
 
-main() 
-{
+int main(int cv, char *argv[]) {
 	struct	sockaddr_in	server;
 	struct	hostent		*host;
 	int s;
 	char c;
+
+	setServerDetails();
 
 	host = gethostbyname (SERVNAME);
 
@@ -44,14 +45,18 @@ main()
 		exit (1);
 	}
 	if (fork ()) {
-		while (1) {
+		while (1) { // child process write
 			c = getchar ();
 			write (s, &c, 1);
 		}
 	} else {
-		while (1) {
+		while (1) { // parent process reads
 			read (s, &c, 1);
 			putchar (c);
 		}
 	}
+}
+
+void setServerDetails() {
+	// read from PROCNANNYCONFIG set data, set the servname and my_port data
 }
