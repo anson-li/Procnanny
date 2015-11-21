@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <string.h>
-#include <apra/inet.h>
+#include <arpa/inet.h>
 
 #define SERVNAME  "ug15"
 // have to change servname dynamically
