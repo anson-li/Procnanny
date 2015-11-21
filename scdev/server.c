@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <string.h>
+#include <apra/inet.h>
 
 #define SERVNAME  "ug15"
 // have to change servname dynamically
@@ -70,7 +71,7 @@ read_from_client (int filedes)
     {
       /* Data read. */
       fprintf (stderr, "Server: got message: `%s'\n", buffer);
-      char * token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
+      char token[MAXMSG] = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
       printf("Parsed the following message: %s\n", token);
       write(filedes, token, (strlen(token)+1));
       return 0;
@@ -119,9 +120,7 @@ int main (int c, char *argv[])
                 /* Connection request on original socket. */
                 int new;
                 size = sizeof (clientname);
-                new = accept (sock,
-                              (struct sockaddr *) &clientname,
-                              &size);
+                new = accept (sock, (struct sockaddr *) &clientname, size);
                 if (new < 0)
                   {
                     perror ("accept");
