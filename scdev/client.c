@@ -1,62 +1,57 @@
 #include <sys/types.h>
+#include <sys/param.h>
+#include <sys/file.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <stdio.h>
 
-/* --------------------------------------------------------------- */
-/* This  is  a simple "login server" that accepts connections from */
-/* remote clients and, for each client, opens a shell on the local */
-/* machine.                                                        */
-/* --------------------------------------------------------------- */
+/* ----------------------------------------------------- */
+/* This is a sample client for the "remote login" server */
+/* ----------------------------------------------------- */
 
-#define MY_PORT		5557	/* Master socket port number */
-
-int client;
+#define	SERVNAME	"sheerness"
+#define MY_PORT		5557
 
 main() 
 {
-	int	sock, fromlength;
-	struct	sockaddr_in	master, from;
+	struct	sockaddr_in	server;
+	struct	hostent		*host;
+	int s;
+	char c;
 
-	/* Create master socket to await connections */
-	sock = socket (AF_INET, SOCK_STREAM, 0);
-	if (sock < 0) {
-		perror ("Server: cannot open master socket");
+	host = gethostbyname (SERVNAME);
+
+	if (host == NULL) {
+		perror ("Client: cannot get host description");
 		exit (1);
 	}
 
-	master.sin_family = AF_INET;
-	master.sin_addr.s_addr = INADDR_ANY;
-	master.sin_port = htons (MY_PORT);
+	s = socket (AF_INET, SOCK_STREAM, 0);
 
-	/* Bind the port to the master socket */
-	if (bind (sock, (struct sockaddr*) &master, sizeof (master))) {
-		perror ("Server: cannot bind master socket");
+	if (s < 0) {
+		perror ("Client: cannot open socket");
 		exit (1);
 	}
 
-	listen (sock, 5);
+	bzero (&server, sizeof (server));
+	bcopy (host->h_addr, & (server.sin_addr), host->h_length);
+	server.sin_family = host->h_addrtype;
+	server.sin_port = htons (MY_PORT);
 
-	while (1) {
-		/* The main loop */
-		client = accept (sock, (struct sockaddr*) & from, & fromlength);
-		if (client < 0) {
-			perror ("Server: accept failed");
-			continue;
+	if (connect (s, (struct sockaddr*) & server, sizeof (server))) {
+		perror ("Producer: cannot connect to server");
+		exit (1);
+	}
+	if (fork ()) {
+		while (1) {
+			c = getchar ();
+			write (s, &c, 1);
 		}
-                if (fork ())
-			close (client);
-		else {
-			close (sock);
-			server ();
-			exit (0);
+	} else {
+		while (1) {
+			read (s, &c, 1);
+			putchar (c);
 		}
 	}
-}
-
-server () {
-
-	close (0); close (1); close (2);
-	dup2 (client, 0); dup2 (client, 1); dup2 (client, 2);
-	system ("csh");
 }
