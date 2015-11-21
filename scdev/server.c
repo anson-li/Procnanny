@@ -55,6 +55,7 @@ int
 read_from_client (int filedes)
 {
   char buffer[MAXMSG];
+  char resultString[100];
   char * token;
   int nbytes;
 
@@ -74,6 +75,15 @@ read_from_client (int filedes)
       fprintf (stderr, "Server: got message: `%s'\n", buffer);
       token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
       printf("Parsed the following message: %s\n", token);
+      if (strcmp(token, "1") == 0) { // if entered input is 1
+        strcpy(resultString, "#init Procnanny");
+      }
+      if (strcmp(token, "2") == 0) { // if entered input is 1
+        strcpy(resultString, "#sigint Procnanny");
+      }
+      if (strcmp(token, "3") == 0) { // if entered input is 1
+        strcpy(resultString, "#sighup Procnanny");
+      }
       write(filedes, token, (strlen(token)+1));
       return 0;
     }
