@@ -123,7 +123,7 @@ int main (int c, char *argv[])
                     exit (EXIT_FAILURE);
                   }
                 fprintf (stderr,
-                         "Server: connect from host %s, port %hd.\n",
+                         "Server: connect from host %d, port %hd.\n",
                          inet_ntoa (clientname.sin_addr),
                          ntohs (clientname.sin_port));
                 FD_SET (new, &active_fd_set);
