@@ -8,8 +8,10 @@
 #include <netdb.h>
 
 #define SERVNAME  "sheerness"
-#define PORT   5555
 #define MAXMSG 512
+
+#define PORT   5555
+int finalpval;
 
 int make_socket (uint16_t port)
 {
@@ -45,7 +47,7 @@ int make_socket (uint16_t port)
       port++;
       name.sin_port = htons (port);
     }
-
+  finalpval = port;
   printf("returning sock\n");
   return sock;
 }
@@ -97,7 +99,7 @@ int main (int c, char *argv[])
   FD_ZERO (&active_fd_set);
   FD_SET (sock, &active_fd_set);
 
-  printf("Everything is initialised.\n");
+  printf("Everything is initialised art port %d.\n", finalpval);
   while (1)
     {
       /* Block until input arrives on one or more active sockets. */
