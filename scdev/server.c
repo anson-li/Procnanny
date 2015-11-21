@@ -25,6 +25,7 @@ int make_socket (uint16_t port)
       exit (EXIT_FAILURE);
     }
     */
+  printf("socket initialised...\n");
   sock = socket (AF_INET, SOCK_STREAM, 0);
   if (sock < 0) {
     perror ("Server: cannot open master socket");
