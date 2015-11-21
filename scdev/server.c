@@ -107,7 +107,7 @@ int main (int c, char *argv[])
       /* Service all the sockets with input pending. */
       for (i = 0; i < FD_SETSIZE; ++i)
         //printf("FD is set\n");
-        if (FD_ISSET (i, &read_fd_set) && FD_ISSET (i, &write_fd_set))
+        if (FD_ISSET (i, &read_fd_set))
           {
           //printf("finding sock\n");
             if (i == sock)
