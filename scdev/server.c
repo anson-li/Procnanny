@@ -121,7 +121,7 @@ int main (int c, char *argv[])
                 /* Connection request on original socket. */
                 int new;
                 size = sizeof (clientname);
-                new = accept (sock, (struct sockaddr *) &clientname, size);
+                new = accept (sock, (struct sockaddr *) &clientname, &size);
                 if (new < 0)
                   {
                     perror ("accept");
