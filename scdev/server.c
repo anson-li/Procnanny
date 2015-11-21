@@ -41,9 +41,9 @@ int make_socket (uint16_t port)
   if (bind (sock, (struct sockaddr *) &name, sizeof (name)) < 0)
     {
       perror ("bind");
-      //exit (EXIT_FAILURE);
-      port++;
-      name.sin_port = htons (port);
+      exit (EXIT_FAILURE);
+      //port++;
+      //name.sin_port = htons (port);
     }
   finalpval = port;
   return sock;
@@ -98,12 +98,11 @@ int main (int c, char *argv[])
     {
       /* Block until input arrives on one or more active sockets. */
       read_fd_set = active_fd_set;
-      if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0)
-        {
+      if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
           perror ("select");
           exit (EXIT_FAILURE);
-        }
-
+      }
+      printf("Connection made!");
       /* Service all the sockets with input pending. */
       for (i = 0; i < FD_SETSIZE; ++i)
         if (FD_ISSET (i, &read_fd_set))
