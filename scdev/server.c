@@ -9,7 +9,7 @@
 /* machine.                                                        */
 /* --------------------------------------------------------------- */
 
-#define MY_PORT   5557  /* Master socket port number */
+#define MY_PORT   5558  /* Master socket port number */
 
 int client;
 

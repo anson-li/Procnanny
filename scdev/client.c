@@ -11,7 +11,7 @@
 /* ----------------------------------------------------- */
 
 #define	SERVNAME	"sheerness"
-#define MY_PORT		5557
+#define MY_PORT		5558
 
 main() 
 {
