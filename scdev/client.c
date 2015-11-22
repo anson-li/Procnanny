@@ -7,9 +7,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* ----------------------------------------------------- */
-/* This is a sample client for the "remote login" server */
-/* ----------------------------------------------------- */
+/*
+A client process nanny (which is a modified form of the procnanny from Assignment #2). 
+Each workstation will have at most one client process nanny. The client must use fork() 
+to create child processes that use kill() to kill monitored processes. The name of your 
+executable for the client must be procnanny.client.
+*/
 
 char SERVNAME[100];
 static int MY_PORT;

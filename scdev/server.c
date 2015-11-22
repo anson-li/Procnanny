@@ -16,6 +16,16 @@
 #include <fcntl.h>
 #include "memwatch.h"
 
+/*
+xA server process nanny (which can also be a modified form of the procnanny 
+from Assignment #2). There is only one server process nanny. The server 
+centralizes the configuration information, it centralizes the logging of 
+activities related to process monitoring, and it centralizes the clean exit 
+of all related processes. The name of your executable for the server must be 
+procnanny.server.  Note that procnanny.server does NOT actually do any of 
+the monitoring or killing of processes itself.
+*/
+
 #define SERVNAME  "ug15"
 // have to change servname dynamically
 #define MAXMSG 512
@@ -23,6 +33,10 @@
 
 static int finalpval = 0;
 char hostname[255];
+
+char appdata[280][1000];
+int timedata[280];
+int counter;
 
 void genericOP(char* data);
 void consoleOP(char* data);
@@ -112,8 +126,6 @@ int read_from_client (int filedes)
     }
 }
 
-
-
 int main (int c, char *argv[]) {
   extern int make_socket (uint16_t port);
   int sock;
@@ -121,6 +133,8 @@ int main (int c, char *argv[]) {
   int i;
   struct sockaddr_in clientname;
   size_t size;
+
+  setupProcnanny(argv[1]);
 
   /* Create the socket and set it up to accept connections. */
   sock = make_socket (PORT);
@@ -172,8 +186,16 @@ int main (int c, char *argv[]) {
                    inet_ntoa (clientname.sin_addr),
                    ntohs (clientname.sin_port));
           FD_SET (new, &active_fd_set);
+          char buffer[MAXMSG];
+          for (i = 0; i < counter; i++) {
+            if (appdata[i][0] != '\0') {
+              sprintf(buffer, "#%s %d", appdata[i], timedata[i]);
+              write(i, buffer, sizeof(buffer) + 1);
+            }
           }
-        else {
+          // write config details
+          //write(filedes, buffer, sizeof(buffer) + 1); 
+        } else {
           /* Data arriving on an already-connected socket. */
           if (read_from_client (i) < 0) {
             close (i);
@@ -183,6 +205,50 @@ int main (int c, char *argv[]) {
       }
     }
   } 
+}
+
+void setupProcnanny(char * filepath) {
+  
+  deleteProcnannies();
+  getParentPID();
+  initialisationOP();
+  
+  const char* s = getenv("PROCNANNYLOGS"); 
+  FILE* logfile = fopen(s, "w");
+  fclose(logfile);   
+
+  FILE* file = fopen ( filepath, "r" );
+
+  if (file == NULL) {
+      printf("ERROR: Nanny.config file presented was not found. Program exiting...");
+      exit(EXIT_FAILURE);  
+  }
+
+  counter = 0;
+  char * pch; 
+  int countval = 0;
+
+  if (file != NULL) {
+      char line[100];
+      while (fgets(line, sizeof line, file) != NULL) { /* read a line from a file */
+          // reads sample text: testa 120
+          strcpy(test[counter - 1], strtok(line, "\n"));
+          pch = strtok (test[counter-1]," ,.-");
+          while (pch != NULL) {
+              if (countval == 0) {
+                  strcpy(appdata[counter], pch);
+                  countval++;
+              } else if (countval == 1) {
+                  timedata[counter] = atoi(pch);
+                  countval = 0;
+                  break;
+              }
+              pch = strtok (NULL, " ,.-");
+          }
+          counter++;
+      }
+  }
+  fclose(file);
 }
 
 void genericOP(char* data) {
