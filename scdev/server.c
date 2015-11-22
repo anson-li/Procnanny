@@ -195,6 +195,7 @@ int main (int c, char *argv[]) {
           for (i = 0; i < counter; i++) {
             if (appdata[i][0] != '\0') {
               sprintf(buffer, "#%s %d", appdata[i], timedata[i]);
+              printf(buffer);
               write(i, buffer, sizeof(buffer) + 1);
             }
           }
