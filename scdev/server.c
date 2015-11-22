@@ -80,17 +80,21 @@ read_from_client (int filedes)
         if (strcmp(token, "1") == 0) { // if entered input is 1
           printf("1 called - initProcNanny calls!\n");
           strcpy(resultString, "#init Procnanny");
+          //write(filedes, resultString, (strlen(resultString)+1));
         }
         if (strcmp(token, "2") == 0) { // if entered input is 1
           printf("2 called - sigint ProcNanny calls!\n");
           strcpy(resultString, "#sigint Procnanny");
+          //write(filedes, resultString, (strlen(resultString)+1));
         }
         if (strcmp(token, "3") == 0) { // if entered input is 1
           printf("3 called - sighup ProcNanny calls!\n");
           strcpy(resultString, "#sighup Procnanny");
+          //write(filedes, resultString, (strlen(resultString)+1));
         }
       }
-      write(filedes, resultString, (strlen(resultString)+1));
+      strcpy(buffer, resultString);
+      write(filedes, buffer, MAXMSG + 1); 
       return 0;
     }
 }
