@@ -41,6 +41,7 @@ int main(int cv, char *argv[]) {
 	server.sin_family = host->h_addrtype;
 	server.sin_port = htons (MY_PORT);
 
+	printf("MY_PORT: %d, SERVNAME: %s\n", MY_PORT, SERVNAME);
 	if (connect (s, (struct sockaddr*) & server, sizeof (server))) {
 		perror ("Producer: cannot connect to server");
 		exit (1);
