@@ -102,7 +102,7 @@ int getConfig(int filedes) {
 			} else if (nbytes == 0) { 
 				/* End-of-file. */
 			    return -1;
-			else {
+			} else {
 				/* Data read. */
 			    memset(&resultString[0], 0, sizeof(resultString));
 		        fprintf (stderr, "Server: got message: `%s'\n", buffer);
