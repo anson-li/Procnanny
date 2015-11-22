@@ -126,7 +126,10 @@ int main (int c, char *argv[])
 
   hostname[254] = '\0';
   gethostname(hostname, 255);
-  printf("Hostname: %s\n", hostname);
+  int curpid;
+  curpid = getpid();
+
+  printf("Procnanny server: PID %d on node %s, port %d\n", curpid, hostname, finalpval);
 
   while (1)
     {
