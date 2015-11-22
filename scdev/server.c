@@ -42,6 +42,7 @@ int counter;
 
 void genericOP(char* data);
 void consoleOP(char* data);
+void setupProcnanny(char * filepath);
 
 int make_socket (uint16_t port)
 {
@@ -251,6 +252,41 @@ void setupProcnanny(char * filepath) {
       }
   }
   fclose(file);
+}
+
+void deleteProcnannies() {
+        FILE * pnfile;
+        pid_t curpid;
+        curpid = getpid();
+        if ( ( pnfile = popen("pgrep procnanny", "r" ) ) == NULL ) {
+                perror( "popen" );
+        } else { 
+            pid_t pidpn;
+            char pidbuffer[30];
+            while (fgets(pidbuffer, 150, pnfile) != NULL) {
+                pidpn = (pid_t) strtol(pidbuffer, NULL, 10);
+                // if pid is not the one you currently opened...
+                if (pidpn != curpid) {
+                    kill(pidpn, SIGKILL);
+                }
+            }
+        }
+        fclose(pnfile); 
+        return;
+}
+
+void getParentPID() {
+    pid_t parent_pid = getpid();
+    parentPID = getpid();
+    printf("Host PID: %d\n", parent_pid);
+    return;
+}
+
+void initialisationOP() {
+    char strPID[1000];
+    sprintf(strPID, "Info: Parent process is PID  %d.", parentPID);
+    consoleOP(strPID);
+    return;
 }
 
 void genericOP(char* data) {
