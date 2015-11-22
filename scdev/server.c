@@ -59,7 +59,7 @@ read_from_client (int filedes)
   char * token;
   int nbytes;
 
-  nbytes = read (filedes, buffer + 1, MAXMSG + 1);
+  nbytes = read (filedes, buffer, MAXMSG);
   if (nbytes < 0)
     {
       /* Read error. */

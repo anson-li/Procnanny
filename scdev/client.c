@@ -10,8 +10,8 @@
 /* This is a sample client for the "remote login" server */
 /* ----------------------------------------------------- */
 
-#define SERVNAME	"ug15"
-#define MY_PORT		2222
+char SERVNAME[100]	"ug15"
+int MY_PORT		2222
 
 int main(int cv, char *argv[]) {
 	struct	sockaddr_in	server;
@@ -19,7 +19,7 @@ int main(int cv, char *argv[]) {
 	int s;
 	char c;
 
-	setServerDetails();
+	setServerDetails(argv[1], argv[2]);
 
 	host = gethostbyname (SERVNAME);
 
@@ -57,6 +57,8 @@ int main(int cv, char *argv[]) {
 	}
 }
 
-void setServerDetails() {
+void setServerDetails(char* servname, char* port) {
 	// read from PROCNANNYCONFIG set data, set the servname and my_port data
+	SERVNAME = servname;
+	MY_PORT = itoa(port);
 }
