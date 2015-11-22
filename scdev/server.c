@@ -12,9 +12,10 @@
 #define SERVNAME  "ug15"
 // have to change servname dynamically
 #define MAXMSG 512
-
 #define PORT   2222
-int finalpval;
+
+static int finalpval;
+char hostname[255];
 
 int make_socket (uint16_t port)
 {
@@ -43,9 +44,9 @@ int make_socket (uint16_t port)
   if (bind (sock, (struct sockaddr *) &name, sizeof (name)) < 0)
     {
       perror ("bind");
-      exit (EXIT_FAILURE);
-      //port++;
-      //name.sin_port = htons (port);
+      //exit (EXIT_FAILURE);
+      port++;
+      name.sin_port = htons (port);
     }
   finalpval = port;
   return sock;
@@ -122,6 +123,11 @@ int main (int c, char *argv[])
   /* Initialize the set of active sockets. */
   FD_ZERO (&active_fd_set);
   FD_SET (sock, &active_fd_set);
+
+  hostname[254] = '\0';
+  gethostname(hostname, 255);
+  printf("Hostname: %s\n", hostname);
+
   while (1)
     {
       /* Block until input arrives on one or more active sockets. */

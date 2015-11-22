@@ -61,7 +61,7 @@ int main(int cv, char *argv[]) {
 void setServerDetails(char* servname, char* port) {
 	// read from PROCNANNYCONFIG set data, set the servname and my_port data
 	if (servname == NULL || port == NULL) {
-		perror("Invalid characters entered; client exiting.");
+		printf("Invalid parameters entered; client exiting.\n");
 		exit(EXIT_FAILURE);
 	}
 	strcpy(SERVNAME,servname);
