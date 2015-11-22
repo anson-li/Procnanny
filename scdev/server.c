@@ -33,6 +33,8 @@ the monitoring or killing of processes itself.
 
 static int finalpval = 0;
 char hostname[255];
+static int parentPID; 
+
 
 char appdata[280][1000];
 char test[280][1000]; //array of strings //length is 10! figure out how to realloc!
