@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /* ----------------------------------------------------- */
 /* This is a sample client for the "remote login" server */
