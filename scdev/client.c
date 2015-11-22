@@ -17,6 +17,8 @@ executable for the client must be procnanny.client.
 char SERVNAME[100];
 static int MY_PORT;
 
+#define MAXMSG 512
+
 int getConfig();
 
 int main(int cv, char *argv[]) {
