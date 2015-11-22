@@ -75,21 +75,21 @@ read_from_client (int filedes)
       fprintf (stderr, "Server: got message: `%s'\n", buffer);
       token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
       printf("Parsed the following message: %s\n", token);
-      strcpy(resultString, "#nothing of use");
+      strcpy(resultString, "#nothing of use\n");
       if (token != NULL) {
         if (strcmp(token, "1") == 0) { // if entered input is 1
           printf("1 called - initProcNanny calls!\n");
-          strcpy(resultString, "#init Procnanny");
+          strcpy(resultString, "#init Procnanny\n");
           //write(filedes, resultString, (strlen(resultString)+1));
         }
         if (strcmp(token, "2") == 0) { // if entered input is 1
           printf("2 called - sigint ProcNanny calls!\n");
-          strcpy(resultString, "#sigint Procnanny");
+          strcpy(resultString, "#sigint Procnanny\n");
           //write(filedes, resultString, (strlen(resultString)+1));
         }
         if (strcmp(token, "3") == 0) { // if entered input is 1
           printf("3 called - sighup ProcNanny calls!\n");
-          strcpy(resultString, "#sighup Procnanny");
+          strcpy(resultString, "#sighup Procnanny\n");
           //write(filedes, resultString, (strlen(resultString)+1));
         }
       }
