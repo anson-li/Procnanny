@@ -61,5 +61,5 @@ int main(int cv, char *argv[]) {
 void setServerDetails(char* servname, char* port) {
 	// read from PROCNANNYCONFIG set data, set the servname and my_port data
 	strcpy(SERVNAME,servname);
-	MY_PORT = itoa(port);
+	MY_PORT = atoi(port);
 }
