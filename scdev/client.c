@@ -17,10 +17,13 @@ executable for the client must be procnanny.client.
 char SERVNAME[100];
 static int MY_PORT;
 
+int getConfig();
+
 int main(int cv, char *argv[]) {
 	struct	sockaddr_in	server;
 	struct	hostent		*host;
-	int s;
+	int s, filedes;
+	fd_set read_fd_set;
 	char c;
 
 	setServerDetails(argv[1], argv[2]);
@@ -49,6 +52,12 @@ int main(int cv, char *argv[]) {
 		perror ("Producer: cannot connect to server");
 		exit (1);
 	}
+
+	// ret = select(maxdesc, &read_from, NULL, NULL, &tv);
+	getConfig(s); 
+
+	// need to read all of the information before you do anything...
+
 	if (fork ()) {
 		while (1) { // child process write
 			c = getchar ();
@@ -70,4 +79,37 @@ void setServerDetails(char* servname, char* port) {
 	}
 	strcpy(SERVNAME,servname);
 	MY_PORT = atoi(port);
+}
+
+int getConfig(int filedes) {
+	char buffer[MAXMSG];
+	fd_set read_fd_set;
+	char resultString[100];
+	char * token;
+	int nbytes;
+
+	FD_ZERO (&read_fd_set);
+	FD_SET (filedes, &read_fd_set);
+
+	printf("Waiting for config file now.\n");
+	while (1) {
+		if (select(filedesc, &read_fd_set, NULL, NULL, NULL) == 1) { 
+			nbytes = read (filedes, buffer, MAXMSG);
+			if (nbytes < 0) {
+				/* Read error. */
+			    perror ("read");
+			    exit (EXIT_FAILURE);
+			} else if (nbytes == 0) { 
+				/* End-of-file. */
+			    return -1;
+			else {
+				/* Data read. */
+			    memset(&resultString[0], 0, sizeof(resultString));
+		        fprintf (stderr, "Server: got message: `%s'\n", buffer);
+		        token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
+		        printf("Parsed the following message: %s\n", token);
+		      	return 0;
+			}
+		}
+	}
 }
