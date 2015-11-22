@@ -93,6 +93,7 @@ read_from_client (int filedes)
           //write(filedes, resultString, (strlen(resultString)+1));
         }
       }
+      memset(&buffer[0], 0, sizeof(buffer));
       strcpy(buffer, resultString);
       write(filedes, buffer, sizeof(buffer) + 1); 
       return 0;
