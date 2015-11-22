@@ -72,6 +72,7 @@ read_from_client (int filedes)
   else
     {
       /* Data read. */
+      memset(&resultString[0], 0, sizeof(resultString));
       fprintf (stderr, "Server: got message: `%s'\n", buffer);
       token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
       printf("Parsed the following message: %s\n", token);
