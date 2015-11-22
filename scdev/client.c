@@ -96,6 +96,7 @@ int getConfig(int filedes) {
 	printf("Waiting for config file now.\n");
 	while (1) {
 		if (select(filedes, &read_fd_set, NULL, NULL, NULL) == 1) { 
+			printf("Entered...\n");
 			nbytes = read (filedes, buffer, MAXMSG);
 			if (nbytes < 0) {
 				/* Read error. */
