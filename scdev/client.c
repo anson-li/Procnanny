@@ -89,12 +89,17 @@ int getConfig(int filedes) {
 	char resultString[100];
 	char * token;
 	int nbytes;
+	struct timeval timedif;
 
 	FD_ZERO (&read_fd_set);
 	FD_SET (filedes, &read_fd_set);
+	timedif.tv_sec = 0;
+    timedif.tv_usec = 0;
+
 
 	printf("Waiting for config file now.\n");
 	while (1) {
+
 		if (select(filedes, &read_fd_set, NULL, NULL, NULL) == 1) { 
 			printf("Entered...\n");
 			nbytes = read (filedes, buffer, MAXMSG);
