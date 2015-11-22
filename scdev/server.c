@@ -192,11 +192,11 @@ int main (int c, char *argv[]) {
                    inet_ntoa (clientname.sin_addr),
                    ntohs (clientname.sin_port));
           FD_SET (new, &active_fd_set);
-          /*
+          
           memset(&buffer[0], 0, sizeof(buffer));
           sprintf(buffer, "buffer...");
           write(i, buffer, sizeof(buffer) + 1);
-          */
+
           /*
           char buffer[MAXMSG];
           for (i = 0; i < counter; i++) {
