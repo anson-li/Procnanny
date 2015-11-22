@@ -17,6 +17,9 @@
 static int finalpval;
 char hostname[255];
 
+void genericOP(char* data);
+void consoleOP(char* data);
+
 int make_socket (uint16_t port)
 {
   int sock;
@@ -103,8 +106,9 @@ read_from_client (int filedes)
     }
 }
 
-int main (int c, char *argv[])
-{
+
+
+int main (int c, char *argv[]) {
   extern int make_socket (uint16_t port);
   int sock;
   fd_set active_fd_set, read_fd_set, write_fd_set;
@@ -129,51 +133,65 @@ int main (int c, char *argv[])
   int curpid;
   curpid = getpid();
 
-  printf("Procnanny server: PID %d on node %s, port %d\n", curpid, hostname, finalpval);
+  char * infolog;
+  fprintf(infolog, "Procnanny server: PID %d on node %s, port %d\n", curpid, hostname, finalpval);
+  consoleOP(infolog);
 
-  while (1)
-    {
-      /* Block until input arrives on one or more active sockets. */
-      read_fd_set = active_fd_set;
-      write_fd_set = active_fd_set;
-      if (select (FD_SETSIZE + 1, &read_fd_set, /*&write_fd_set*/ NULL, NULL, NULL) < 0) {
-        perror ("select");
-        exit (EXIT_FAILURE);
-      }
-      printf("Connection made!\n");
-      /* Service all the sockets with input pending. */
-      for (i = 0; i < FD_SETSIZE; ++i)
-        //printf("FD is set\n");
-        if (FD_ISSET (i, &read_fd_set))
-          {
-          //printf("finding sock\n");
-            if (i == sock)
-              {
-                printf("Connection made on new socket");
-                /* Connection request on original socket. */
-                int new;
-                size = sizeof (clientname);
-                new = accept (sock, (struct sockaddr *) &clientname, &size);
-                if (new < 0)
-                  {
-                    perror ("accept");
-                    exit (EXIT_FAILURE);
-                  }
-                fprintf (stderr,
-                         "Server: connect from host %d, port %hd.\n",
-                         inet_ntoa (clientname.sin_addr),
-                         ntohs (clientname.sin_port));
-                FD_SET (new, &active_fd_set);
-              }
-            else
-              {
-                /* Data arriving on an already-connected socket. */
-                if (read_from_client (i) < 0)
-                  {
-                    close (i);
-                    FD_CLR (i, &active_fd_set);
-                  }
-              }
-          }
+  while (1) {
+    /* Block until input arrives on one or more active sockets. */
+    read_fd_set = active_fd_set;
+    write_fd_set = active_fd_set;
+    if (select (FD_SETSIZE + 1, &read_fd_set, /*&write_fd_set*/ NULL, NULL, NULL) < 0) {
+      perror ("select");
+      exit (EXIT_FAILURE);
     }
+    printf("Connection made!\n");
+    /* Service all the sockets with input pending. */
+    for (i = 0; i < FD_SETSIZE; ++i) {
+      //printf("FD is set\n");
+      if (FD_ISSET (i, &read_fd_set)) {
+        //printf("finding sock\n");
+        if (i == sock) {
+          printf("Connection made on new socket");
+          /* Connection request on original socket. */
+          int new;
+          size = sizeof (clientname);
+          new = accept (sock, (struct sockaddr *) &clientname, &size);
+          if (new < 0) {
+            perror ("accept");
+            exit (EXIT_FAILURE);
+          }
+          fprintf (stderr,
+                   "Server: connect from host %d, port %hd.\n",
+                   inet_ntoa (clientname.sin_addr),
+                   ntohs (clientname.sin_port));
+          FD_SET (new, &active_fd_set);
+          }
+        else {
+          /* Data arriving on an already-connected socket. */
+          if (read_from_client (i) < 0) {
+            close (i);
+            FD_CLR (i, &active_fd_set);
+          }
+        }
+      }
+    }
+  } 
+}
+
+void genericOP(char* data) {
+    const char* s = getenv("PROCNANNYLOGS");
+    FILE* file= fopen (s, "a" );
+    time_t ltime;
+    time(&ltime); 
+    fprintf(file, "[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
+    fclose(file);
+    return;
+}
+
+void consoleOP(char * data) {
+  time_t ltime;
+  time(&ltime); 
+  printf("[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
+  return;
 }
