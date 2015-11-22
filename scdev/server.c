@@ -140,7 +140,7 @@ int main (int c, char *argv[]) {
   curpid = getpid();
 
   char * infolog;
-  fprintf(infolog, "Procnanny server: PID %d on node %s, port %d\n", curpid, hostname, finalpval);
+  sprintf(infolog, "Procnanny server: PID %d on node %s, port %d\n", curpid, hostname, finalpval);
   consoleOP(infolog);
 
   while (1) {
