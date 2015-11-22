@@ -8,13 +8,20 @@
 #include <netdb.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <string.h>
+#include <time.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include "memwatch.h"
 
 #define SERVNAME  "ug15"
 // have to change servname dynamically
 #define MAXMSG 512
 #define PORT   2222
 
-static int finalpval;
+static int finalpval = 0;
 char hostname[255];
 
 void genericOP(char* data);
@@ -55,8 +62,7 @@ int make_socket (uint16_t port)
   return sock;
 }
 
-int
-read_from_client (int filedes)
+int read_from_client (int filedes)
 {
   char buffer[MAXMSG];
   char resultString[100];
