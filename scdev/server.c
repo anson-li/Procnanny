@@ -194,8 +194,9 @@ int main (int c, char *argv[]) {
           char buffer[MAXMSG];
           for (i = 0; i < counter; i++) {
             if (appdata[i][0] != '\0') {
+              memset(&buffer[0], 0, sizeof(buffer));
               sprintf(buffer, "#%s %d", appdata[i], timedata[i]);
-              printf(buffer);
+              printf("BUFFER: %s\n", buffer);
               write(i, buffer, sizeof(buffer) + 1);
             }
           }
