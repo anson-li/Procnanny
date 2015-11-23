@@ -341,18 +341,19 @@ void killClients() {
     //FD_ZERO (&write_fd_set);
     //FD_SET (clientsList[clientCount], &write_fd_set);
     FD_ZERO (&read_fd_set);
-    FD_SET (clientsList[clientCount], &read_fd_set);
+    FD_SET (clientsList[i], &read_fd_set);
 
-    retval = select(clientsList[clientCount],&read_fd_set, NULL, NULL, /*&timedif*/ NULL);
+    // block until it can send 
+    retval = select(clientsList[i],&read_fd_set, NULL, NULL, NULL);
     if (retval) {
       printf("retval initialised ....\n");
-      write(clientsList[clientCount], &buffer, sizeof(buffer));
+      write(clientsList[i], &buffer, sizeof(buffer));
     } else {
       printf("retval: %d\n", retval);
     }
-    readval = select(clientsList[clientCount],&read_fd_set, NULL, NULL, &timedif);
+    readval = select(clientsList[i],&read_fd_set, NULL, NULL, &timedif);
     if (readval) {
-      read_from_client(clientsList[clientCount]);
+      read_from_client(clientsList[i]);
     }
   }
   //sprintf(printNum, "Info: Caught SIGINT. Exiting cleanly. %d process(es) killed.", killPID);
