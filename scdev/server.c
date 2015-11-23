@@ -177,7 +177,7 @@ int main (int c, char *argv[]) {
       if (FD_ISSET (i, &read_fd_set)) {
         //printf("finding sock\n");
         if (i == sock) {
-          printf("Connection made on new socket");
+          printf("Connection made on new socket\n");
           /* Connection request on original socket. */
           int new;
           char buffer[MAXMSG];
@@ -267,6 +267,7 @@ void setupProcnanny(char * filepath) {
       }
   }
   fclose(file);
+  printf("COUNTER AT EXIT IS : %d", counter);
 }
 
 void deleteProcnannies() {
