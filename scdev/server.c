@@ -129,7 +129,12 @@ int read_from_client (int filedes)
         if (strncmp(token, "5", 1) == 0 ) { // 5 is the kill command 
           killcount++;
           int subcounter = 0;
-          char * pidval, char * appdata, char * timeStr, char * hostname;
+          
+          char * pidval;
+          char * appdata;
+          char * timeStr;
+          char * hostname;
+
           subtoken = strtok(token, " ");
           while( subtoken != NULL ) {
             if (subcounter == 1) {
