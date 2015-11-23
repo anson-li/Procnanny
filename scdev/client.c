@@ -628,6 +628,7 @@ int monitorProcesses() {
 
 void read_from_server() {
 	char buffer[MAXMSG];
+	int nbytes;
  	nbytes = read (s, buffer, MAXMSG);
  	if (nbytes < 0) {
       	/* Read error. */
