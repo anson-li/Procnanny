@@ -344,6 +344,7 @@ void killClients() {
     FD_SET (clientsList[i], &read_fd_set);
 
     // block until it can send 
+    printf("clientcount is : %d, i val is: %d", clientCount, i );
     retval = select(FD_SETSIZE + 1,&read_fd_set, NULL, NULL, NULL);
     if (retval) {
       printf("retval initialised ....\n");
