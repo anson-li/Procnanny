@@ -292,12 +292,13 @@ int main (int c, char *argv[]) {
 }
 
 void endProcess() {
-  char endproc[150];
+  char endproc[255];
+  char kcchar[15];
   //sprintf(endproc, "Info: Server exiting. %d processes killed on nodes", killcount);
   strcpy(endproc, "Info: Server exiting. ");
-  strcat(endproc, killcount);
+  sprintf(kcchar, "%d", killcount);
+  strcat(endproc, kcchar);
   strcat(endproc, " processes killed on nodes ");
-  /*
   int i;
   for (i = 0; i < hostnamesize; i++) {
     if (i == 0) {
@@ -307,7 +308,6 @@ void endProcess() {
       strcat(endproc, hostnamelist[i]);
     }
   }
-  */
   strcat(endproc, ".");
   consoleOP(endproc); // have to specify which nodes removed.
   genericOP(endproc);
