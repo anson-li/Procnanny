@@ -322,7 +322,7 @@ void killClients() {
   char endMsg[MAXMSG];
   char sigintChar[MAXMSG];
   genericOP("Killing procnanny clients.");
-  for (int i = 0; i < clientCount; i++) {
+  for (i = 0; i < clientCount; i++) {
     // send signal
     // read response
     char buffer[MAXMSG];
