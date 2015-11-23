@@ -343,7 +343,7 @@ void killClients() {
     FD_ZERO (&read_fd_set);
     FD_SET (clientsList[clientCount], &read_fd_set);
 
-    retval = select(clientsList[clientCount],&read_fd_set, /*&write_fd_set*/ NULL, NULL, &timedif);
+    retval = select(clientsList[clientCount],&read_fd_set, /*&write_fd_set*/ NULL, NULL, /*&timedif*/ NULL);
     if (retval) {
       printf("retval initialised ....\n");
       write(clientsList[clientCount], &buffer, sizeof(buffer));
