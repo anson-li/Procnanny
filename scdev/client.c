@@ -119,14 +119,16 @@ int getConfig(int filedes) {
 		        //token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
 		        //printf("Parsed the following message: %s\n", token);
 		        if (strcmp(buffer, "EOF")) {
+		        	printf("eof...\n");
 		      		return 0;
 		      	} else {
 		      		// parse the config data here / first application val is the app, second is the time
+		      		printf("valid statement!\n");
 		      		char * token;
 		      		token = strtok(buffer, " ");
    					/* walk through other tokens */
    					while( token != NULL ) {
-      					printf( " %s\n", token );
+      					printf( "TOKEN: %s\n", token );
       					token = strtok(NULL, " ");
    					}
 		      	}
