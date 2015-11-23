@@ -422,7 +422,7 @@ int monitorProcesses(int filedes) {
 		/**
 		* FIXME: make this a conditional read once parents read...
 		**/
-		if (select(totalFill, &read_fd_set, NULL, NULL, &timedif)) { 
+		if (select(1, &read_fd_set, NULL, NULL, &timedif)) { 
     		read_from_server(filedes);
     	}
         if (SIFLAG == 1) { //setup to prevent early completion via sighup... 

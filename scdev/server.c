@@ -342,6 +342,7 @@ void killClients() {
 
     retval = select(clientsList[clientCount],NULL, &write_fd_set, NULL, &timedif);
     if (retval) {
+      printf("retval initialised ....");
       write(clientsList[clientCount], &buffer, sizeof(buffer));
     }
     readval = select(clientsList[clientCount],&read_fd_set, NULL, NULL, &timedif);
