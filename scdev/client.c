@@ -8,6 +8,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>   /* errno */
+#include <time.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
 
 /*
 A client process nanny (which is a modified form of the procnanny from Assignment #2). 
@@ -25,7 +31,15 @@ char test[280][1000]; //array of strings //length is 10! figure out how to reall
 int timedata[280];
 int counter;
 
+static int parentPID; 
+static int SHFLAG = 0;
+static int SIFLAG = 0;
+
 #define MAXMSG 512
+#define READ 0
+#define WRITE 1 
+#define CHILD 0
+#define PARENT 1
 
 int getConfig();
 void setServerDetails(char* servname, char* port);
@@ -42,6 +56,18 @@ void getParentPID();
 void initialisationOP();
 void write_to_pipe(int file, char * data);
 void read_from_pipe(int file);
+
+static void catch_function(int signo) {
+    SIFLAG = 1;
+}
+
+static void fail_function(int signo) {
+    exit(EXIT_FAILURE);
+}
+
+static void ignore_function(int signo ) { 
+    SHFLAG = 1; 
+}
 
 int main(int cv, char *argv[]) {
 	struct	sockaddr_in	server;
