@@ -644,6 +644,7 @@ void read_from_server(int filedes) {
 	char buffer[MAXMSG];
 	int nbytes;
  	nbytes = read (filedes, buffer, MAXMSG);
+ 	printf("read_from_server statement\n");
  	if (nbytes < 0) {
       	/* Read error. */
       	perror ("read");

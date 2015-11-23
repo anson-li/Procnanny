@@ -335,7 +335,6 @@ void killClients() {
     memset(&buffer[0], 0, sizeof(buffer));
     sprintf(buffer, "1"); // 1 denotes sigint
     
-
     FD_ZERO (&write_fd_set);
     FD_SET (clientsList[clientCount], &write_fd_set);
     FD_ZERO (&read_fd_set);
