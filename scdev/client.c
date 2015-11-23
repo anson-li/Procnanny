@@ -417,6 +417,7 @@ int monitorProcesses(int filedes) {
 
     	FD_ZERO (&read_fd_set);
 		FD_SET (filedes, &read_fd_set);
+
 		if (select(totalFill, &read_fd_set, NULL, NULL, &timedif)) { 
     		read_from_server();
     	}
@@ -652,11 +653,13 @@ void read_from_server() {
   		char * token;
   		token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
   		printf("READ: %s", token);
-  		if (strcmp(token, "1") == 0) { //simulate the killprocs
-  			sigintProcnannies();
-      		killProcessOP(signum);
-    		return 0;
-  		}
+  		if (token != NULL) {
+	  		if (strcmp(token, "1") == 0) { //simulate the killprocs
+	  			sigintProcnannies();
+	      		killProcessOP(signum);
+	    		return 0;
+	  		}
+	  	}
   	}
 }
 
