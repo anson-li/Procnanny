@@ -344,14 +344,14 @@ void killClients() {
     FD_SET (clientsList[i], &read_fd_set);
 
     // block until it can send 
-    retval = select(clientsList[i],&read_fd_set, NULL, NULL, NULL);
+    retval = select(FD_SETSIZE + 1,&read_fd_set, NULL, NULL, NULL);
     if (retval) {
       printf("retval initialised ....\n");
       write(clientsList[i], &buffer, sizeof(buffer));
     } else {
       printf("retval: %d\n", retval);
     }
-    readval = select(clientsList[i],&read_fd_set, NULL, NULL, &timedif);
+    readval = select(FD_SETSIZE + 1,&read_fd_set, NULL, NULL, &timedif);
     if (readval) {
       read_from_client(clientsList[i]);
     }
