@@ -104,7 +104,7 @@ int getConfig(int filedes) {
 
 	printf("Waiting for config file now.\n");
 	while (1) {
-		char * token;
+		//char * token;
 		FD_ZERO (&read_fd_set);
 		FD_SET (filedes, &read_fd_set);
 
