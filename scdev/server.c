@@ -153,6 +153,8 @@ int read_from_client (int filedes)
             subcounter++;
           }
           sigintcount = sigintcount + procKilled;
+          return 0;
+          
         } 
         if (strncmp(token, "5", 1) == 0 ) { // 5 is the kill command 
           killcount++;
