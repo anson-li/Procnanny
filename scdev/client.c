@@ -34,8 +34,7 @@ void setServerDetails(char* servname, char* port);
 int main(int cv, char *argv[]) {
 	struct	sockaddr_in	server;
 	struct	hostent		*host;
-	int s, filedes;
-	fd_set read_fd_set;
+	int s;
 	char c;
 
 	setServerDetails(argv[1], argv[2]);
