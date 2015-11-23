@@ -59,6 +59,7 @@ static void fail_function(int signo) {
 }
 
 static void ignore_function(int signo ) { 
+    printf("sighup clicked ,,, end process entered");
     SIFLAG = 1;
     endProcess(); // SIGHUP // HAVE TO REWRITE 
 }
@@ -256,8 +257,10 @@ int main (int c, char *argv[]) {
 
 void endProcess() {
   char endproc[150];
-  consoleOP("Info: Server exiting. %d processes killed on all nodes", killcount); // have to specify which nodes removed.
-  exit(EXIT_SUCCES);
+  sprintf(endproc, "Info: Server exiting. %d processes killed on all nodes", killcount);
+  consoleOP(endproc); // have to specify which nodes removed.
+  genericOP(endproc);
+  exit(EXIT_SUCCESS);
 }
 
 void setupProcnanny(char * filepath) {
