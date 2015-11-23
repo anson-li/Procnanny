@@ -162,8 +162,9 @@ int read_from_client (int filedes)
             } 
           }
           if (iterflag == 0) {
-            printf("I made it into my household");
+            printf("I made it into my household\n");
             strcpy(hostnamelist[hostnamesize], hostname);
+            printf("%s\n", hostnamelist[hostnamesize]);
           }
           pidKilledOP(pidval, appdata, hostname, timeStr);
         }
