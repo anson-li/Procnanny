@@ -162,9 +162,7 @@ int read_from_client (int filedes)
             } 
           }
           if (iterflag == 0) {
-            printf("I made it into my household\n");
             strcpy(hostnamelist[hostnamesize], hostname);
-            printf("%s\n", hostnamelist[hostnamesize]);
           }
           pidKilledOP(pidval, appdata, hostname, timeStr);
         }
@@ -303,7 +301,7 @@ void endProcess() {
   strcat(endproc, kcchar);
   strcat(endproc, " processe(s) killed on nodes ");
   int i;
-  for (i = 0; i < hostnamesize; i++) {
+  for (i = 0; i <= hostnamesize; i++) {
     if (i == 0) {
       strcat(endproc, hostnamelist[i]);
     } else {
