@@ -668,7 +668,7 @@ void read_from_server(int filedes) {
 	  		if (strcmp(token, "1") == 0) { //simulate the killprocs
 	  			sigintProcnannies();
 	      		killProcessOP(signum);
-	    		SIGINT = 1;
+	    		SIFLAG = 1;
 	  		}
 	  	}
   	}
