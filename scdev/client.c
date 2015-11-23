@@ -150,8 +150,8 @@ int getConfig(int filedes) {
       						timedata[counter] = atoi(token);
       					}
       					token = strtok(NULL, " ");
-      					counter++;
    					}
+   					counter++;
 		      	}
 			}
 		}
