@@ -44,6 +44,10 @@ static int SIFLAG = 0;
 #define CHILD 0
 #define PARENT 1
 
+/* socket specific variables */
+int s;
+
+
 int getConfig();
 void setServerDetails(char* servname, char* port);
 int monitorProcesses();
@@ -75,7 +79,6 @@ static void ignore_function(int signo ) {
 int main(int cv, char *argv[]) {
 	struct	sockaddr_in	server;
 	struct	hostent		*host;
-	int s;
 	char c;
 
 	setServerDetails(argv[1], argv[2]);
@@ -107,7 +110,6 @@ int main(int cv, char *argv[]) {
 
 	// ret = select(maxdesc, &read_from, NULL, NULL, &tv);
 	getConfig(s); 
-
 	monitorProcesses();
 
 	// need to read all of the information before you do anything...
@@ -252,7 +254,7 @@ int monitorProcesses() {
                       int count = 0;
                         char buff[1000];
                         bzero(buff, 1000);
-                    char byte = 0;
+                    	char byte = 0;
 
                         strtok(pidval, "\n");
                         initProcOP(appProcessed, pidval);
@@ -270,17 +272,17 @@ int monitorProcesses() {
                                     sigintProcnannies();
                             goto completeProcess;
                             }
-                                if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1)
+                       if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1)
                     {
                         buff[0] = byte;
                         char printWrite[150];
                         if (read(fd[i][PARENT][READ], buff+1, count) == count) {
                             int charbuf = atoi(buff);
                             if (charbuf == 1) {
-                                            sprintf(printWrite, "2"); // sends for onwait process
+                                sprintf(printWrite, "2"); // sends for onwait process
                                 write_to_pipe(fd[i][CHILD][WRITE], printWrite);
-                                        } else if (charbuf == -1) {
-                                            exit(EXIT_FAILURE);
+                            } else if (charbuf == -1) {
+                                exit(EXIT_FAILURE);
                             }
                         }
                     }
@@ -684,19 +686,19 @@ void sigintProcnannies() {
 }
 
 void genericOP(char* data) {
-        const char* s = getenv("PROCNANNYLOGS");
-        FILE* file= fopen (s, "a" );
-        time_t ltime;
-        time(&ltime); 
-        fprintf(file, "[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
-        fclose(file);
-        return;
+    time_t ltime;
+    time(&ltime); 
+    char printop[150];
+    sprintf(file, "[%s] %s\n", strtok(ctime(&ltime), "\n"), data);    
+    return;
 }
 
 void consoleOP(char * data) {
     time_t ltime;
     time(&ltime); 
-    printf("[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
+    char printop[150];
+    printf(printop, "#[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
+    write (s, &printop, sizeof(printop));
     return;
 }
 
