@@ -31,6 +31,9 @@ the monitoring or killing of processes itself.
 #define MAXMSG 512
 #define PORT   2222
 
+int clientCount = 0;
+int clientsList[32];
+
 static int finalpval = 0;
 char hostname[255];
 char hostnamelist[32][255];
@@ -52,6 +55,8 @@ void genericOP(char* data);
 void consoleOP(char* data);
 void setupProcnanny(char * filepath);
 void endProcess();
+void writeEndProcesses();
+void killClients();
 void pidKilledOP(char * pidval, char * appdata, char * hostname, char * timeStr);
 
 static void catch_function(int signo) {
@@ -242,12 +247,12 @@ int main (int c, char *argv[]) {
         if (i == sock) {
           printf("Connection made on new socket\n");
           /* Connection request on original socket. */
-          int new;
           char buffer[MAXMSG];
           size = sizeof (clientname);
-          new = accept (sock, (struct sockaddr *) &clientname, &size);
-          /* Connection accepted at 'new'*/ 
-          if (new < 0) {
+          clientsList[clientCount] = accept (sock, (struct sockaddr *) &clientname, &size);
+          clientCount++;
+          /* Connection accepted at 'clientsList[clientCount]'*/ 
+          if (clientsList[clientCount] < 0) {
             perror ("accept");
             exit (EXIT_FAILURE);
           }
@@ -256,7 +261,7 @@ int main (int c, char *argv[]) {
                    "Server: connect from host %d, port %hd.\n",
                    inet_ntoa (clientname.sin_addr),
                    ntohs (clientname.sin_port));
-          FD_SET (new, &active_fd_set);
+          FD_SET (clientsList[clientCount], &active_fd_set);
           
           //memset(&buffer[0], 0, sizeof(buffer));
           /*
@@ -271,12 +276,12 @@ int main (int c, char *argv[]) {
               memset(&buffer[0], 0, sizeof(buffer));
               sprintf(buffer, "%s %d", appdata[i], timedata[i]);
               printf("BUFFER: %s\n", buffer);
-              write(new, &buffer, sizeof(buffer));
+              write(clientsList[clientCount], &buffer, sizeof(buffer));
             }
           }
           memset(&buffer[0], 0, sizeof(buffer));
           strcpy(buffer, "EOF");
-          write(new, &buffer, sizeof(buffer));
+          write(clientsList[clientCount], &buffer, sizeof(buffer));
           // write config details
           //write(filedes, buffer, sizeof(buffer) + 1); 
         } else {
@@ -292,14 +297,23 @@ int main (int c, char *argv[]) {
 }
 
 void endProcess() {
-  
+  killClients();
+  writeEndProcesses();
+  exit(EXIT_SUCCESS);
+}
+
+void killClients() {
+
+}
+
+void writeEndProcesses() {
   char endproc[255];
   char kcchar[15];
   //sprintf(endproc, "Info: Server exiting. %d processes killed on nodes", killcount);
   strcpy(endproc, "Info: Server exiting. ");
   sprintf(kcchar, "%d", killcount);
   strcat(endproc, kcchar);
-  strcat(endproc, " processe(s) killed on nodes ");
+  strcat(endproc, " processe(s) killed on node(s) ");
   int i;
   for (i = 0; i <= hostnamesize; i++) {
     if (i == 0) {
@@ -312,7 +326,6 @@ void endProcess() {
   strcat(endproc, ".");
   consoleOP(endproc); // have to specify which nodes removed.
   genericOP(endproc);
-  exit(EXIT_SUCCESS);
 }
 
 void setupProcnanny(char * filepath) {
