@@ -33,6 +33,7 @@ the monitoring or killing of processes itself.
 
 static int finalpval = 0;
 char hostname[255];
+char hostnamelist[32][255];
 static int parentPID; 
 int killcount = 0;
 
@@ -49,6 +50,7 @@ void genericOP(char* data);
 void consoleOP(char* data);
 void setupProcnanny(char * filepath);
 void endProcess();
+void pidKilledOP(char * pidval, char * appdata, char * hostname, char * timeStr);
 
 static void catch_function(int signo) {
     endProcess();
@@ -59,7 +61,6 @@ static void fail_function(int signo) {
 }
 
 static void ignore_function(int signo ) { 
-    printf("sighup clicked ,,, end process entered");
     SIFLAG = 1;
     endProcess(); // SIGHUP // HAVE TO REWRITE 
 }
@@ -104,6 +105,7 @@ int read_from_client (int filedes)
   char buffer[MAXMSG];
   char resultString[100];
   char * token;
+  char * subtoken;
   int nbytes;
 
   nbytes = read (filedes, buffer, MAXMSG);
@@ -124,11 +126,25 @@ int read_from_client (int filedes)
       token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
       printf("Parsed the following message: %s\n", token);
       if (token != NULL) {
-        if (strncmp(token, "[", 1) == 0 ) { // to directly write to logfile
-          genOPnotime(token);
-          if (strstr(token, "killed") != NULL) {
-            killcount++;
+        if (strncmp(token, "5", 1) == 0 ) { // 5 is the kill command 
+          killcount++;
+          int subcounter = 0;
+          char * pidval, char * appdata, char * timeStr, char * hostname;
+          subtoken = strtok(token, " ");
+          while( subtoken != NULL ) {
+            if (subcounter == 1) {
+              strcpy(pidval, subtoken);
+            } else if (subcounter == 2) {
+              strcpy(appdata, subtoken);
+            } else if (subcounter == 3) {
+              strcpy(hostname, subtoken);
+            } else if (subcounter == 4) {
+              strcpy(timeStr, subtoken);
+            }
+            subtoken = strtok(NULL, " ");
+            subcounter++;
           }
+          pidKilledOP(pidval, appdata, hostname, timeStr);
         }
         if (strcmp(token, "1") == 0) { // if entered input is 1
           printf("1 called - initProcNanny calls!\n");
@@ -257,7 +273,7 @@ int main (int c, char *argv[]) {
 
 void endProcess() {
   char endproc[150];
-  sprintf(endproc, "Info: Server exiting. %d processes killed on all nodes", killcount);
+  sprintf(endproc, "Info: Server exiting. %d processes killed on all nodes.", killcount);
   consoleOP(endproc); // have to specify which nodes removed.
   genericOP(endproc);
   exit(EXIT_SUCCESS);
@@ -349,6 +365,21 @@ void genericOP(char* data) {
     time(&ltime); 
     fprintf(file, "[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
     fclose(file);
+    return;
+}
+
+void pidKilledOP(char * pidval, char * appdata, char * hostname, char * timeStr) {
+    char str[1000];
+    strcpy(str, "Action: PID ");
+    strcat(str, pidval);
+    strcat(str, " (");
+    strcat(str, appdata);
+    strcat(str, ") on ");
+    strcat(str, hostname);
+    strcat(str, " killed after exceeding ");
+    strcat(str, timeStr);
+    strcat(str, " seconds.");
+    genericOP(str);
     return;
 }
 

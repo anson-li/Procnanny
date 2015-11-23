@@ -718,6 +718,15 @@ void killProcessOP(int signum) {
 
 void pidKilledOP(char * pidval, char * appdata, char * timeStr) {
     char str[1000];
+    strcpy(str, "5 ");
+    strcat(str, pidval);
+    strcat(str, " ");
+    strcat(str, appdata);
+    strcat(str, " ");
+    strcat(str, hostname);
+    strcat(str, " ");
+    strcat(str, timeStr);
+    /*
     strcpy(str, "Action: PID ");
     strcat(str, pidval);
     strcat(str, " (");
@@ -726,7 +735,7 @@ void pidKilledOP(char * pidval, char * appdata, char * timeStr) {
     strcat(str, hostname);
     strcat(str, " killed after exceeding ");
     strcat(str, timeStr);
-    strcat(str, " seconds.");
+    strcat(str, " seconds.");*/
     genericOP(str);
     return;
 }
