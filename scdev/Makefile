@@ -1,10 +1,10 @@
 all: procnanny.server procnanny.client
 
 procnanny.server: server.c
-	gcc -Wall -DMEMWATCH -DMW_STDIO -o -g procnanny.server server.c memwatch.c
+	gcc -Wall -DMEMWATCH -DMW_STDIO -o procnanny.server server.c memwatch.c
 
 procnanny.client: client.c
-	gcc -Wall -DMEMWATCH -DMW_STDIO -o -g procnanny.client client.c memwatch.c
+	gcc -Wall -DMEMWATCH -DMW_STDIO -o procnanny.client client.c memwatch.c
 
 clean:
 	rm -f procnanny.server procnanny.client *.o core
