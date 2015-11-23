@@ -329,13 +329,13 @@ void killClients() {
     memset(&buffer[0], 0, sizeof(buffer));
     sprintf(buffer, "1"); // 1 denotes sigint
     write(clientsList[clientCount], &buffer, sizeof(buffer));
-    read_from_client(clientsList[clientCount]);
+    //read_from_client(clientsList[clientCount]);
     //sprintf(printNum, "Info: Caught SIGINT. Exiting cleanly. %d process(es) killed.", killPID);
   }
   strcpy(endMsg, "Info: Caught SIGINT. Exiting cleanly. ");
   sprintf(sigintChar, "%d", sigintcount);
   strcat(endMsg, sigintChar);
-  strcat(endMsg, "process(es) killed on");
+  strcat(endMsg, " process(es) killed on ");
   int j;
   for (j = 0; j <= hostnamesize; j++) {
     if (j == 0) {
