@@ -699,6 +699,7 @@ void genericOP(char* data) {
 }
 
 void genericOPnotime(char * data) {
+	char printop[150];
 	sprintf(printop, "%s\n", data);    
     write(s, &printop, sizeof(printop));
     return;
