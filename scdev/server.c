@@ -129,11 +129,11 @@ int read_from_client (int filedes)
         if (strncmp(token, "5", 1) == 0 ) { // 5 is the kill command 
           killcount++;
           int subcounter = 0;
-          
-          char * pidval;
-          char * appdata;
-          char * timeStr;
-          char * hostname;
+
+          char pidval[250];
+          char appdata[250];
+          char timeStr[250];
+          char hostname[250];
 
           subtoken = strtok(token, " ");
           while( subtoken != NULL ) {
@@ -373,7 +373,7 @@ void genericOP(char* data) {
     return;
 }
 
-void pidKilledOP(char * pidval, char * appdata, char * hostname, char * timeStr) {
+void pidKilledOP(char pidval[250], char appdata[250], char hostname[250], char timeStr[250]) {
     char str[1000];
     strcpy(str, "Action: PID ");
     strcat(str, pidval);
