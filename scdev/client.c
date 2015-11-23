@@ -689,16 +689,15 @@ void genericOP(char* data) {
     time_t ltime;
     time(&ltime); 
     char printop[150];
-    sprintf(file, "[%s] %s\n", strtok(ctime(&ltime), "\n"), data);    
+    sprintf(printop, "[%s] %s\n", strtok(ctime(&ltime), "\n"), data);    
+    write(s, &printop, sizeof(printop));
     return;
 }
 
 void consoleOP(char * data) {
     time_t ltime;
     time(&ltime); 
-    char printop[150];
-    printf(printop, "#[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
-    write (s, &printop, sizeof(printop));
+    printf("#[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
     return;
 }
 
