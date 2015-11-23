@@ -121,7 +121,10 @@ int read_from_client (int filedes)
     {
       /* Read error. */
       perror ("read");
-      exit (EXIT_FAILURE);
+      /**
+      * FIXME: if 'connection reset by peer', it means that the station is terminated -- but DON'T EXIT! 
+      */
+      //exit (EXIT_FAILURE);
     }
   else if (nbytes == 0)
     /* End-of-file. */
@@ -339,7 +342,7 @@ void killClients() {
     //FD_SET (clientsList[clientCount], &write_fd_set);
     FD_ZERO (&read_fd_set);
     FD_SET (clientsList[clientCount], &read_fd_set);
-    
+
     retval = select(clientsList[clientCount],&read_fd_set, /*&write_fd_set*/ NULL, NULL, &timedif);
     if (retval) {
       printf("retval initialised ....");
