@@ -180,7 +180,7 @@ int main (int c, char *argv[]) {
           printf("Connection made on new socket");
           /* Connection request on original socket. */
           int new;
-                    char buffer[MAXMSG];
+          char buffer[MAXMSG];
           size = sizeof (clientname);
           new = accept (sock, (struct sockaddr *) &clientname, &size);
           if (new < 0) {
@@ -195,8 +195,8 @@ int main (int c, char *argv[]) {
           
           //memset(&buffer[0], 0, sizeof(buffer));
           printf("init send buffer");
-          sprintf(buffer, "buffer...");
-          send(i, &buffer, sizeof(buffer), 0);
+          strcpy(buffer, "send data test");
+          write(i, &buffer, sizeof(buffer));
           printf("complete send");
           /*
           char buffer[MAXMSG];
