@@ -250,7 +250,6 @@ int main (int c, char *argv[]) {
           char buffer[MAXMSG];
           size = sizeof (clientname);
           clientsList[clientCount] = accept (sock, (struct sockaddr *) &clientname, &size);
-          clientCount++;
           /* Connection accepted at 'clientsList[clientCount]'*/ 
           if (clientsList[clientCount] < 0) {
             perror ("accept");
@@ -282,6 +281,7 @@ int main (int c, char *argv[]) {
           memset(&buffer[0], 0, sizeof(buffer));
           strcpy(buffer, "EOF");
           write(clientsList[clientCount], &buffer, sizeof(buffer));
+          clientCount++;
           // write config details
           //write(filedes, buffer, sizeof(buffer) + 1); 
         } else {
