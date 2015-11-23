@@ -395,8 +395,6 @@ int monitorProcesses(int filedes) {
  	int totalFill = 10000;
 	fd_set read_fd_set;
 	struct timeval timedif;
-	timedif.tv_sec = 1;
-    timedif.tv_usec = 0;
 
     int pidstatus;
     char * bch;
@@ -422,6 +420,9 @@ int monitorProcesses(int filedes) {
 		/**
 		* FIXME: make this a conditional read once parents read...
 		**/
+		timedif.tv_sec = 1;
+    	timedif.tv_usec = 0;
+
 		if (select(1, &read_fd_set, NULL, NULL, &timedif)) { 
     		read_from_server(filedes);
     	} else {
@@ -616,16 +617,16 @@ int monitorProcesses(int filedes) {
                         bch = strtok (NULL, " ,.-");
                     }
         } 
-        /*       
+              
         if (countProcCompleted == totalProcessCounter) {
             goto parentMonitoring;
-        }*/
-        //k++;
+        }
+        k++;
       }
-      /*
+      
       if (countProcCompleted == totalProcessCounter) {
         goto parentMonitoring;
-      }*/
+      }
     }
     }
 
