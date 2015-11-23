@@ -392,6 +392,11 @@ int monitorProcesses() {
   	char byte = 0;
   	int count = 0;
  	int h = 0;
+ 	int totalFill = 10000;
+	fd_set read_fd_set;
+	struct timeval timedif;
+	timedif.tv_sec = 0;
+    timedif.tv_usec = 0;
 
     int pidstatus;
     char * bch;
@@ -409,7 +414,12 @@ int monitorProcesses() {
 
     k = 0;
     while(1) {
-    	read_from_server();
+
+    	FD_ZERO (&read_fd_set);
+		FD_SET (filedes, &read_fd_set);
+		if (select(totalFill, &read_fd_set, NULL, NULL, &timedif)) { 
+    		read_from_server();
+    	}
         if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
             sigintProcnannies();
       		goto completeProcess;
