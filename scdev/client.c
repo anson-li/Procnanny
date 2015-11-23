@@ -413,6 +413,7 @@ int monitorProcesses(int filedes) {
 
     k = 0;
     while(1) {
+    	printf("new while iterate!\n");
 
     	FD_ZERO (&read_fd_set);
 		FD_SET (filedes, &read_fd_set);
@@ -422,7 +423,6 @@ int monitorProcesses(int filedes) {
 		**/
 		timedif.tv_sec = 1;
     	timedif.tv_usec = 0;
-
 		if (select(1, &read_fd_set, NULL, NULL, &timedif)) { 
     		read_from_server(filedes);
     	} else {
