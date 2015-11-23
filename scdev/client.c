@@ -28,6 +28,9 @@ static int MY_PORT;
 char appdata[280][1000];
 char test[280][1000]; //array of strings //length is 10! figure out how to realloc!
 
+char appProcessed[1000];
+int timeProcessed;
+
 int timedata[280];
 int counter;
 
