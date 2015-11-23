@@ -130,7 +130,7 @@ int getConfig(int filedes) {
 		        	int i;
 		        	printf("COLLECTED DATA:\n");
 		        	for (i = 0; i < counter; i++) {
-		        		printf("%s // %d seconds\n", appdata[i], timedata[i]);
+		        		printf("Application: %s, for %d seconds\n", appdata[i], timedata[i]);
 		        	}
 		      		return 0;
 		      	} else {
