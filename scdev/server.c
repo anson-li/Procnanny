@@ -206,11 +206,13 @@ int main (int c, char *argv[]) {
           for (i = 0; i < counter; i++) {
             if (appdata[i][0] != '\0') {
               memset(&buffer[0], 0, sizeof(buffer));
-              sprintf(buffer, "#%s %d", appdata[i], timedata[i]);
+              sprintf(buffer, "%s %d", appdata[i], timedata[i]);
               printf("BUFFER: %s\n", buffer);
               write(new, &buffer, sizeof(buffer));
             }
           }
+          memset(&buffer[0], 0, sizeof(buffer));
+          strcpy(buffer, "EOF");
           // write config details
           //write(filedes, buffer, sizeof(buffer) + 1); 
         } else {
@@ -267,7 +269,6 @@ void setupProcnanny(char * filepath) {
       }
   }
   fclose(file);
-  printf("COUNTER AT EXIT IS : %d", counter);
 }
 
 void deleteProcnannies() {

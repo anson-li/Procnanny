@@ -115,10 +115,21 @@ int getConfig(int filedes) {
 			} else {
 				/* Data read. */
 			    memset(&resultString[0], 0, sizeof(resultString));
-		        fprintf (stderr, "Server: got message: `%s'\n", buffer);
+		        fprintf (stderr, "Server: got message: '%s'\n", buffer);
 		        //token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
 		        //printf("Parsed the following message: %s\n", token);
-		      	return 0;
+		        if (strcmp(buffer, "EOF")) {
+		      		return 0;
+		      	} else {
+		      		// parse the config data here / first application val is the app, second is the time
+		      		char * token;
+		      		token = strtok(buffer, " ");
+   					/* walk through other tokens */
+   					while( token != NULL ) {
+      					printf( " %s\n", token );
+      					token = strtok(NULL, s);
+   					}
+		      	}
 			}
 		}
 	}
