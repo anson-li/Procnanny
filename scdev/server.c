@@ -34,6 +34,8 @@ the monitoring or killing of processes itself.
 static int finalpval = 0;
 char hostname[255];
 char hostnamelist[32][255];
+int hostnamesize = 0;
+
 static int parentPID; 
 int killcount = 0;
 
@@ -151,6 +153,16 @@ int read_from_client (int filedes)
             }
             subtoken = strtok(NULL, " ");
             subcounter++;
+          }
+          int iterh;
+          int iterflag = 0;
+          for (iterh = 0; iterh < hostnamesize; iterh++) {
+            if (strcmp(hostname, hostnamelist[iterh]) == 0) {
+              iterflag = 1;
+            } 
+          }
+          if (iterflag == 0) {
+            hostnamelist[hostnamesize] = hostname;
           }
           pidKilledOP(pidval, appdata, hostname, timeStr);
         }
@@ -281,7 +293,20 @@ int main (int c, char *argv[]) {
 
 void endProcess() {
   char endproc[150];
-  sprintf(endproc, "Info: Server exiting. %d processes killed on all nodes.", killcount);
+  //sprintf(endproc, "Info: Server exiting. %d processes killed on nodes", killcount);
+  strcpy(endproc, "Info: Server exiting. ");
+  strcat(endproc, killcount);
+  strcat(endproc, " processes killed on nodes ");
+  int i;
+  for (i = 0; i < hostnamesize; i++) {
+    if (i == 0) {
+      strcat(endproc, hostnamelist[i]);
+    } else {
+      strcat(endproc, ", ");
+      strcat(endproc, hostnamelist[i]);
+    }
+  }
+  strcat(endproc, ".");
   consoleOP(endproc); // have to specify which nodes removed.
   genericOP(endproc);
   exit(EXIT_SUCCESS);
