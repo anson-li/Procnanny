@@ -346,7 +346,11 @@ void killClients() {
     FD_SET (clientsList[i], &read_fd_set);
     // ACCEPT IT HERE TOO
     // block until it can send 
-    printf("clientcount is : %d, i val is: %d\n", clientCount, i );
+    printf("Writing now!\n");
+    write(clientsList[i], &buffer, sizeof(buffer));
+    printf("Reading now!\n");
+    read_from_client(clientsList[i]);
+    /*
     retval = select(FD_SETSIZE + 1,&read_fd_set, NULL, NULL, &timedif);
     if (retval >= 0) {
       printf("retval initialised ...\n");
@@ -357,7 +361,7 @@ void killClients() {
     readval = select(FD_SETSIZE + 1,&read_fd_set, NULL, NULL, &timedif);
     if (readval) {
       read_from_client(clientsList[i]);
-    }
+    }*/
   }
   //sprintf(printNum, "Info: Caught SIGINT. Exiting cleanly. %d process(es) killed.", killPID);
   strcpy(endMsg, "Info: Caught SIGINT. Exiting cleanly. ");
