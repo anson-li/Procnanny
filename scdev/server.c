@@ -298,9 +298,9 @@ void endProcess() {
   //sprintf(endproc, "Info: Server exiting. %d processes killed on nodes", killcount);
   strcpy(endproc, "Info: Server exiting. ");
   sprintf(kcchar, "%d", killcount);
-  /*
   strcat(endproc, kcchar);
   strcat(endproc, " processes killed on nodes ");
+  /*
   int i;
   for (i = 0; i < hostnamesize; i++) {
     if (i == 0) {
