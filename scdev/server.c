@@ -183,10 +183,12 @@ int main (int c, char *argv[]) {
           char buffer[MAXMSG];
           size = sizeof (clientname);
           new = accept (sock, (struct sockaddr *) &clientname, &size);
+          /* Connection accepted at 'new'*/ 
           if (new < 0) {
             perror ("accept");
             exit (EXIT_FAILURE);
           }
+
           fprintf (stderr,
                    "Server: connect from host %d, port %hd.\n",
                    inet_ntoa (clientname.sin_addr),
@@ -196,7 +198,7 @@ int main (int c, char *argv[]) {
           //memset(&buffer[0], 0, sizeof(buffer));
           printf("init send buffer");
           strcpy(buffer, "send data test");
-          write(sock, &buffer, sizeof(buffer));
+          write(new, &buffer, sizeof(buffer));
           printf("complete send");
           /*
           char buffer[MAXMSG];
