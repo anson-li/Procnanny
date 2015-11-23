@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 /*
 A client process nanny (which is a modified form of the procnanny from Assignment #2). 
