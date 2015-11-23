@@ -52,7 +52,7 @@ int s;
 
 int getConfig();
 void setServerDetails(char* servname, char* port);
-int monitorProcesses();
+int monitorProcesses(int filedes);
 void genericOP(char* data);
 void consoleOP(char* data);
 void killProcessOP(int signum);
@@ -116,7 +116,7 @@ int main(int cv, char *argv[]) {
 
 	// ret = select(maxdesc, &read_from, NULL, NULL, &tv);
 	getConfig(s); 
-	monitorProcesses();
+	monitorProcesses(s);
 
 	// need to read all of the information before you do anything...
 
@@ -208,7 +208,7 @@ int getConfig(int filedes) {
 	}
 }
 
-int monitorProcesses() {
+int monitorProcesses(int filedes) {
 	
 	FILE* f[1000]; // may have to change this, original value counter - 1 ; need to realloc then.
     int i;
