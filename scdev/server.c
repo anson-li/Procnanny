@@ -327,7 +327,7 @@ void killClients() {
   char sigintChar[MAXMSG];
   fd_set /*write_fd_set,*/ read_fd_set;
   struct timeval timedif;
-  timedif.tv_sec = 1;
+  timedif.tv_sec = 10;
   timedif.tv_usec = 0;
 
   consoleOP("Killing procnanny clients.");
@@ -343,7 +343,7 @@ void killClients() {
     FD_ZERO (&read_fd_set);
     FD_SET (clientsList[clientCount], &read_fd_set);
 
-    retval = select(clientsList[clientCount],&read_fd_set, /*&write_fd_set*/ NULL, NULL, /*&timedif*/ NULL);
+    retval = select(clientsList[clientCount],&read_fd_set, NULL, NULL, /*&timedif*/ NULL);
     if (retval) {
       printf("retval initialised ....\n");
       write(clientsList[clientCount], &buffer, sizeof(buffer));
