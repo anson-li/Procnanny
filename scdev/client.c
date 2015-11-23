@@ -118,7 +118,7 @@ int getConfig(int filedes) {
 		        fprintf (stderr, "Server: got message: '%s'\n", buffer);
 		        //token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
 		        //printf("Parsed the following message: %s\n", token);
-		        if (strcmp(buffer, "EOF")) {
+		        if (strcmp(buffer, "EOF") == 0) {
 		        	printf("eof...\n");
 		      		return 0;
 		      	} else {

@@ -213,6 +213,7 @@ int main (int c, char *argv[]) {
           }
           memset(&buffer[0], 0, sizeof(buffer));
           strcpy(buffer, "EOF");
+          write(new, &buffer, sizeof(buffer));
           // write config details
           //write(filedes, buffer, sizeof(buffer) + 1); 
         } else {
