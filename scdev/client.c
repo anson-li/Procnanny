@@ -6,6 +6,7 @@
 #include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /*
 A client process nanny (which is a modified form of the procnanny from Assignment #2). 
@@ -97,7 +98,7 @@ int getConfig(int filedes) {
 
 	printf("Waiting for config file now.\n");
 	while (1) {
-
+		char * token;
 		FD_ZERO (&read_fd_set);
 		FD_SET (filedes, &read_fd_set);
 
@@ -124,7 +125,6 @@ int getConfig(int filedes) {
 		      	} else {
 		      		// parse the config data here / first application val is the app, second is the time
 		      		printf("valid statement!\n");
-		      		char * token;
 		      		token = strtok(buffer, " ");
    					/* walk through other tokens */
    					while( token != NULL ) {
