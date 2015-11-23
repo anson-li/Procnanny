@@ -34,6 +34,7 @@ int timeProcessed;
 
 int timedata[280];
 int counter;
+int signum = 0;
 
 static int parentPID; 
 static int SHFLAG = 0;
@@ -386,7 +387,6 @@ int monitorProcesses() {
     }  
 
     int k; 
-    int signum = 0;
     char buff[1000];
     bzero(buff, 1000);
   	char byte = 0;
