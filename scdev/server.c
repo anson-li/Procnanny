@@ -34,7 +34,10 @@ the monitoring or killing of processes itself.
 static int finalpval = 0;
 char hostname[255];
 static int parentPID; 
+int killcount = 0;
 
+static int SHFLAG = 0;
+static int SIFLAG = 0;
 
 char appdata[280][1000];
 char test[280][1000]; //array of strings //length is 10! figure out how to realloc!
@@ -45,6 +48,20 @@ int counter;
 void genericOP(char* data);
 void consoleOP(char* data);
 void setupProcnanny(char * filepath);
+void endProcess();
+
+static void catch_function(int signo) {
+    endProcess();
+}
+
+static void fail_function(int signo) {
+    exit(EXIT_FAILURE);
+}
+
+static void ignore_function(int signo ) { 
+    SIFLAG = 1;
+    endProcess(); // SIGHUP // HAVE TO REWRITE 
+}
 
 int make_socket (uint16_t port)
 {
@@ -108,6 +125,9 @@ int read_from_client (int filedes)
       if (token != NULL) {
         if (strncmp(token, "[", 1) == 0 ) { // to directly write to logfile
           genOPnotime(token);
+          if (strstr(token, "killed") != NULL) {
+            killcount++;
+          }
         }
         if (strcmp(token, "1") == 0) { // if entered input is 1
           printf("1 called - initProcNanny calls!\n");
@@ -142,6 +162,9 @@ int main (int c, char *argv[]) {
   struct sockaddr_in clientname;
   size_t size;
 
+
+  signal(SIGHUP, ignore_function);
+  signal(SIGINT, catch_function);
   setupProcnanny(argv[1]);
 
   /* Create the socket and set it up to accept connections. */
@@ -229,6 +252,12 @@ int main (int c, char *argv[]) {
       }
     }
   } 
+}
+
+void endProcess() {
+  char endproc[150];
+  consoleOP("Info: Server exiting. %d processes killed on all nodes", killcount); // have to specify which nodes removed.
+  exit(EXIT_SUCCES);
 }
 
 void setupProcnanny(char * filepath) {

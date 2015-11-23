@@ -755,7 +755,9 @@ void initProcOP(char * appdata, char * pidval ) {
     strcat(str, appdata);
     strcat(str, "' (PID ");
     strcat(str, pidval);
-    strcat(str, ").");
+    strcat(str, ") on node ");
+    strcat(str, hostname);
+    strcat(str, ".");
     genericOP(str); 
     return;
 }
