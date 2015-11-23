@@ -195,7 +195,7 @@ int main (int c, char *argv[]) {
           
           memset(&buffer[0], 0, sizeof(buffer));
           sprintf(buffer, "buffer...");
-          write(i, buffer, sizeof(buffer) + 1);
+          send(i, buffer, sizeof(buffer) + 1, 0);
 
           /*
           char buffer[MAXMSG];
