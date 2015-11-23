@@ -437,6 +437,7 @@ int monitorProcesses(int filedes) {
         } else {
             k = 0;
         }
+        fcntl(fd[k][CHILD][READ], F_SETFL, O_NONBLOCK);
         if (SHFLAG == 1 || read(fd[k][CHILD][READ], &byte, 1) == 1) {
             // if the ioctl is -1 then switch to the next k value...
             if (SHFLAG == 1) { // REREAD FILE
