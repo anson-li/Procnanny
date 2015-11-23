@@ -41,6 +41,7 @@ int hostnamesize = 0;
 
 static int parentPID; 
 int killcount = 0;
+int sigintcount = 0;
 
 static int SHFLAG = 0;
 static int SIFLAG = 0;
@@ -129,12 +130,26 @@ int read_from_client (int filedes)
     {
       /* Data read. */
       memset(&resultString[0], 0, sizeof(resultString));
-      fprintf (stderr, "Server: got message: `%s'\n", buffer);
+      fprintf (stderr, "Server: got message: '%s'\n", buffer);
       token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
       printf("Parsed the following message: %s\n", token);
       if (token != NULL) {
         if (strncmp(token, "[", 1) == 0 ) { // just save these, not necessary
           genericOP(token);
+        } 
+        if (strncmp(token, "2", 1) == 0 ) { // 2 is the sigint command
+
+          int procKilled = 0;
+          int subcounter = 0;
+          subtoken = strtok(token, " ");
+          while( subtoken != NULL ) {
+            if (subcounter == 1) {
+              printf("Total process killed here: %s\n", subtoken);
+              procKilled = procKilled + atoi(subtoken);
+            }
+            subcounter++;
+          }
+          sigintcount = sigintcount + procKilled;
         } 
         if (strncmp(token, "5", 1) == 0 ) { // 5 is the kill command 
           killcount++;
@@ -303,7 +318,36 @@ void endProcess() {
 }
 
 void killClients() {
-
+  int i;
+  char endMsg[MAXMSG];
+  char sigintChar[MAXMSG];
+  genericOP("Killing procnanny clients.");
+  for (int i = 0; i < clientCount; i++) {
+    // send signal
+    // read response
+    char buffer[MAXMSG];
+    memset(&buffer[0], 0, sizeof(buffer));
+    sprintf(buffer, "1"); // 1 denotes sigint
+    write(clientsList[clientCount], &buffer, sizeof(buffer));
+    read_from_client(clientsList[clientCount]);
+    //sprintf(printNum, "Info: Caught SIGINT. Exiting cleanly. %d process(es) killed.", killPID);
+  }
+  strcpy(endMsg, "Info: Caught SIGINT. Exiting cleanly. ");
+  sprintf(sigintChar, "%d", sigintcount);
+  strcat(endMsg, sigintChar);
+  strcat(endMsg, "process(es) killed on");
+  int j;
+  for (j = 0; j <= hostnamesize; j++) {
+    if (j == 0) {
+      strcat(endMsg, hostnamelist[j]);
+    } else {
+      strcat(endMsg, ", ");
+      strcat(endMsg, hostnamelist[j]);
+    }
+  }
+  strcat(endMsg, ".");
+  consoleOP(endMsg); // have to specify which nodes removed.
+  genericOP(endMsg);
 }
 
 void writeEndProcesses() {

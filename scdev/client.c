@@ -64,6 +64,7 @@ void getParentPID();
 void initialisationOP();
 void write_to_pipe(int file, char * data);
 void read_from_pipe(int file);
+void read_from_server();
 
 static void catch_function(int signo) {
     SIFLAG = 1;
@@ -408,11 +409,12 @@ int monitorProcesses() {
 
     k = 0;
     while(1) {
+    	read_from_server();
         if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
             sigintProcnannies();
-      goto completeProcess;
-    }
-    if (k < totalProcessCounter) {
+      		goto completeProcess;
+    	}
+    	if (k < totalProcessCounter) {
             k++;
         } else {
             k = 0;
@@ -624,6 +626,29 @@ int monitorProcesses() {
     return 0;
 }
 
+void read_from_server() {
+	char buffer[MAXMSG];
+ 	nbytes = read (s, buffer, MAXMSG);
+ 	if (nbytes < 0) {
+      	/* Read error. */
+      	perror ("read");
+      	exit (EXIT_FAILURE);
+    } else if (nbytes == 0) {
+    	/* End-of-file. */
+    	return -1;
+  	} else {
+  		// parser here
+  		char * token;
+  		token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
+  		printf("READ: %s", token);
+  		if (strcmp(token, "1") == 0) { //simulate the killprocs
+  			sigintProcnannies();
+      		killProcessOP(signum);
+    		return 0;
+  		}
+  	}
+}
+
 void write_to_pipe (int file, char* data)
 {
   write(file, data, strlen(data));
@@ -683,7 +708,7 @@ void sigintProcnannies() {
         }
         fclose(pnfile); 
         char printNum[150];
-        sprintf(printNum, "Info: Caught SIGINT. Exiting cleanly. %d process(es) killed.", killPID);
+        sprintf(printNum, "2 %d", killPID);
         consoleOP(printNum);
         genericOP(printNum);
         return;
