@@ -292,6 +292,7 @@ int main (int c, char *argv[]) {
 }
 
 void endProcess() {
+  /*
   char endproc[255];
   char kcchar[15];
   //sprintf(endproc, "Info: Server exiting. %d processes killed on nodes", killcount);
@@ -311,6 +312,7 @@ void endProcess() {
   strcat(endproc, ".");
   consoleOP(endproc); // have to specify which nodes removed.
   genericOP(endproc);
+  */
   exit(EXIT_SUCCESS);
 }
 
