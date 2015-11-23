@@ -419,7 +419,7 @@ int monitorProcesses(int filedes) {
 		FD_SET (filedes, &read_fd_set);
 
 		if (select(totalFill, &read_fd_set, NULL, NULL, &timedif)) { 
-    		read_from_server();
+    		read_from_server(filedes);
     	}
         if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
             sigintProcnannies();
@@ -637,10 +637,10 @@ int monitorProcesses(int filedes) {
     return 0;
 }
 
-void read_from_server() {
+void read_from_server(int filedes) {
 	char buffer[MAXMSG];
 	int nbytes;
- 	nbytes = read (s, buffer, MAXMSG);
+ 	nbytes = read (filedes, buffer, MAXMSG);
  	if (nbytes < 0) {
       	/* Read error. */
       	perror ("read");
