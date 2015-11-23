@@ -193,10 +193,11 @@ int main (int c, char *argv[]) {
                    ntohs (clientname.sin_port));
           FD_SET (new, &active_fd_set);
           
-          memset(&buffer[0], 0, sizeof(buffer));
+          //memset(&buffer[0], 0, sizeof(buffer));
+          printf("init send buffer");
           sprintf(buffer, "buffer...");
           send(i, buffer, sizeof(buffer) + 1, 0);
-
+          printf("complete send");
           /*
           char buffer[MAXMSG];
           for (i = 0; i < counter; i++) {
