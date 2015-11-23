@@ -411,17 +411,18 @@ int monitorProcesses() {
         if (SHFLAG == 1 || read(fd[k][CHILD][READ], &byte, 1) == 1) {
             // if the ioctl is -1 then switch to the next k value...
             if (SHFLAG == 1) { // REREAD FILE
-                int validChild = 0;
-                char switchProc[1000];
-                char buff2[1000];
-                bzero(buff2, 1000);
-            char byte2 = 0;
-            char test2[280][1000];
-            int count2 = 0;
+	            int validChild = 0;
+	            char switchProc[1000];
+	            char buff2[1000];
+	            bzero(buff2, 1000);
+	            char byte2 = 0;
+	            char test2[280][1000];
+	            int count2 = 0;
 
                 consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
                 genericOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
                 // if there's a new program then search, so search w/ respect to the current appname list
+                /* FIXME: Replace the new read values with the piped values.
                 FILE* file2 = fopen ( argv[1], "r" );
 
                 if (file2 != NULL) {
@@ -456,11 +457,7 @@ int monitorProcesses() {
                                     if (validChild == 0) {
                                         sprintf(switchProc, "1");
                                         write_to_pipe(fd[h][PARENT][WRITE], switchProc);
-                                        /*
-                                        int ops;
-                                        ops = fcntl(fd[h][CHILD][READ],F_GETFL); // reenable blocking
-                                        fcntl(fd[h][CHILD][READ], F_SETFL, ops & ~O_NONBLOCK);
-                                        */
+                                       
                                     while (SIFLAG == 1 || read(fd[h][CHILD][READ], &byte2, 1) == 1) {
                                         if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
                                                 sigintProcnannies();
@@ -549,6 +546,7 @@ int monitorProcesses() {
                     }
                 }
                 fclose(file2);
+                */
                 SHFLAG = 0;
                 goto parentMonitoring;
             } 
@@ -560,10 +558,10 @@ int monitorProcesses() {
                     k = 0;
                 }
             } else if (ioctl(fd[k][CHILD][READ], FIONREAD, &count) != -1) {
-        //buff = malloc(count+1);
-        //bzero(buff, count+1);
-        buff[0] = byte;
-        if (read(fd[k][CHILD][READ], buff+1, count) == count) {
+		        //buff = malloc(count+1);
+		        //bzero(buff, count+1);
+		        buff[0] = byte;
+		        if (read(fd[k][CHILD][READ], buff+1, count) == count) {
                     bch = strtok (buff," ,.-");
                     while (bch != NULL) {
                         if (countvalb == 0) {
