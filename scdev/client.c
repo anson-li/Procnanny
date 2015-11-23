@@ -18,6 +18,12 @@ executable for the client must be procnanny.client.
 char SERVNAME[100];
 static int MY_PORT;
 
+char appdata[280][1000];
+char test[280][1000]; //array of strings //length is 10! figure out how to realloc!
+
+int timedata[280];
+int counter;
+
 #define MAXMSG 512
 
 int getConfig();
@@ -94,7 +100,7 @@ int getConfig(int filedes) {
 	struct timeval timedif;
 	timedif.tv_sec = 0;
     timedif.tv_usec = 0;
-
+    counter = 0;
 
 	printf("Waiting for config file now.\n");
 	while (1) {
@@ -121,15 +127,30 @@ int getConfig(int filedes) {
 		        //printf("Parsed the following message: %s\n", token);
 		        if (strcmp(buffer, "EOF") == 0) {
 		        	printf("eof...\n");
+		        	int i;
+		        	printf("COLLECTED DATA:\n");
+		        	for (i = 0; i < counter; i++) {
+		        		printf("%s // %d seconds", appdata[i], timedata[i]);
+		        	}
 		      		return 0;
 		      	} else {
 		      		// parse the config data here / first application val is the app, second is the time
+		      		int countval = 0;
 		      		printf("valid statement!\n");
 		      		token = strtok(buffer, " ");
    					/* walk through other tokens */
    					while( token != NULL ) {
-      					printf( "TOKEN: %s\n", token );
+   						if (countval == 0) {
+      						printf( "APP: %s\n", token );
+      						strcpy(appdata[counter], token);
+      						countval++;
+      					} else {
+      						printf("TIME: %s\n". token);
+      						countval = 0;
+      						timedata[counter] = atoi(token);
+      					}
       					token = strtok(NULL, " ");
+      					counter++;
    					}
 		      	}
 			}
