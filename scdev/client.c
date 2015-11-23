@@ -22,6 +22,7 @@ to create child processes that use kill() to kill monitored processes. The name 
 executable for the client must be procnanny.client.
 */
 
+char hostname[255];
 char SERVNAME[100];
 static int MY_PORT;
 
@@ -96,6 +97,9 @@ int main(int cv, char *argv[]) {
 		perror ("Client: cannot open socket");
 		exit (1);
 	}
+
+	hostname[254] = '\0';
+  	gethostname(hostname, 255);
 
 	bzero (&server, sizeof (server));
 	bcopy (host->h_addr, & (server.sin_addr), host->h_length);
@@ -718,7 +722,9 @@ void pidKilledOP(char * pidval, char * appdata, char * timeStr) {
     strcat(str, pidval);
     strcat(str, " (");
     strcat(str, appdata);
-    strcat(str, ") killed after exceeding ");
+    strcat(str, ") on ");
+    strcat(str, hostname);
+    strcat(str, " killed after exceeding ");
     strcat(str, timeStr);
     strcat(str, " seconds.");
     genericOP(str);
@@ -729,7 +735,9 @@ void noProcessOP(char * appdata) {
     char noProcess[150];
     strcpy(noProcess, "Info: No '");
     strcat(noProcess, appdata);
-    strcat(noProcess, "' processes found.");
+    strcat(noProcess, "' processes found on ");
+    strcat(noProcess, hostname);
+    strcat(noProcess, ".");
     genericOP(noProcess);
     return;
 }
