@@ -126,9 +126,7 @@ int getConfig(int filedes) {
 		        //token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
 		        //printf("Parsed the following message: %s\n", token);
 		        if (strcmp(buffer, "EOF") == 0) {
-		        	printf("eof...\n");
 		        	int i;
-		        	printf("COLLECTED DATA:\n");
 		        	for (i = 0; i < counter; i++) {
 		        		printf("Application: %s, for %d seconds\n", appdata[i], timedata[i]);
 		        	}
@@ -136,7 +134,6 @@ int getConfig(int filedes) {
 		      	} else {
 		      		// parse the config data here / first application val is the app, second is the time
 		      		int countval = 0;
-		      		printf("valid statement!\n");
 		      		token = strtok(buffer, " ");
    					/* walk through other tokens */
    					while( token != NULL ) {
