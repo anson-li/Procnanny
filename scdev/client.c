@@ -623,7 +623,7 @@ int monitorProcesses(int filedes) {
         }
         k++;
       }
-      
+      printf("out of while loop?\n");
       if (countProcCompleted == totalProcessCounter) {
         goto parentMonitoring;
       }
