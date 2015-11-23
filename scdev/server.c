@@ -126,6 +126,9 @@ int read_from_client (int filedes)
       token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
       printf("Parsed the following message: %s\n", token);
       if (token != NULL) {
+        if (strncmp(token, "[", 1) == 0 ) { // just save these, not necessary
+          genericOP(token);
+        } 
         if (strncmp(token, "5", 1) == 0 ) { // 5 is the kill command 
           killcount++;
           int subcounter = 0;
