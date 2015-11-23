@@ -317,7 +317,7 @@ int main (int c, char *argv[]) {
 void endProcess() {
   killClients();
   writeEndProcesses();
-  sleep(1);
+  //sleep(1);
   exit(EXIT_SUCCESS);
 }
 
@@ -345,8 +345,10 @@ void killClients() {
 
     retval = select(clientsList[clientCount],&read_fd_set, /*&write_fd_set*/ NULL, NULL, &timedif);
     if (retval) {
-      printf("retval initialised ....");
+      printf("retval initialised ....\n");
       write(clientsList[clientCount], &buffer, sizeof(buffer));
+    } else {
+      printf("retval: %d\n", retval);
     }
     readval = select(clientsList[clientCount],&read_fd_set, NULL, NULL, &timedif);
     if (readval) {
