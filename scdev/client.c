@@ -403,9 +403,10 @@ int monitorProcesses(int filedes) {
     int countvalb = 0;
     int countProcCompleted = 0;
 
+    /*
     if (totalProcessCounter == 0) {
         goto completeProcess;
-    }
+    }*/ 
 
     parentMonitoring:;
     for (k = 0; k < totalProcessCounter; k++ ) {
