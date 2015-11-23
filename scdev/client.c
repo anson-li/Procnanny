@@ -417,7 +417,10 @@ int monitorProcesses(int filedes) {
 
     	FD_ZERO (&read_fd_set);
 		FD_SET (filedes, &read_fd_set);
-
+		// see if the parent has anything to send 
+		/**
+		* FIXME: make this a conditional read once parents read...
+		**/
 		if (select(totalFill, &read_fd_set, NULL, NULL, &timedif)) { 
     		read_from_server(filedes);
     	}

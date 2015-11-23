@@ -319,9 +319,14 @@ void endProcess() {
 }
 
 void killClients() {
-  int i;
+  int i, retval, readval;
   char endMsg[MAXMSG];
   char sigintChar[MAXMSG];
+  fd_set write_fd_set, read_fd_set;
+  struct timeval timedif;
+  timedif.tv_sec = 1;
+  timedif.tv_usec = 0;
+
   genericOP("Killing procnanny clients.");
   for (i = 0; i < clientCount; i++) {
     // send signal
@@ -329,10 +334,23 @@ void killClients() {
     char buffer[MAXMSG];
     memset(&buffer[0], 0, sizeof(buffer));
     sprintf(buffer, "1"); // 1 denotes sigint
-    write(clientsList[clientCount], &buffer, sizeof(buffer));
-    //read_from_client(clientsList[clientCount]);
-    //sprintf(printNum, "Info: Caught SIGINT. Exiting cleanly. %d process(es) killed.", killPID);
+    
+
+    FD_ZERO (&write_fd_set);
+    FD_SET (clientsList[clientCount], &write_fd_set);
+    FD_ZERO (&read_fd_set);
+    FD_SET (clientsList[clientCount], &read_fd_set);
+
+    retval = select(clientsList[clientCount],NULL, &write_fd_set, NULL, &timedif);
+    if (retval) {
+      write(clientsList[clientCount], &buffer, sizeof(buffer));
+    }
+    readval = select(clientsList[clientCount],&read_fd_set, NULL, NULL, &timedif);
+    if (readval) {
+      read_from_client(clientsList[clientCount]);
+    }
   }
+  //sprintf(printNum, "Info: Caught SIGINT. Exiting cleanly. %d process(es) killed.", killPID);
   strcpy(endMsg, "Info: Caught SIGINT. Exiting cleanly. ");
   sprintf(sigintChar, "%d", sigintcount);
   strcat(endMsg, sigintChar);
