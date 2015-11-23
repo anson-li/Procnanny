@@ -322,7 +322,7 @@ void killClients() {
   int i, retval, readval;
   char endMsg[MAXMSG];
   char sigintChar[MAXMSG];
-  fd_set write_fd_set, read_fd_set;
+  fd_set /*write_fd_set*/, read_fd_set;
   struct timeval timedif;
   timedif.tv_sec = 1;
   timedif.tv_usec = 0;
@@ -335,12 +335,12 @@ void killClients() {
     memset(&buffer[0], 0, sizeof(buffer));
     sprintf(buffer, "1"); // 1 denotes sigint
     
-    FD_ZERO (&write_fd_set);
-    FD_SET (clientsList[clientCount], &write_fd_set);
+    //FD_ZERO (&write_fd_set);
+    //FD_SET (clientsList[clientCount], &write_fd_set);
     FD_ZERO (&read_fd_set);
     FD_SET (clientsList[clientCount], &read_fd_set);
-
-    retval = select(clientsList[clientCount],NULL, &write_fd_set, NULL, &timedif);
+    
+    retval = select(clientsList[clientCount],&read_fd_set, /*&write_fd_set*/ NULL, NULL, &timedif);
     if (retval) {
       printf("retval initialised ....");
       write(clientsList[clientCount], &buffer, sizeof(buffer));
