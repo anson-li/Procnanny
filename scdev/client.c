@@ -145,7 +145,7 @@ int getConfig(int filedes) {
       						strcpy(appdata[counter], token);
       						countval++;
       					} else {
-      						printf("TIME: %s\n". token);
+      						printf("TIME: %s\n", token);
       						countval = 0;
       						timedata[counter] = atoi(token);
       					}
