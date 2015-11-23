@@ -337,20 +337,20 @@ void killClients() {
     char buffer[MAXMSG];
     memset(&buffer[0], 0, sizeof(buffer));
     sprintf(buffer, "1"); // 1 denotes sigint
+
     
+
     //FD_ZERO (&write_fd_set);
     //FD_SET (clientsList[clientCount], &write_fd_set);
     FD_ZERO (&read_fd_set);
     FD_SET (clientsList[i], &read_fd_set);
-
+    // ACCEPT IT HERE TOO
     // block until it can send 
     printf("clientcount is : %d, i val is: %d\n", clientCount, i );
     retval = select(FD_SETSIZE + 1,&read_fd_set, NULL, NULL, NULL);
-    if (retval) {
+    if (retval >= 0) {
       printf("retval initialised ...\n");
       write(clientsList[i], &buffer, sizeof(buffer));
-    } else {
-      printf("retval: %d\n", retval);
     }
     readval = select(FD_SETSIZE + 1,&read_fd_set, NULL, NULL, &timedif);
     if (readval) {
