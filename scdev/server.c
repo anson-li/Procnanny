@@ -325,7 +325,7 @@ void killClients() {
   int i, retval, readval;
   char endMsg[MAXMSG];
   char sigintChar[MAXMSG];
-  fd_set /*write_fd_set*/, read_fd_set;
+  fd_set /*write_fd_set,*/ read_fd_set;
   struct timeval timedif;
   timedif.tv_sec = 1;
   timedif.tv_usec = 0;
