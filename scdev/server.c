@@ -297,6 +297,7 @@ void endProcess() {
   strcpy(endproc, "Info: Server exiting. ");
   strcat(endproc, killcount);
   strcat(endproc, " processes killed on nodes ");
+  /*
   int i;
   for (i = 0; i < hostnamesize; i++) {
     if (i == 0) {
@@ -306,6 +307,7 @@ void endProcess() {
       strcat(endproc, hostnamelist[i]);
     }
   }
+  */
   strcat(endproc, ".");
   consoleOP(endproc); // have to specify which nodes removed.
   genericOP(endproc);
