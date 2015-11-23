@@ -196,7 +196,7 @@ int main (int c, char *argv[]) {
           //memset(&buffer[0], 0, sizeof(buffer));
           printf("init send buffer");
           strcpy(buffer, "send data test");
-          write(i, &buffer, sizeof(buffer));
+          write(sock, &buffer, sizeof(buffer));
           printf("complete send");
           /*
           char buffer[MAXMSG];
