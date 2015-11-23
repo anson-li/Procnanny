@@ -106,7 +106,7 @@ int read_from_client (int filedes)
       token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
       printf("Parsed the following message: %s\n", token);
       if (token != NULL) {
-        if (strcmp(token[0], "[") == 0 ) { // to directly write to logfile
+        if (strncmp(token, "[", 1) == 0 ) { // to directly write to logfile
           genOPnotime(token);
         }
         if (strcmp(token, "1") == 0) { // if entered input is 1
