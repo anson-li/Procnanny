@@ -735,7 +735,7 @@ void sigintProcnannies() {
         char printNum[150];
         sprintf(printNum, "2 %d", killPID);
         consoleOP(printNum);
-        genericOP(printNum);
+        genericOPnotime(printNum);
         return;
 }
 
