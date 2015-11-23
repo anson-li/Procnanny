@@ -314,6 +314,7 @@ int main (int c, char *argv[]) {
 void endProcess() {
   killClients();
   writeEndProcesses();
+  sleep(1);
   exit(EXIT_SUCCESS);
 }
 
