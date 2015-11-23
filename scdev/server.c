@@ -196,10 +196,10 @@ int main (int c, char *argv[]) {
           FD_SET (new, &active_fd_set);
           
           //memset(&buffer[0], 0, sizeof(buffer));
-          printf("init send buffer");
+          printf("init send buffer\n");
           strcpy(buffer, "send data test");
           write(new, &buffer, sizeof(buffer));
-          printf("complete send");
+          printf("complete send\n");
           /*
           char buffer[MAXMSG];
           for (i = 0; i < counter; i++) {
