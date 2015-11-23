@@ -202,7 +202,6 @@ int main (int c, char *argv[]) {
           write(new, &buffer, sizeof(buffer));
           printf("complete send\n");
           */
-          char buffer[MAXMSG];
           for (i = 0; i < counter; i++) {
             if (appdata[i][0] != '\0') {
               memset(&buffer[0], 0, sizeof(buffer));
