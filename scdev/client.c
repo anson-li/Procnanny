@@ -423,7 +423,7 @@ int monitorProcesses(int filedes) {
 		**/
 		timedif.tv_sec = 1;
     	timedif.tv_usec = 0;
-		if (select(1, &read_fd_set, NULL, NULL, &timedif)) { 
+		if (select(FD_SETSIZE + 1, &read_fd_set, NULL, NULL, &timedif)) { 
     		read_from_server(filedes);
     	} else {
     		printf("failed to properly read from server.\n");
