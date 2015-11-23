@@ -210,7 +210,7 @@ int main (int c, char *argv[]) {
               printf("BUFFER: %s\n", buffer);
               write(new, &buffer, sizeof(buffer));
             }
-          }*/
+          }
           // write config details
           //write(filedes, buffer, sizeof(buffer) + 1); 
         } else {
