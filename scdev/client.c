@@ -28,6 +28,8 @@ int counter;
 #define MAXMSG 512
 
 int getConfig();
+void setServerDetails(char* servname, char* port);
+
 
 int main(int cv, char *argv[]) {
 	struct	sockaddr_in	server;
