@@ -330,7 +330,7 @@ void killClients() {
   timedif.tv_sec = 1;
   timedif.tv_usec = 0;
 
-  genericOP("Killing procnanny clients.");
+  consoleOP("Killing procnanny clients.");
   for (i = 0; i < clientCount; i++) {
     // send signal
     // read response
