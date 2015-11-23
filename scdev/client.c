@@ -30,7 +30,18 @@ int counter;
 int getConfig();
 void setServerDetails(char* servname, char* port);
 int monitorProcesses();
-
+void genericOP(char* data);
+void consoleOP(char* data);
+void killProcessOP(int signum);
+void pidKilledOP(char * pidval, char * appdata, char * timeStr);
+void noProcessOP(char * appdata);
+void initProcOP(char * appdata, char * pidval );
+void deleteProcnannies();
+void sigintProcnannies();
+void getParentPID();
+void initialisationOP();
+void write_to_pipe(int file, char * data);
+void read_from_pipe(int file);
 
 int main(int cv, char *argv[]) {
 	struct	sockaddr_in	server;
@@ -579,4 +590,143 @@ int monitorProcesses() {
     
     return 0;
 }
+
+void write_to_pipe (int file, char* data)
+{
+  write(file, data, strlen(data));
+}
+
+void read_from_pipe (int file)
+{
+  FILE *stream;
+  int c;
+  stream = fdopen (file, "r");
+  while ((c = fgetc (stream)) != EOF)
+    putchar (c);
+  fclose (stream);
+}
+
+void deleteProcnannies() {
+        FILE * pnfile;
+        pid_t curpid;
+        curpid = getpid();
+        if ( ( pnfile = popen("pgrep procnanny", "r" ) ) == NULL ) {
+                perror( "popen" );
+        } else { 
+            pid_t pidpn;
+            char pidbuffer[30];
+            while (fgets(pidbuffer, 150, pnfile) != NULL) {
+                pidpn = (pid_t) strtol(pidbuffer, NULL, 10);
+                // if pid is not the one you currently opened...
+                if (pidpn != curpid) {
+                    kill(pidpn, SIGKILL);
+                }
+            }
+        }
+        fclose(pnfile); 
+        return;
+}
+
+void sigintProcnannies() {
+        FILE * pnfile;
+        pid_t curpid;
+        int killPID = 0;
+        curpid = getpid();
+        if ( ( pnfile = popen("pgrep procnanny", "r" ) ) == NULL ) {
+                perror( "popen" );
+        } else { 
+            pid_t pidpn;
+            char pidbuffer[30];
+            while (fgets(pidbuffer, 150, pnfile) != NULL) {
+                pidpn = (pid_t) strtol(pidbuffer, NULL, 10);
+                // if pid is not the one you currently opened...
+                if (pidpn != curpid) {
+                    int sigk = kill(pidpn, SIGINT);
+                    if (sigk == 0) {
+                        killPID++;
+                    }
+                }
+            }
+        }
+        fclose(pnfile); 
+        char printNum[150];
+        sprintf(printNum, "Info: Caught SIGINT. Exiting cleanly. %d process(es) killed.", killPID);
+        consoleOP(printNum);
+        genericOP(printNum);
+        return;
+}
+
+void genericOP(char* data) {
+        const char* s = getenv("PROCNANNYLOGS");
+        FILE* file= fopen (s, "a" );
+        time_t ltime;
+        time(&ltime); 
+        fprintf(file, "[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
+        fclose(file);
+        return;
+}
+
+void consoleOP(char * data) {
+    time_t ltime;
+    time(&ltime); 
+    printf("[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
+    return;
+}
+
+void killProcessOP(int signum) {
+    char strresult[250];    
+    char strTPC[30];
+    sprintf(strTPC, "%d", signum);
+    strcpy(strresult, "Info: Exiting. ");
+    strcat(strresult, strTPC);
+    strcat(strresult, " process(es) killed.");
+    genericOP(strresult);
+    return;
+}
+
+void pidKilledOP(char * pidval, char * appdata, char * timeStr) {
+    char str[1000];
+    strcpy(str, "Action: PID ");
+    strcat(str, pidval);
+    strcat(str, " (");
+    strcat(str, appdata);
+    strcat(str, ") killed after exceeding ");
+    strcat(str, timeStr);
+    strcat(str, " seconds.");
+    genericOP(str);
+    return;
+}
+
+void noProcessOP(char * appdata) {
+    char noProcess[150];
+    strcpy(noProcess, "Info: No '");
+    strcat(noProcess, appdata);
+    strcat(noProcess, "' processes found.");
+    genericOP(noProcess);
+    return;
+}
+
+void getParentPID() {
+    pid_t parent_pid = getpid();
+    parentPID = getpid();
+    printf("Host PID: %d\n", parent_pid);
+    return;
+}
+
+void initProcOP(char * appdata, char * pidval ) {
+    char str[1000];
+    strcpy(str, "Info: Initializing monitoring of process '");
+    strcat(str, appdata);
+    strcat(str, "' (PID ");
+    strcat(str, pidval);
+    strcat(str, ").");
+    genericOP(str); 
+    return;
+}
+
+void initialisationOP() {
+    char strPID[1000];
+    sprintf(strPID, "Info: Parent process is PID  %d.", parentPID);
+    consoleOP(strPID);
+    return;
 }
