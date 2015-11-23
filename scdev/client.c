@@ -127,7 +127,7 @@ int getConfig(int filedes) {
    					/* walk through other tokens */
    					while( token != NULL ) {
       					printf( " %s\n", token );
-      					token = strtok(NULL, s);
+      					token = strtok(NULL, " ");
    					}
 		      	}
 			}
