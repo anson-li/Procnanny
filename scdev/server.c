@@ -123,110 +123,110 @@ int read_from_client (int filedes)
   int nbytes;
 
   nbytes = read (filedes, buffer, MAXMSG);
-  if (nbytes < 0)
-    {
+  if (nbytes < 0) {
       /* Read error. */
       perror ("read");
       /**
       * FIXME: if 'connection reset by peer', it means that the station is terminated -- but DON'T EXIT! 
       */
       //exit (EXIT_FAILURE);
-    }
-  else if (nbytes == 0)
+  }
+  else if (nbytes == 0) {
     /* End-of-file. */
     return -1;
-  else
-    {
-      /* Data read. */
-      memset(&resultString[0], 0, sizeof(resultString));
-      fprintf (stderr, "Server: got message: '%s'\n", buffer);
-      token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
-      printf("Parsed the following message: %s\n", token);
-      if (token != NULL) {
-        if (strncmp(token, "[", 1) == 0 ) { // just save these, not necessary
-          genOPnotime(token);
-        } 
-        if (strncmp(token, "2", 1) == 0 ) { // 2 is the sigint command
+  }
+  else {
+    /* Data read. */
+    memset(&resultString[0], 0, sizeof(resultString));
+    fprintf (stderr, "Server: got message: '%s'\n", buffer);
+    token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
+    printf("Parsed the following message: %s\n", token);
+    if (token != NULL) {
+      if (strncmp(token, "[", 1) == 0 ) { // just save these, not necessary
+        genOPnotime(token);
+      } 
+      if (strncmp(token, "2", 1) == 0 ) { // 2 is the sigint command
 
-          int procKilled = 0;
-          int subcounter = 0;
-          subtoken = strtok(token, " ");
-          while( subtoken != NULL ) {
-            if (subcounter == 1) {
-              printf("Total process killed here: %s\n", subtoken);
-              procKilled = procKilled + atoi(subtoken);
-            }
-            subtoken = strtok(NULL, " ");
-            subcounter++;
+        int procKilled = 0;
+        int subcounter = 0;
+        subtoken = strtok(token, " ");
+        while( subtoken != NULL ) {
+          if (subcounter == 1) {
+            printf("Total process killed here: %s\n", subtoken);
+            procKilled = procKilled + atoi(subtoken);
           }
-          sigintcount = sigintcount + procKilled;
-          return 0;
+          subtoken = strtok(NULL, " ");
+          subcounter++;
+        }
+        sigintcount = sigintcount + procKilled;
+        return 0;
 
-        } 
-        if (strncmp(token, "5", 1) == 0 ) { // 5 is the kill command 
-          killcount++;
-          int subcounter = 0;
+      } 
+      if (strncmp(token, "5", 1) == 0 ) { // 5 is the kill command 
+        killcount++;
+        int subcounter = 0;
 
-          char pidval[250];
-          char appdata[250];
-          char timeStr[250];
-          char hostname[250];
+        char pidval[250];
+        char appdata[250];
+        char timeStr[250];
+        char hostname[250];
 
-          subtoken = strtok(token, " ");
-          while( subtoken != NULL ) {
-            if (subcounter == 1) {
-              strcpy(pidval, subtoken);
-            } else if (subcounter == 2) {
-              strcpy(appdata, subtoken);
-            } else if (subcounter == 3) {
-              strcpy(hostname, subtoken);
-            } else if (subcounter == 4) {
-              strcpy(timeStr, subtoken);
-            }
-            subtoken = strtok(NULL, " ");
-            subcounter++;
+        subtoken = strtok(token, " ");
+        while( subtoken != NULL ) {
+          if (subcounter == 1) {
+            strcpy(pidval, subtoken);
+          } else if (subcounter == 2) {
+            strcpy(appdata, subtoken);
+          } else if (subcounter == 3) {
+            strcpy(hostname, subtoken);
+          } else if (subcounter == 4) {
+            strcpy(timeStr, subtoken);
           }
-          int iterh;
-          int iterflag = 0;
-          for (iterh = 0; iterh < hostnamesize; iterh++) {
-            if (strcmp(hostname, hostnamelist[iterh]) == 0) {
-              iterflag = 1;
-            } 
-          }
-          if (iterflag == 0) {
-            strcpy(hostnamelist[hostnamesize], hostname);
-          }
-          pidKilledOP(pidval, appdata, hostname, timeStr);
+          subtoken = strtok(NULL, " ");
+          subcounter++;
         }
-        if (strcmp(token, "1") == 0) { // if entered input is 1
-          printf("1 called - initProcNanny calls!\n");
-          strcpy(resultString, "#init Procnanny\n");
-          //write(filedes, resultString, (strlen(resultString)+1));
+        int iterh;
+        int iterflag = 0;
+        for (iterh = 0; iterh < hostnamesize; iterh++) {
+          if (strcmp(hostname, hostnamelist[iterh]) == 0) {
+            iterflag = 1;
+          } 
         }
-        else if (strcmp(token, "2") == 0) { // if entered input is 1
-          printf("2 called - sigint ProcNanny calls!\n");
-          strcpy(resultString, "#sigint Procnanny\n");
-          //write(filedes, resultString, (strlen(resultString)+1));
+        if (iterflag == 0) {
+          strcpy(hostnamelist[hostnamesize], hostname);
         }
-        else if (strcmp(token, "3") == 0) { // if entered input is 1
-          printf("3 called - sighup ProcNanny calls!\n");
-          strcpy(resultString, "#sighup Procnanny\n");
-          //write(filedes, resultString, (strlen(resultString)+1));
-        } else {
-          strcpy(resultString, "#nothing of use\n");
-        }
+        pidKilledOP(pidval, appdata, hostname, timeStr);
       }
-      memset(&buffer[0], 0, sizeof(buffer));
-      strcpy(buffer, resultString);
-      write(filedes, buffer, sizeof(buffer) + 1); 
-      return 0;
+      if (strcmp(token, "1") == 0) { // if entered input is 1
+        printf("1 called - initProcNanny calls!\n");
+        strcpy(resultString, "#init Procnanny\n");
+        //write(filedes, resultString, (strlen(resultString)+1));
+      }
+      else if (strcmp(token, "2") == 0) { // if entered input is 1
+        printf("2 called - sigint ProcNanny calls!\n");
+        strcpy(resultString, "#sigint Procnanny\n");
+        //write(filedes, resultString, (strlen(resultString)+1));
+      }
+      else if (strcmp(token, "3") == 0) { // if entered input is 1
+        printf("3 called - sighup ProcNanny calls!\n");
+        strcpy(resultString, "#sighup Procnanny\n");
+        //write(filedes, resultString, (strlen(resultString)+1));
+      } else {
+        strcpy(resultString, "#nothing of use\n");
+      }
     }
+    memset(&buffer[0], 0, sizeof(buffer));
+    strcpy(buffer, resultString);
+    write(filedes, buffer, sizeof(buffer) + 1); 
+    return 0;
+  }
+  return 0;
 }
 
 int main (int c, char *argv[]) {
   extern int make_socket (uint16_t port);
   int sock;
-  fd_set active_fd_set, read_fd_set, write_fd_set;
+  fd_set active_fd_set, read_fd_set/*, write_fd_set*/;
   int i;
   struct sockaddr_in clientname;
   size_t size;
@@ -413,9 +413,9 @@ void killClients() {
   char endMsg[MAXMSG];
   char sigintChar[MAXMSG];
   fd_set /*write_fd_set,*/ read_fd_set;
-  struct timeval timedif;
-  timedif.tv_sec = 2;
-  timedif.tv_usec = 0;
+  //struct timeval timedif;
+  //timedif.tv_sec = 2;
+  //timedif.tv_usec = 0;
 
   consoleOP("Killing procnanny clients.");
   for (i = 0; i < clientCount; i++) {
