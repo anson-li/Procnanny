@@ -679,7 +679,7 @@ void read_from_server(int filedes) {
 	  			  	printf("subtoken = %s\n", subtoken);
 	  			  	subsubtoken = strtok(subtoken, " ");
 	  			  	while (subsubtoken != NULL) {
-		  			  	if (strcmp(subtoken, "66") != 0) {
+		  			  	if (strcmp(subtoken, "EOF") != 0) {
 		  			  		printf("SUBSUBTOKEN: %s\n", subsubtoken);
 		  			  	}
 		  			  	else {
