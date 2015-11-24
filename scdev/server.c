@@ -143,7 +143,7 @@ int read_from_client (int filedes)
       printf("Parsed the following message: %s\n", token);
       if (token != NULL) {
         if (strncmp(token, "[", 1) == 0 ) { // just save these, not necessary
-          genericOP(token);
+          genOPnotime(token);
         } 
         if (strncmp(token, "2", 1) == 0 ) { // 2 is the sigint command
 
