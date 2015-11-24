@@ -324,6 +324,7 @@ int main (int c, char *argv[]) {
 
 void sighupProcess() {
   //reread process
+  printf("reached sighup...\n");
   readProcnanny(filepathmain);
   sendNewData();
   SHFLAG = 0;
