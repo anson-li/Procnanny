@@ -262,7 +262,7 @@ int monitorProcesses(int filedes) {
 
                         childMonitoring:;
 
-                      int count = 0;
+                      	int count = 0;
                         char buff[1000];
                         bzero(buff, 1000);
                     	char byte = 0;
@@ -299,7 +299,7 @@ int monitorProcesses(int filedes) {
                     }
                 }
                 // inform busy ...
-                            sleepLeft = sleepLeft - 5;
+                sleepLeft = sleepLeft - 5;
                         }
 
                         pidint = (pid_t) strtol(pidval, NULL, 10);
