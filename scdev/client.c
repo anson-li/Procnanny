@@ -676,8 +676,8 @@ void read_from_server(int filedes) {
 	  			while(1) {
 	  				read (filedes, buffer, MAXMSG);
 	  			  	subtoken = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
+	  			  	printf("subtoken = %s\n", subtoken);
 	  			  	subsubtoken = strtok(subtoken, " ");
-	  			  	printf("sst = %s\n", subsubtoken);
 	  			  	while (subsubtoken != NULL) {
 		  			  	if (strcmp(subtoken, "4") != 0) {
 		  			  		printf("SUBSUBTOKEN: %s\n", subsubtoken);
