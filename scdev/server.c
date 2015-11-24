@@ -262,7 +262,8 @@ int main (int c, char *argv[]) {
     write_fd_set = active_fd_set;
     if (select (FD_SETSIZE + 1, &read_fd_set, /*&write_fd_set*/ NULL, NULL, NULL) < 0) {
       perror ("select");
-      exit (EXIT_FAILURE);
+      //exit (EXIT_FAILURE);
+      continue;
     }
     printf("Connection made!\n");
     /* Service all the sockets with input pending. */
