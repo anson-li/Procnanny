@@ -662,6 +662,8 @@ void read_from_server(int filedes) {
   	} else {
   		// parser here
   		char * token;
+  		char * subtoken;
+  		char * subsubtoken;
   		token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
   		printf("READ: %s", token);
   		if (token != NULL) {
@@ -669,6 +671,22 @@ void read_from_server(int filedes) {
 	  			sigintProcnannies();
 	      		killProcessOP(signum);
 	    		SIFLAG = 1;
+	  		}
+	  		if (strcmp(token, "3") == 0) { //simulate the sighup
+	  			while(1) {
+	  				read (filedes, buffer, MAXMSG);
+	  			  	subtoken = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
+	  			  	subsubtoken = strtok(subtoken, " ");
+	  			  	while (subsubtoken != NULL) {
+		  			  	if (strcmp(subtoken, "4") != 0) {
+		  			  		printf("SUBSUBTOKEN: %s\n", subsubtoken);
+		  			  	}
+		  			  	else {
+		  			  		return;
+		  			  	}
+		  			}
+	  				// wait till it reads '4' then end.
+	  			} 
 	  		}
 	  	}
   	}

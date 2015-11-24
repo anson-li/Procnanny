@@ -375,7 +375,27 @@ void readProcnanny(char * filepath) {
 }
 
 void sendNewData() {
-
+  char buffer[MAXMSG];
+  int i, j;
+  fd_set read_fd_set;
+  for (i = 0; i < clientCount; i++) {
+    FD_ZERO (&read_fd_set);
+    FD_SET (clientsList[i], &read_fd_set);
+    memset(&buffer[0], 0, sizeof(buffer));
+    sprintf(buffer, "3");
+    write(clientsList[i], &buffer, sizeof(buffer));
+    for (j = 0; j < counter; j++) {
+      if (appdata[j][0] != '\0') {
+        memset(&buffer[0], 0, sizeof(buffer));
+        sprintf(buffer, "%s %d", appdata[j], timedata[j]);
+        printf("BUFFER: %s\n", buffer);
+        write(clientsList[i], &buffer, sizeof(buffer));
+      }
+    }
+    memset(&buffer[0], 0, sizeof(buffer));
+    sprintf(buffer, "4");
+    write(clientsList[i], &buffer, sizeof(buffer));
+  }
 }
 
 void endProcess() {
