@@ -466,6 +466,7 @@ int monitorProcesses(int filedes) {
                 for (n = 0; n < countread; n++) {
                     // reads sample text: testa 120
                     validChild = 0;
+                    int countval = 0;
                     counter = totalProcessCounter + 1;
                     //strcpy(test2[counter - 1], strtok(line, "\n"));
                     //pch = strtok (test2[counter-1]," ,.-");
