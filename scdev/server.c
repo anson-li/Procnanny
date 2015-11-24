@@ -50,7 +50,7 @@ char appdata[280][1000];
 char test[280][1000]; //array of strings //length is 10! figure out how to realloc!
 
 int timedata[280];
-int counter;
+int counter = 0;
 
 void genericOP(char* data);
 void consoleOP(char* data);
@@ -58,9 +58,13 @@ void setupProcnanny(char * filepath);
 void endProcess();
 void writeEndProcesses();
 void killClients();
+void sighupProcess();
 void pidKilledOP(char * pidval, char * appdata, char * hostname, char * timeStr);
+void readProcnanny(char * filepath);
+void sendNewData();
 
 static void catch_function(int signo) {
+    SIFLAG = 1;
     endProcess();
 }
 
@@ -69,8 +73,8 @@ static void fail_function(int signo) {
 }
 
 static void ignore_function(int signo ) { 
-    SIFLAG = 1;
-    endProcess(); // SIGHUP // HAVE TO REWRITE 
+    SHFLAG = 1;
+    sighupProcess(); // SIGHUP // HAVE TO REWRITE 
 }
 
 int make_socket (uint16_t port)
@@ -317,6 +321,60 @@ int main (int c, char *argv[]) {
   } 
 }
 
+void sighupProcess() {
+  //reread process
+  readProcnanny();
+  sendNewData();
+  SHFLAG = 0;
+}
+
+void readProcnanny(char * filepath) {
+  const char* s = getenv("PROCNANNYLOGS"); 
+  FILE* logfile = fopen(s, "w");
+  fclose(logfile);   
+
+  FILE* file = fopen ( filepath, "r" );
+
+  if (file == NULL) {
+      printf("ERROR: Nanny.config file presented was not found. Program exiting...");
+      exit(EXIT_FAILURE);  
+  }
+
+  char * pch; 
+  int countval = 0;
+  counter = 0;
+  
+  memset(&test[0], 0, sizeof(test));
+  memset(&appdata[0], 0, sizeof(appdata));
+  memset(&timedata[0], 0, sizeof(timedata));
+
+  if (file != NULL) {
+      char line[100];
+      while (fgets(line, sizeof line, file) != NULL) { /* read a line from a file */
+          // reads sample text: testa 120
+          strcpy(test[counter - 1], strtok(line, "\n"));
+          pch = strtok (test[counter-1]," ,.-");
+          while (pch != NULL) {
+              if (countval == 0) {
+                  strcpy(appdata[counter], pch);
+                  countval++;
+              } else if (countval == 1) {
+                  timedata[counter] = atoi(pch);
+                  countval = 0;
+                  break;
+              }
+              pch = strtok (NULL, " ,.-");
+          }
+          counter++;
+      }
+  }
+  fclose(file);
+}
+
+void sendNewData() {
+
+}
+
 void endProcess() {
   killClients();
   writeEndProcesses();
@@ -340,8 +398,6 @@ void killClients() {
     char buffer[MAXMSG];
     memset(&buffer[0], 0, sizeof(buffer));
     sprintf(buffer, "1"); // 1 denotes sigint
-
-    
 
     //FD_ZERO (&write_fd_set);
     //FD_SET (clientsList[clientCount], &write_fd_set);
@@ -408,47 +464,11 @@ void writeEndProcesses() {
 }
 
 void setupProcnanny(char * filepath) {
-  
   deleteProcnannies();
   getParentPID();
   initialisationOP();
-  
-  const char* s = getenv("PROCNANNYLOGS"); 
-  FILE* logfile = fopen(s, "w");
-  fclose(logfile);   
-
-  FILE* file = fopen ( filepath, "r" );
-
-  if (file == NULL) {
-      printf("ERROR: Nanny.config file presented was not found. Program exiting...");
-      exit(EXIT_FAILURE);  
-  }
-
-  counter = 0;
-  char * pch; 
-  int countval = 0;
-
-  if (file != NULL) {
-      char line[100];
-      while (fgets(line, sizeof line, file) != NULL) { /* read a line from a file */
-          // reads sample text: testa 120
-          strcpy(test[counter - 1], strtok(line, "\n"));
-          pch = strtok (test[counter-1]," ,.-");
-          while (pch != NULL) {
-              if (countval == 0) {
-                  strcpy(appdata[counter], pch);
-                  countval++;
-              } else if (countval == 1) {
-                  timedata[counter] = atoi(pch);
-                  countval = 0;
-                  break;
-              }
-              pch = strtok (NULL, " ,.-");
-          }
-          counter++;
-      }
-  }
-  fclose(file);
+  readProcnanny(filepath);
+  return;
 }
 
 void deleteProcnannies() {
