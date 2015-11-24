@@ -430,9 +430,9 @@ void killClients() {
     FD_SET (clientsList[i], &read_fd_set);
     // ACCEPT IT HERE TOO
     // block until it can send 
-    printf("Writing now!\n");
+    //printf("Writing now!\n");
     write(clientsList[i], &buffer, sizeof(buffer));
-    printf("Reading now!\n");
+    //printf("Reading now!\n");
     read_from_client(clientsList[i]);
     /*
     retval = select(FD_SETSIZE + 1,&read_fd_set, NULL, NULL, &timedif);
