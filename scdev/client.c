@@ -675,6 +675,7 @@ void read_from_server(int filedes) {
 	  		if (strcmp(token, "3") == 0) { //simulate the sighup
 	  			while(1) {
 	  				read (filedes, buffer, MAXMSG);
+	  				printf("buffer = %s", buffer);
 	  			  	subtoken = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
 	  			  	printf("subtoken = %s\n", subtoken);
 	  			  	subsubtoken = strtok(subtoken, " ");
