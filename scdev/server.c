@@ -393,7 +393,7 @@ void sendNewData() {
       }
     }
     memset(&buffer[0], 0, sizeof(buffer));
-    sprintf(buffer, "4");
+    sprintf(buffer, "66");
     write(clientsList[i], &buffer, sizeof(buffer));
   }
 }
