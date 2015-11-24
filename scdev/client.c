@@ -488,6 +488,7 @@ int monitorProcesses(int filedes) {
                     //} 
                     if (countval == 1 && validAppData == 0) {
                        	timedata[counter] = timeread[n];
+                       	printf("appdata: %s, timedata: %d", appdata[counter], timedata[counter]);
                         //  this is where you query, because everything is cleared.
                         for (h = 0; h < totalProcessCounter; h++) {
                             //h = h + 1; // sync w child process?
