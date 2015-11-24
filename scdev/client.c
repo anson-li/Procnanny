@@ -462,7 +462,7 @@ int monitorProcesses(int filedes) {
                 //if (file2 != NULL) {
                     //char line [1000];
                     //while (fgets(line, sizeof line, file2) != NULL) { // read a line from a file 
-                int m;
+                int n;
                 for (n = 0; n < countread; n++) {
                     // reads sample text: testa 120
                     validChild = 0;
