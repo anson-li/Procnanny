@@ -36,6 +36,11 @@ int timedata[280];
 int counter;
 int signum = 0;
 
+int timeread[280];
+char appread[280][1000];
+char testread[280][1000];
+int countread = 0;
+
 static int parentPID; 
 static int SHFLAG = 0;
 static int SIFLAG = 0;
@@ -452,131 +457,128 @@ int monitorProcesses(int filedes) {
                 consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
                 genericOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
                 // if there's a new program then search, so search w/ respect to the current appname list
-                /* FIXME: Replace the new read values with the piped values.
-                FILE* file2 = fopen ( argv[1], "r" );
+                //FILE* file2 = fopen ( argv[1], "r" );
 
-                if (file2 != NULL) {
-                    char line [1000];
-                    while (fgets(line, sizeof line, file2) != NULL) { // read a line from a file 
-                        // reads sample text: testa 120
-                        validChild = 0;
-                        counter = totalProcessCounter + 1;
-                        strcpy(test2[counter - 1], strtok(line, "\n"));
-                        pch = strtok (test2[counter-1]," ,.-");
-                        int validAppData = 0;
-                        while (pch != NULL) {
-                            if (countval == 0) {
-                                int m;
-                                for (m = 0; m < totalProcessCounter; m++) {
-                                    validAppData = 0;
-                                    if (strcmp(appdata[m], pch) == 0) {
-                                        validAppData = 1;
-                                    } 
-                                }
-                                if (validAppData == 0) {
-                                    strcpy(appdata[counter], pch);
-                                    countval++;
-                                    pch = strtok (NULL, " ,.-");
-                                }
-                            } 
-                            if (countval == 1 && validAppData == 0) {
-                                timedata[counter] = atoi(pch);
-                                //  this is where you query, because everything is cleared.
-                                for (h = 0; h < totalProcessCounter; h++) {
-                                    //h = h + 1; // sync w child process?
-                                    if (validChild == 0) {
-                                        sprintf(switchProc, "1");
-                                        write_to_pipe(fd[h][PARENT][WRITE], switchProc);
-                                       
-                                    while (SIFLAG == 1 || read(fd[h][CHILD][READ], &byte2, 1) == 1) {
-                                        if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
+                //if (file2 != NULL) {
+                    //char line [1000];
+                    //while (fgets(line, sizeof line, file2) != NULL) { // read a line from a file 
+                int m;
+                for (n = 0; n < countread; n++) {
+                    // reads sample text: testa 120
+                    validChild = 0;
+                    counter = totalProcessCounter + 1;
+                    //strcpy(test2[counter - 1], strtok(line, "\n"));
+                    //pch = strtok (test2[counter-1]," ,.-");
+                    int validAppData = 0;
+                    //while (pch != NULL) {
+                    //if (countval == 0) {
+                    int m;
+                    for (m = 0; m < totalProcessCounter; m++) {
+                        validAppData = 0;
+                        if (strcmp(appdata[m], appread[m]) == 0) {
+                            validAppData = 1;
+                        } 
+                    }
+                    if (validAppData == 0) {
+                        strcpy(appdata[counter], appread[n]);
+                        countval++;
+                        //pch = strtok (NULL, " ,.-");
+                    }
+                    //} 
+                    if (countval == 1 && validAppData == 0) {
+                       	timedata[counter] = timeread[n];
+                        //  this is where you query, because everything is cleared.
+                        for (h = 0; h < totalProcessCounter; h++) {
+                            //h = h + 1; // sync w child process?
+                            if (validChild == 0) {
+                                sprintf(switchProc, "1");
+                                write_to_pipe(fd[h][PARENT][WRITE], switchProc);
+                                   
+                            	while (SIFLAG == 1 || read(fd[h][CHILD][READ], &byte2, 1) == 1) {
+                                    if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
+                                        sigintProcnannies();
+                                    	goto completeProcess;
+                                    }
+                                    if (ioctl(fd[h][CHILD][READ], FIONREAD, &count2) != -1) {
+                                        buff2[0] = byte2;
+                                        if (SIFLAG == 1 || read(fd[h][CHILD][READ], buff2+1, count2) == count2) {
+                                            if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
                                                 sigintProcnannies();
-                                        goto completeProcess;
-                                        }
-                                            if (ioctl(fd[h][CHILD][READ], FIONREAD, &count2) != -1) {
-                                                buff2[0] = byte2;
-                                                if (SIFLAG == 1 || read(fd[h][CHILD][READ], buff2+1, count2) == count2) {
-                                                    if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
-                                                        sigintProcnannies();
-                                                goto completeProcess;
-                                                }
-                                                    int tmpinitval = atoi(buff2);
-                                                    if (tmpinitval == 2) {
-                                                        fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
-                                                    } else if (tmpinitval == 1) {
-                                                        // pass all the variables required here.
-                                                        // the child can: a. pass the variables and simply open a new process to monitor, or
-                                                        // b. reset the process UP THERE and rerun the forked process - which is probably better imo...
-                                                        char idToMonitor[150];
-                                                        sprintf(idToMonitor, "%s %d", appdata[counter], timedata[counter]);
-                                                        write_to_pipe(fd[h][PARENT][WRITE], idToMonitor);
-                                                        validChild = 1;
-                                                        fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
-                                                    } else { // it got a bad value in the pipe... send it back! 
-                                                        write_to_pipe(fd[h][CHILD][READ], buff2);
-                                                        fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
-                                                    }
-                                                }
+                                            	goto completeProcess;
+                                            }
+                                            int tmpinitval = atoi(buff2);
+                                            if (tmpinitval == 2) {
+                                                fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
+                                            } else if (tmpinitval == 1) {
+                                                // pass all the variables required here.
+                                                // the child can: a. pass the variables and simply open a new process to monitor, or
+                                                // b. reset the process UP THERE and rerun the forked process - which is probably better imo...
+                                                char idToMonitor[150];
+                                                sprintf(idToMonitor, "%s %d", appdata[counter], timedata[counter]);
+                                                write_to_pipe(fd[h][PARENT][WRITE], idToMonitor);
+                                                validChild = 1;
+                                                fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
+                                            } else { // it got a bad value in the pipe... send it back! 
+                                                write_to_pipe(fd[h][CHILD][READ], buff2);
+                                                fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
                                             }
                                         }
-                                        fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
                                     }
                                 }
+                                fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
+                            }
+                        }
+                        if (validChild == 0) {
+                            // FORK PROCESS HERE @ THIS POINT. HAVE TO FORK...?
+                            // set the i value (counter val) as the one you're using
+                            // fork here; the child is redirected to the child process UP THERE
+                            // the parent is just going to pass and do nothing i guess.
+                            char grepip[1000];
+                            strcpy(grepip, "pgrep ");
+                            strcat(grepip, appdata[counter]);
+                            if ( ( f[counter] = popen( grepip, "r" ) ) == NULL ) {
+                                perror( "popen" );
+                            } else {
+                                char pidval[150];
+                                bzero(pidval, 150);
 
-                                if (validChild == 0) {
-                                    // FORK PROCESS HERE @ THIS POINT. HAVE TO FORK...?
-                                    // set the i value (counter val) as the one you're using
-                                    // fork here; the child is redirected to the child process UP THERE
-                                    // the parent is just going to pass and do nothing i guess.
-                                    char grepip[1000];
-                                    strcpy(grepip, "pgrep ");
-                                    strcat(grepip, appdata[counter]);
-                                    if ( ( f[counter] = popen( grepip, "r" ) ) == NULL ) {
-                                        perror( "popen" );
-                                    } else {
-                                        char pidval[150];
-                                        bzero(pidval, 150);
+                                if (pipe(fd[counter][PARENT]) < 0) {
+                                    exit(EXIT_FAILURE); 
+                                }
+                                if (pipe(fd[counter][CHILD]) < 0) {
+                                    exit(EXIT_FAILURE); 
+                                }
+                                
+                                fcntl(fd[counter][CHILD][READ], F_SETFL, O_NONBLOCK);
 
-                                        if (pipe(fd[counter][PARENT]) < 0) {
-                                            exit(EXIT_FAILURE); 
-                                        }
-                                        if (pipe(fd[counter][CHILD]) < 0) {
-                                            exit(EXIT_FAILURE); 
-                                        }
-                                        
-                                        fcntl(fd[counter][CHILD][READ], F_SETFL, O_NONBLOCK);
+                                while (fgets(pidval, 150, f[counter]) != NULL) {
+                                    pid = fork();
+                                    if (pid < 0) { // error process
+                                        fprintf(stderr, "can't fork, error %d\n", errno);
+                                        exit(EXIT_FAILURE);
 
-                                        while (fgets(pidval, 150, f[counter]) != NULL) {
-                                            pid = fork();
-                                            if (pid < 0) { // error process
-                                                fprintf(stderr, "can't fork, error %d\n", errno);
-                                                exit(EXIT_FAILURE);
+                                    } else if (pid > 0) { // parent process
+                                        totalProcessCounter = totalProcessCounter + 1;
 
-                                            } else if (pid > 0) { // parent process
-                                                totalProcessCounter = totalProcessCounter + 1;
+                                    } else if (pid == 0 ) { // child process
 
-                                            } else if (pid == 0 ) { // child process
+                                        signal(SIGINT, fail_function);
 
-                                                signal(SIGINT, fail_function);
+                                        strcpy(appProcessed, appdata[counter]);
+                                        timeProcessed = timedata[counter];
 
-                                                strcpy(appProcessed, appdata[counter]);
-                                                timeProcessed = timedata[counter];
-
-                                                goto childMonitoring;
-
-                                            }
-                                        }
+                                        goto childMonitoring;
                                     }
                                 }
                             }
-                            countval = 0;
-                            break;
                         }
-                        counter++;
+                    	//countval = 0;
+                    	//break;
                     }
+                    counter++;
                 }
-                fclose(file2);
-                */
+                //}
+                //fclose(file2);
                 SHFLAG = 0;
                 goto parentMonitoring;
             } 
@@ -673,18 +675,30 @@ void read_from_server(int filedes) {
 	    		SIFLAG = 1;
 	  		}
 	  		if (strcmp(token, "3") == 0) { //simulate the sighup
+	  			memset(&testread[0], 0, sizeof(testread));
+				memset(&appread[0], 0, sizeof(appread));
+				memset(&timeread[0], 0, sizeof(timeread));
+				countread = 0;
 	  			while(1) {
+
+					int countval = 0;
 	  				read (filedes, buffer, MAXMSG);
-	  				printf("buffer = %s", buffer);
 	  			  	subtoken = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
-	  			  	printf("subtoken = %s\n", subtoken);
 	  			  	subsubtoken = strtok(subtoken, " ");
 	  			  	while (subsubtoken != NULL) {
 		  			  	if (strcmp(subtoken, "EOF") != 0) {
 		  			  		printf("SUBSUBTOKEN: %s\n", subsubtoken);
+		  			  		if (countval == 0) {
+		  			  			strcpy(appread[countread], subsubtoken);
+		  			  			countval++;
+		  			  		} else {
+		  			  			timeread[countread] = atoi(subsubtoken);
+		  			  			countval = 0;
+		  			  			countread++;
+		  			  		}
 		  			  	}
 		  			  	else {
-		  			  		printf("66isreached\n");
+		  			  		printf("Parsing completed; returning.\n");
 		  			  		SHFLAG = 1;
 		  			  		return;
 		  			  	}
