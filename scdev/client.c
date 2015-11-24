@@ -684,6 +684,7 @@ void read_from_server(int filedes) {
 		  			  	else {
 		  			  		return;
 		  			  	}
+		  			  	subsubtoken = strtok(NULL, " ");
 		  			}
 	  				// wait till it reads '4' then end.
 	  			} 
