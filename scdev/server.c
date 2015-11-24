@@ -36,6 +36,7 @@ int clientsList[32];
 
 static int finalpval = 0;
 char hostname[255];
+char filepathmain[255];
 char hostnamelist[32][255];
 int hostnamesize = 0;
 
@@ -229,10 +230,10 @@ int main (int c, char *argv[]) {
   struct sockaddr_in clientname;
   size_t size;
 
-
   signal(SIGHUP, ignore_function);
   signal(SIGINT, catch_function);
   setupProcnanny(argv[1]);
+  strcpy(filepathmain, argv[1]);
 
   /* Create the socket and set it up to accept connections. */
   sock = make_socket (PORT);
@@ -323,7 +324,7 @@ int main (int c, char *argv[]) {
 
 void sighupProcess() {
   //reread process
-  readProcnanny();
+  readProcnanny(filepathmain);
   sendNewData();
   SHFLAG = 0;
 }
@@ -343,7 +344,7 @@ void readProcnanny(char * filepath) {
   char * pch; 
   int countval = 0;
   counter = 0;
-  
+
   memset(&test[0], 0, sizeof(test));
   memset(&appdata[0], 0, sizeof(appdata));
   memset(&timedata[0], 0, sizeof(timedata));
