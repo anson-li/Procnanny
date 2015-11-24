@@ -535,6 +535,7 @@ void initialisationOP() {
 }
 
 void printServerInfo(int curpid, char hostname[255], int finalpval) {
+    printf("debugggg///\n");
     const char* s = getenv("PROCNANNYSERVERINFO");
     FILE* logfile = fopen(s, "w");
     fprintf(logfile, "NODE %s PID %d PORT %d", hostname, curpid, finalpval);
