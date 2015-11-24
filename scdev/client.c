@@ -682,6 +682,8 @@ void read_from_server(int filedes) {
 		  			  		printf("SUBSUBTOKEN: %s\n", subsubtoken);
 		  			  	}
 		  			  	else {
+		  			  		printf("4isreached\n");
+		  			  		SHFLAG = 1;
 		  			  		return;
 		  			  	}
 		  			  	subsubtoken = strtok(NULL, " ");
