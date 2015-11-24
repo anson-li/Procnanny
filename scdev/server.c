@@ -54,6 +54,7 @@ int timedata[280];
 int counter = 0;
 
 void genericOP(char* data);
+void genOPnotime(char* data);
 void consoleOP(char* data);
 void setupProcnanny(char * filepath);
 void endProcess();
@@ -63,14 +64,14 @@ void sighupProcess();
 void pidKilledOP(char * pidval, char * appdata, char * hostname, char * timeStr);
 void readProcnanny(char * filepath);
 void sendNewData();
+void getParentPID();
+void initialisationOP();
+void deleteProcnannies();
+
 
 static void catch_function(int signo) {
     SIFLAG = 1;
     endProcess();
-}
-
-static void fail_function(int signo) {
-    exit(EXIT_FAILURE);
 }
 
 static void ignore_function(int signo ) { 
@@ -408,7 +409,7 @@ void endProcess() {
 }
 
 void killClients() {
-  int i, retval, readval;
+  int i;
   char endMsg[MAXMSG];
   char sigintChar[MAXMSG];
   fd_set /*write_fd_set,*/ read_fd_set;
