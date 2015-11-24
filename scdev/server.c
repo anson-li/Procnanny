@@ -397,6 +397,7 @@ void sendNewData() {
     printf("BUFFER: %s\n", buffer);
     write(clientsList[i], &buffer, sizeof(buffer));
   }
+  sleep(1);
 }
 
 void endProcess() {
