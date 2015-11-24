@@ -67,6 +67,7 @@ void sendNewData();
 void getParentPID();
 void initialisationOP();
 void deleteProcnannies();
+void printServerInfo(int curpid, char hostname[255], int finalpval);
 
 
 static void catch_function(int signo) {
@@ -255,6 +256,7 @@ int main (int c, char *argv[]) {
 
   char infolog[100];
   sprintf(infolog, "Procnanny server: PID %d on node %s, port %d", curpid, hostname, finalpval);
+  printServerInfo(curpid, hostname, finalpval);
   consoleOP(infolog);
 
   while (1) {
@@ -530,6 +532,13 @@ void initialisationOP() {
     sprintf(strPID, "Info: Parent process is PID  %d.", parentPID);
     consoleOP(strPID);
     return;
+}
+
+void printServerInfo(int curpid, char hostname[255], int finalpval) {
+    const char* s = getenv("PROCNANNYSERVERINFO");
+    FILE* logfile = fopen(s, "w");
+    fprintf(logfile, "NODE %s PID %d PORT %d", hostname, curpid, finalpval);
+    fclose(logfile); 
 }
 
 void genericOP(char* data) {
