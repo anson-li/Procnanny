@@ -285,7 +285,7 @@ int main (int c, char *argv[]) {
           }
 
           fprintf (stderr,
-                   "Server: connect from host %d, port %hs.\n",
+                   "Server: connect from host %d, port %s.\n",
                    inet_ntoa (clientname.sin_addr),
                    ntohs (clientname.sin_port));
           FD_SET (clientsList[clientCount], &active_fd_set);
