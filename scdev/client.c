@@ -306,7 +306,7 @@ int monitorProcesses(int filedes) {
                     sprintf(timeStr, "%d", timeProcessed);
                     char prntChild[150];
                     printf("killpid: %d\n", pidint);
-                    printf("KILLING THE PROCESS\n")
+                    printf("KILLING THE PROCESS\n");
                     int killresult = kill(pidint, SIGKILL);
                     if (killresult == 0) {
                             //printf("You killed the process (PID: %d) (Application: %s)\n", pidint, test[i] );
