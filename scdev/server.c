@@ -196,8 +196,10 @@ int read_from_client (int filedes)
         }
         if (iterflag == 0) {
           strcpy(hostnamelist[hostnamesize], hostname);
-          printf("hostnamelist added: %s", hostnamelist[hostnamesize]);
+          printf("hostnamelist added: %s\n", hostnamelist[hostnamesize]);
           hostnamesize++;
+        } else {
+          printf("itersize =/= 0...\n");
         }
         pidKilledOP(pidval, appdata, hostname, timeStr);
       }
