@@ -326,6 +326,7 @@ int monitorProcesses(int filedes) {
                     if (killresult == 0) {
                             //printf("You killed the process (PID: %d) (Application: %s)\n", pidint, test[i] );
                         pidKilledOP(pidval, appProcessed, timeStr);
+                        printf("pidkilled");
                         sprintf(prntChild, "1 %s", appProcessed);
                     } else if (killresult == -1) {
                             //printf("ERROR: Process already killed (PID: %d) (Application: %s)\n", pidint, test[i] );
@@ -741,9 +742,9 @@ void read_from_server(int filedes) {
 
 void write_to_pipe (int file, char* data)
 {
-    //if (file != 0) {
+    if (file != 0) {
         write(file, data, strlen(data));
-    //} 
+    } 
     /*else {
         file = file + 1;
         write(file, data, strlen(data));
