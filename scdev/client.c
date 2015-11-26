@@ -490,7 +490,7 @@ int monitorProcesses(int filedes) {
                     //while (pch != NULL) {
                     //if (countval == 0) {
                     int m;
-                    printf("Testing %s\n", appread[m]);
+                    //printf("Testing %s\n", appread[m]);
                     for (m = 0; m < totalProcessCounter; m++) {
                         validAppData = 0;
                         if (strcmp(appdata[m], appread[n]) == 0) {
