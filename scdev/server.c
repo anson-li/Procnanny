@@ -336,6 +336,7 @@ void sighupProcess() {
   char sighupread[150];
   strcpy(sighupread, "Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
   genericOP(sighupread);
+  consoleOP(sighupread);
   readProcnanny(filepathmain);
   sendNewData();
   SHFLAG = 0;
@@ -488,7 +489,7 @@ void writeEndProcesses() {
   strcat(endproc, kcchar);
   strcat(endproc, " processe(s) killed on node(s) ");
   int i;
-  for (i = 0; i <= hostnamesize; i++) {
+  for (i = 0; i < hostnamesize; i++) {
     if (i == 0) {
       strcat(endproc, hostnamelist[i]);
     } else {
