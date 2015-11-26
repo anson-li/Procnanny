@@ -623,7 +623,6 @@ int monitorProcesses(int filedes) {
                         pidstatus = atoi(bch);
                         if (pidstatus == 1) {
                             countProcCompleted++;
-                            printf("something is printing here\n");
                             strcpy(appdata[k], "");
                             signum++;
                         } else if (pidstatus == 0) {
