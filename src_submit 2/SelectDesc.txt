@@ -1,0 +1,16 @@
+Basically, select lets you monitor multiple file descriptors simutaneously, so you don't get blocked on a single file descriptor.
+
+In this assignment, you have to use pipes. If there's nothing to read from a pipe it's blocked - and as a result, because of this miscommunication the whole parent's communication is blocked. 
+
+By using select, the parent can select the process to follow and complete it adequately to design. By doing so, you can serve multiple clients at the same time without being blocked by a single file descriptor.
+
+#include <sys/select.h>
+int select(int nfds, fd_set *restrict readfds, fd_set *restrict writefds, fd_set *restrict errorfds), those three base file descriptors are generall monitoring stdin, stdout, and stderr. By using his, you can only monitor.
+
+Use FD_SET to set the read or write for the select. Basically, the fd_set is an array that holds all the file descriptors.
+
+You HAVE to always let your server wait online, and wait for the other processes to connect.
+
+You have to use a new socket (generated) to communicate to teh parent at every new 'client' that logs. You can't let the client 'fill' the socket because then you have to wait for the next parent - however, splitting it is fine.
+
+ex. ret(integer) = select(maxdesc{int}, &read_from{reads from standard input}, NULL, NULL. &tv{struct}); <- blocks from standard input until it can read from it.

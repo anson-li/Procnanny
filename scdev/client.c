@@ -743,7 +743,10 @@ void write_to_pipe (int file, char* data)
 {
     if (file != 0) {
         write(file, data, strlen(data));
-    }
+    } /*else {
+        file = file + 1;
+        write(file, data, strlen(data));
+    }*/
 }
 
 void read_from_pipe (int file)
