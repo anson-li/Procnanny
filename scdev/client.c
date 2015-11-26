@@ -42,6 +42,7 @@ char testread[280][1000];
 int countread = 0;
 char pidval[150];
 
+char newpid[150];
 
 static int parentPID; 
 static int SHFLAG = 0;
@@ -263,6 +264,7 @@ int monitorProcesses(int filedes) {
 
                         childMonitoring:;
                         printf("PIDVAL22222: %s\n", pidval);
+                        printf("NEWPID2222: %s\n", newpid);
                         int count = 0;
                         char buff[1000];
                         bzero(buff, 1000);
@@ -574,7 +576,8 @@ int monitorProcesses(int filedes) {
                                         strcpy(appProcessed, appdata[counter]);
                                         timeProcessed = timedata[counter];
                                         printf("PIDVAL: %s\n", pidval);
-
+                                        strcpy(newpid, pidval);
+                                        printf("NEWPID222222: %s\n", newpid);
                                         goto childMonitoring;
                                     }
                                 }
