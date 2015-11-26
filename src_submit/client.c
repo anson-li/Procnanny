@@ -141,7 +141,7 @@ if (fork ()) {
 	} else {
 		while (1) { // parent process reads
 			read (s, &c, 1);
-			putchar (c);
+			//putchar (c);
 		}
 	}
 }
@@ -747,7 +747,7 @@ void read_from_pipe (int file)
   int c;
   stream = fdopen (file, "r");
   while ((c = fgetc (stream)) != EOF)
-    putchar (c);
+    //putchar (c);
 fclose (stream);
 }
 
