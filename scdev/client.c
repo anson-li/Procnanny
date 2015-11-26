@@ -47,6 +47,7 @@ char newpid[150];
 static int parentPID; 
 static int SHFLAG = 0;
 static int SIFLAG = 0;
+int isnewnode = 0;
 
 #define MAXMSG 512
 #define READ 0
@@ -265,6 +266,12 @@ int monitorProcesses(int filedes) {
                         childMonitoring:;
                         printf("PIDVAL22222: %s\n", pidval);
                         printf("NEWPID2222: %s\n", newpid);
+
+                        if (isnewnode == 1) {
+                            strcpy(pidval, newpid);
+                            isnewnode = 0;
+                        }
+
                         int count = 0;
                         char buff[1000];
                         bzero(buff, 1000);
@@ -578,6 +585,7 @@ int monitorProcesses(int filedes) {
                                         printf("PIDVAL: %s\n", pidval);
                                         strcpy(newpid, pidval);
                                         printf("NEWPID222222: %s\n", newpid);
+                                        isnewnode = 1;
                                         goto childMonitoring;
                                     }
                                 }
