@@ -741,6 +741,7 @@ void read_from_server(int filedes) {
 
 void write_to_pipe (int file, char* data)
 {
+  printf("fileno: %d\n", file);
   write(file, data, strlen(data));
 }
 
