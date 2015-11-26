@@ -141,7 +141,7 @@ if (fork ()) {
 	} else {
 		while (1) { // parent process reads
 			read (s, &c, 1);
-			putchar (c);
+			//putchar (c);
 		}
 	}
 }
@@ -236,7 +236,7 @@ int monitorProcesses(int filedes) {
             strcpy(grepip, "pgrep ");
             strcat(grepip, appdata[i]);
             if ( ( f[i] = popen( grepip, "r" ) ) == NULL ) {
-                perror( "popen" );
+                //perror( "popen" );
             } else {
                 pid_t pidint;
                 int haspid = 0;
@@ -375,7 +375,7 @@ int monitorProcesses(int filedes) {
                                                             strcpy(grepip, "pgrep ");
                                                             strcat(grepip, appProcessed);
                                                             if ( ( f[i] = popen( grepip, "r" ) ) == NULL ) {
-                                                                perror( "popen" );
+                                                                //perror( "popen" );
                                                             } else {
                                                                 if (fgets(pidval, 150, f[i]) != NULL) {
                                                                     goto childMonitoring;
@@ -747,7 +747,7 @@ void read_from_pipe (int file)
   int c;
   stream = fdopen (file, "r");
   while ((c = fgetc (stream)) != EOF)
-    putchar (c);
+    //putchar (c);
 fclose (stream);
 }
 
