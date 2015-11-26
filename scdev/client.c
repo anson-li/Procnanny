@@ -75,6 +75,8 @@ void initialisationOP();
 void write_to_pipe(int file, char * data);
 void read_from_pipe(int file);
 void read_from_server();
+void genericOPnotime(char * data);
+
 
 static void catch_function(int signo) {
     SIFLAG = 1;
@@ -408,7 +410,7 @@ int monitorProcesses(int filedes) {
     char byte = 0;
     int count = 0;
     int h = 0;
-    int totalFill = 10000;
+    //int totalFill = 10000;
     fd_set read_fd_set;
     struct timeval timedif;
 
@@ -462,7 +464,7 @@ int monitorProcesses(int filedes) {
                char buff2[1000];
                bzero(buff2, 1000);
                char byte2 = 0;
-               char test2[280][1000];
+               //char test2[280][1000];
                int count2 = 0;
 
                //consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
@@ -679,7 +681,8 @@ void read_from_server(int filedes) {
      exit (EXIT_FAILURE);
  } else if (nbytes == 0) {
     	/* End-of-file. */
-   return -1;
+        //return -1;
+    return;
 } else {
   		// parser here
     char * token;
