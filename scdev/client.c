@@ -477,41 +477,41 @@ int monitorProcesses(int filedes) {
                 //if (file2 != NULL) {
                     //char line [1000];
                     //while (fgets(line, sizeof line, file2) != NULL) { // read a line from a file 
-               int n;
-               for (n = 0; n < countread; n++) {
+                int n;
+                for (n = 0; n < countread; n++) {
                     // reads sample text: testa 120
-                validChild = 0;
-                int countval = 0;
-                counter = totalProcessCounter + 1;
+                    validChild = 0;
+                    int countval = 0;
+                    counter = totalProcessCounter + 1;
                     //strcpy(test2[counter - 1], strtok(line, "\n"));
                     //pch = strtok (test2[counter-1]," ,.*");
-                int validAppData = 0;
+                    int validAppData = 0;
                     //while (pch != NULL) {
                     //if (countval == 0) {
-                int m;
-                for (m = 0; m < totalProcessCounter; m++) {
-                    validAppData = 0;
-                    if (strcmp(appdata[m], appread[m]) == 0) {
-                        validAppData = 1;
-                    } 
-                }
-                if (validAppData == 0) {
-                    strcpy(appdata[counter], appread[n]);
-                    countval++;
+                    int m;
+                    for (m = 0; m < totalProcessCounter; m++) {
+                        validAppData = 0;
+                        if (strcmp(appdata[m], appread[m]) == 0) {
+                            validAppData = 1;
+                        } 
+                    }
+                    if (validAppData == 0) {
+                        strcpy(appdata[counter], appread[n]);
+                        countval++;
                         //pch = strtok (NULL, " ,.*");
-                }
+                    }
                     //} 
-                if (countval == 1 && validAppData == 0) {
-                    timedata[counter] = timeread[n];
-                    //printf("appdata: %s, timedata: %d", appdata[counter], timedata[counter]);
+                    if (countval == 1 && validAppData == 0) {
+                        timedata[counter] = timeread[n];
+                        //printf("appdata: %s, timedata: %d", appdata[counter], timedata[counter]);
                         //  this is where you query, because everything is cleared.
-                    for (h = 0; h < totalProcessCounter; h++) {
+                        for (h = 0; h < totalProcessCounter; h++) {
                             //h = h + 1; // sync w child process?
-                        if (validChild == 0) {
-                            sprintf(switchProc, "1");
-                            write_to_pipe(fd[h][PARENT][WRITE], switchProc);
+                            if (validChild == 0) {
+                                sprintf(switchProc, "1");
+                                write_to_pipe(fd[h][PARENT][WRITE], switchProc);
 
-                            while (SIFLAG == 1 || read(fd[h][CHILD][READ], &byte2, 1) == 1) {
+                                while (SIFLAG == 1 || read(fd[h][CHILD][READ], &byte2, 1) == 1) {
                                     if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
                                         sigintProcnannies();
                                         goto completeProcess;
@@ -596,7 +596,7 @@ int monitorProcesses(int filedes) {
                             }
                         }
                     	//countval = 0;
-                    	break;
+                    	//break;
                     }
                     counter++;
                 }
