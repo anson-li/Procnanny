@@ -179,38 +179,38 @@ int getConfig(int filedes) {
              return -1;
          } else {
 				/* Data read. */
-             memset(&resultString[0], 0, sizeof(resultString));
-             fprintf (stderr, "Server: got message: '%s'\n", buffer);
+            memset(&resultString[0], 0, sizeof(resultString));
+            fprintf (stderr, "Server: got message: '%s'\n", buffer);
 		        //token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
 		        //printf("Parsed the following message: %s\n", token);
-             if (strcmp(buffer, "EOF") == 0) {
+            if (strcmp(buffer, "EOF") == 0) {
                  int i;
                  for (i = 0; i < counter; i++) {
                     printf("Application: %s, for %d seconds\n", appdata[i], timedata[i]);
-                }
-                return 0;
+                 }
+                 return 0;
             } else {
 		      		// parse the config data here / first application val is the app, second is the time
               int countval = 0;
               token = strtok(buffer, " ");
    					/* walk through other tokens */
-              while( token != NULL ) {
-               if (countval == 0) {
-                printf( "APP: %s\n", token );
-                strcpy(appdata[counter], token);
-                countval++;
-            } else {
-                printf("TIME: %s\n", token);
-                countval = 0;
-                timedata[counter] = atoi(token);
+                while( token != NULL ) {
+                    if (countval == 0) {
+                        printf( "APP: %s\n", token );
+                        strcpy(appdata[counter], token);
+                        countval++;
+                    } else {
+                        printf("TIME: %s\n", token);
+                        countval = 0;
+                        timedata[counter] = atoi(token);
+                    }
+                    token = strtok(NULL, " ");
+                }
+                counter++;
             }
-            token = strtok(NULL, " ");
         }
-        counter++;
+     }
     }
-}
-}
-}
 }
 
 int monitorProcesses(int filedes) {
