@@ -172,7 +172,7 @@ int getConfig(int filedes) {
 
       if (select(totalFill, &read_fd_set, NULL, NULL, &timedif)) { 
 
-         printf("Entered...\n");
+         //printf("Entered...\n");
          nbytes = read (filedes, buffer, MAXMSG);
          if (nbytes < 0) {
 				/* Read error. */
@@ -184,13 +184,13 @@ int getConfig(int filedes) {
          } else {
 				/* Data read. */
             memset(&resultString[0], 0, sizeof(resultString));
-            fprintf (stderr, "Server: got message: '%s'\n", buffer);
+            //fprintf (stderr, "Server: got message: '%s'\n", buffer);
 		        //token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
 		        //printf("Parsed the following message: %s\n", token);
             if (strcmp(buffer, "EOF") == 0) {
                  int i;
                  for (i = 0; i < counter; i++) {
-                    printf("Application: %s, for %d seconds\n", appdata[i], timedata[i]);
+                    //printf("Application: %s, for %d seconds\n", appdata[i], timedata[i]);
                  }
                  return 0;
             } else {
@@ -200,11 +200,11 @@ int getConfig(int filedes) {
    					/* walk through other tokens */
                 while( token != NULL ) {
                     if (countval == 0) {
-                        printf( "APP: %s\n", token );
+                        //printf( "APP: %s\n", token );
                         strcpy(appdata[counter], token);
                         countval++;
                     } else {
-                        printf("TIME: %s\n", token);
+                        //printf("TIME: %s\n", token);
                         countval = 0;
                         timedata[counter] = atoi(token);
                     }
@@ -249,7 +249,7 @@ int monitorProcesses(int filedes) {
                     pid = fork();
                     if (pid < 0) { // error process
 
-                        fprintf(stderr, "can't fork, error %d\n", errno);
+                        //fprintf(stderr, "can't fork, error %d\n", errno);
                         exit(EXIT_FAILURE);
 
                     } else if (pid > 0) { // parent process
@@ -466,7 +466,7 @@ int monitorProcesses(int filedes) {
                int count2 = 0;
 
                //consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
-               genericOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
+               //genericOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
                 // if there's a new program then search, so search w/ respect to the current appname list
                 //FILE* file2 = fopen ( argv[1], "r" );
 
