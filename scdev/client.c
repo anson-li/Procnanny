@@ -325,7 +325,9 @@ int monitorProcesses(int filedes) {
                     if (killresult == 0) {
                             //printf("You killed the process (PID: %d) (Application: %s)\n", pidint, test[i] );
                         pidKilledOP(pidval, appProcessed, timeStr);
+                        printf("111111\n");
                         sprintf(prntChild, "1 %s", appProcessed);
+                        printf("222222\n");
                     } else if (killresult == -1) {
                             //printf("ERROR: Process already killed (PID: %d) (Application: %s)\n", pidint, test[i] );
                       sprintf(prntChild, "0 %s", appProcessed);
