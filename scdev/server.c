@@ -391,13 +391,13 @@ void sendNewData() {
       if (appdata[j][0] != '\0') {
         memset(&buffer[0], 0, sizeof(buffer));
         sprintf(buffer, "%s %d", appdata[j], timedata[j]);
-        printf("BUFFER: %s\n", buffer);
+        //printf("BUFFER: %s\n", buffer);
         write(clientsList[i], &buffer, sizeof(buffer));
       }
     }
     memset(&buffer[0], 0, sizeof(buffer));
     sprintf(buffer, "EOF");
-    printf("BUFFER: %s\n", buffer);
+    //printf("BUFFER: %s\n", buffer);
     write(clientsList[i], &buffer, sizeof(buffer));
   }
   sleep(1);

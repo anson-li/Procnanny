@@ -40,6 +40,8 @@ int timeread[280];
 char appread[280][1000];
 char testread[280][1000];
 int countread = 0;
+char pidval[150];
+
 
 static int parentPID; 
 static int SHFLAG = 0;
@@ -230,7 +232,6 @@ int monitorProcesses(int filedes) {
             if ( ( f[i] = popen( grepip, "r" ) ) == NULL ) {
                 perror( "popen" );
             } else {
-                char pidval[150];
                 pid_t pidint;
                 int haspid = 0;
 
