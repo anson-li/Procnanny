@@ -106,7 +106,7 @@ int make_socket (uint16_t port)
   name.sin_addr.s_addr = htonl (INADDR_ANY);
   while (bind (sock, (struct sockaddr *) &name, sizeof (name)) < 0)
     {
-      perror ("bind");
+      //perror ("bind");
       //exit (EXIT_FAILURE);
       port++;
       name.sin_port = htons (port);
@@ -126,7 +126,7 @@ int read_from_client (int filedes)
   nbytes = read (filedes, buffer, MAXMSG);
   if (nbytes < 0) {
       /* Read error. */
-      perror ("read");
+      //perror ("read");
       /**
       * FIXME: if 'connection reset by peer', it means that the station is terminated -- but DON'T EXIT! 
       */
@@ -139,9 +139,9 @@ int read_from_client (int filedes)
   else {
     /* Data read. */
     memset(&resultString[0], 0, sizeof(resultString));
-    fprintf (stderr, "Server: got message: '%s'\n", buffer);
+    //fprintf (stderr, "Server: got message: '%s'\n", buffer);
     token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
-    printf("Parsed the following message: %s\n", token);
+    //printf("Parsed the following message: %s\n", token);
     if (token != NULL) {
       if (strncmp(token, "[", 1) == 0 ) { // just save these, not necessary
         genOPnotime(token);
@@ -153,7 +153,7 @@ int read_from_client (int filedes)
         subtoken = strtok(token, " ");
         while( subtoken != NULL ) {
           if (subcounter == 1) {
-            printf("Total process killed here: %s\n", subtoken);
+            //printf("Total process killed here: %s\n", subtoken);
             procKilled = procKilled + atoi(subtoken);
           }
           subtoken = strtok(NULL, " ");
@@ -199,17 +199,17 @@ int read_from_client (int filedes)
         pidKilledOP(pidval, appdata, hostname, timeStr);
       }
       if (strcmp(token, "1") == 0) { // if entered input is 1
-        printf("1 called - initProcNanny calls!\n");
+        //printf("1 called - initProcNanny calls!\n");
         strcpy(resultString, "#init Procnanny\n");
         //write(filedes, resultString, (strlen(resultString)+1));
       }
       else if (strcmp(token, "2") == 0) { // if entered input is 1
-        printf("2 called - sigint ProcNanny calls!\n");
+        //printf("2 called - sigint ProcNanny calls!\n");
         strcpy(resultString, "#sigint Procnanny\n");
         //write(filedes, resultString, (strlen(resultString)+1));
       }
       else if (strcmp(token, "3") == 0) { // if entered input is 1
-        printf("3 called - sighup ProcNanny calls!\n");
+        //printf("3 called - sighup ProcNanny calls!\n");
         strcpy(resultString, "#sighup Procnanny\n");
         //write(filedes, resultString, (strlen(resultString)+1));
       } else {
@@ -241,7 +241,7 @@ int main (int c, char *argv[]) {
   sock = make_socket (PORT);
   if (listen (sock, 1) < 0)
     {
-      perror ("listen");
+      //perror ("listen");
       exit (EXIT_FAILURE);
     }
 
@@ -264,32 +264,33 @@ int main (int c, char *argv[]) {
     read_fd_set = active_fd_set;
     //write_fd_set = active_fd_set;
     if (select (FD_SETSIZE + 1, &read_fd_set, /*&write_fd_set*/ NULL, NULL, NULL) < 0) {
-      perror ("select");
+      //perror ("select");
       //exit (EXIT_FAILURE);
       continue;
     }
-    printf("Connection made!\n");
+    //printf("Connection made!\n");
     /* Service all the sockets with input pending. */
     for (i = 0; i < FD_SETSIZE; ++i) {
       //printf("FD is set\n");
       if (FD_ISSET (i, &read_fd_set)) {
         //printf("finding sock\n");
         if (i == sock) {
-          printf("Connection made on new socket\n");
+          //printf("Connection made on new socket\n");
           /* Connection request on original socket. */
           char buffer[MAXMSG];
           size = sizeof (clientname);
           clientsList[clientCount] = accept (sock, (struct sockaddr *) &clientname, (socklen_t *) &size);
           /* Connection accepted at 'clientsList[clientCount]'*/ 
           if (clientsList[clientCount] < 0) {
-            perror ("accept");
+            //perror ("accept");
             exit (EXIT_FAILURE);
           }
-
+          /*
           fprintf (stderr,
                    "Server: connect from host %s, port %hd.\n",
                    inet_ntoa (clientname.sin_addr),
                    ntohs (clientname.sin_port));
+                   */
           FD_SET (clientsList[clientCount], &active_fd_set);
           
           //memset(&buffer[0], 0, sizeof(buffer));
@@ -299,12 +300,12 @@ int main (int c, char *argv[]) {
           write(new, &buffer, sizeof(buffer));
           printf("complete send\n");
           */
-          printf("COUNTER: %d\n", counter);
+          //printf("COUNTER: %d\n", counter);
           for (i = 0; i < counter; i++) {
             if (appdata[i][0] != '\0') {
               memset(&buffer[0], 0, sizeof(buffer));
               sprintf(buffer, "%s %d", appdata[i], timedata[i]);
-              printf("BUFFER: %s\n", buffer);
+              //printf("BUFFER: %s\n", buffer);
               write(clientsList[clientCount], &buffer, sizeof(buffer));
             }
           }
@@ -328,7 +329,7 @@ int main (int c, char *argv[]) {
 
 void sighupProcess() {
   //reread process
-  printf("reached sighup...\n");
+  //printf("reached sighup...\n");
   readProcnanny(filepathmain);
   sendNewData();
   SHFLAG = 0;
@@ -504,7 +505,7 @@ void deleteProcnannies() {
         pid_t curpid;
         curpid = getpid();
         if ( ( pnfile = popen("pgrep procnanny", "r" ) ) == NULL ) {
-                perror( "popen" );
+                //perror( "popen" );
         } else { 
             pid_t pidpn;
             char pidbuffer[30];
@@ -523,7 +524,7 @@ void deleteProcnannies() {
 void getParentPID() {
     pid_t parent_pid = getpid();
     parentPID = getpid();
-    printf("Host PID: %d\n", parent_pid);
+    //printf("Host PID: %d\n", parent_pid);
     return;
 }
 

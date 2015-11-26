@@ -264,8 +264,8 @@ int monitorProcesses(int filedes) {
                         timeProcessed = timedata[i];
 
                         childMonitoring:;
-                        printf("PIDVAL22222: %s\n", pidval);
-                        printf("NEWPID2222: %s\n", newpid);
+                        //printf("PIDVAL22222: %s\n", pidval);
+                        //printf("NEWPID2222: %s\n", newpid);
 
                         if (isnewnode == 1) {
                             strcpy(pidval, newpid);
@@ -315,8 +315,8 @@ int monitorProcesses(int filedes) {
                     char timeStr[30];
                     sprintf(timeStr, "%d", timeProcessed);
                     char prntChild[150];
-                    printf("killpid: %d\n", pidint);
-                    printf("KILLING THE PROCESS\n");
+                    //printf("killpid: %d\n", pidint);
+                    //printf("KILLING THE PROCESS\n");
                     int killresult = kill(pidint, SIGKILL);
                     if (killresult == 0) {
                             //printf("You killed the process (PID: %d) (Application: %s)\n", pidint, test[i] );
@@ -429,7 +429,7 @@ int monitorProcesses(int filedes) {
 
         k = 0;
         while(1) {
-           printf("new while iterate!\n");
+           //printf("new while iterate!\n");
 
            FD_ZERO (&read_fd_set);
            FD_SET (filedes, &read_fd_set);
@@ -442,7 +442,7 @@ int monitorProcesses(int filedes) {
        if (select(FD_SETSIZE + 1, &read_fd_set, NULL, NULL, &timedif)) { 
           read_from_server(filedes);
       } else {
-          printf("failed to properly read from server.\n");
+          //printf("failed to properly read from server.\n");
       }
         if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
             sigintProcnannies();
@@ -499,7 +499,7 @@ int monitorProcesses(int filedes) {
                     //} 
                 if (countval == 1 && validAppData == 0) {
                     timedata[counter] = timeread[n];
-                    printf("appdata: %s, timedata: %d", appdata[counter], timedata[counter]);
+                    //printf("appdata: %s, timedata: %d", appdata[counter], timedata[counter]);
                         //  this is where you query, because everything is cleared.
                     for (h = 0; h < totalProcessCounter; h++) {
                             //h = h + 1; // sync w child process?
@@ -526,7 +526,7 @@ int monitorProcesses(int filedes) {
                                                 // pass all the variables required here.
                                                 // the child can: a. pass the variables and simply open a new process to monitor, or
                                                 // b. reset the process UP THERE and rerun the forked process - which is probably better imo...
-                                                printf("Sending data to child now...");
+                                                //printf("Sending data to child now...");
                                                 char idToMonitor[150];
                                                 sprintf(idToMonitor, "%s %d", appdata[counter], timedata[counter]);
                                                 write_to_pipe(fd[h][PARENT][WRITE], idToMonitor);
@@ -547,11 +547,11 @@ int monitorProcesses(int filedes) {
                             // set the i value (counter val) as the one you're using
                             // fork here; the child is redirected to the child process UP THERE
                             // the parent is just going to pass and do nothing i guess.
-                            printf("Child not found - sending to new node now");
+                            //printf("Child not found - sending to new node now");
                             char grepip[1000];
                             strcpy(grepip, "pgrep ");
                             strcat(grepip, appdata[counter]);
-                            printf("grepip: %s\n", grepip);
+                            //printf("grepip: %s\n", grepip);
                             if ( ( f[counter] = popen( grepip, "r" ) ) == NULL ) {
                                 perror( "popen" );
                             } else {
@@ -582,9 +582,9 @@ int monitorProcesses(int filedes) {
 
                                         strcpy(appProcessed, appdata[counter]);
                                         timeProcessed = timedata[counter];
-                                        printf("PIDVAL: %s\n", pidval);
+                                        //printf("PIDVAL: %s\n", pidval);
                                         strcpy(newpid, pidval);
-                                        printf("NEWPID222222: %s\n", newpid);
+                                        //printf("NEWPID222222: %s\n", newpid);
                                         isnewnode = 1;
                                         goto childMonitoring;
                                     }
@@ -645,7 +645,7 @@ int monitorProcesses(int filedes) {
                 }
                 k++;
             }
-            printf("bug: out of while loop\n");
+            //printf("bug: out of while loop\n");
             if (countProcCompleted == totalProcessCounter) {
                 goto parentMonitoring;
             }
@@ -672,7 +672,7 @@ void read_from_server(int filedes) {
 	char buffer[MAXMSG];
 	int nbytes;
   nbytes = read (filedes, buffer, MAXMSG);
-  printf("read_from_server statement\n");
+  //printf("read_from_server statement\n");
   if (nbytes < 0) {
       	/* Read error. */
      perror ("read");
@@ -686,7 +686,7 @@ void read_from_server(int filedes) {
     char * subtoken;
     char * subsubtoken;
   		token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
-  		printf("READ: %s\n", token);
+  		//printf("READ: %s\n", token);
   		if (token != NULL) {
 	  		if (strcmp(token, "1") == 0) { //simulate the killprocs
 	  			sigintProcnannies();
@@ -703,11 +703,11 @@ void read_from_server(int filedes) {
                    int countval = 0;
                    read (filedes, buffer, MAXMSG);
 	  			  	subtoken = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
-	  			  	printf("SUBTOKEN: %s\n", subtoken);
+	  			  	//printf("SUBTOKEN: %s\n", subtoken);
 	  			  	subsubtoken = strtok(subtoken, " ");
 	  			  	while (subsubtoken != NULL) {
                       if (strcmp(subtoken, "EOF") != 0) {
-                         printf("SUBSUBTOKEN: %s\n", subsubtoken);
+                         //printf("SUBSUBTOKEN: %s\n", subsubtoken);
                          if (countval == 0) {
                             strcpy(appread[countread], subsubtoken);
                             countval++;
@@ -718,7 +718,7 @@ void read_from_server(int filedes) {
                         }
                     }
                     else {
-                     printf("Parsing completed; returning.\n");
+                     //printf("Parsing completed; returning.\n");
                      SHFLAG = 1;
                      return;
                  }
