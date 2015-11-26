@@ -531,7 +531,7 @@ void deleteProcnannies() {
 }
 
 void getParentPID() {
-    pid_t parent_pid = getpid();
+    //pid_t parent_pid = getpid();
     parentPID = getpid();
     //printf("Host PID: %d\n", parent_pid);
     return;
