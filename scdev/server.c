@@ -257,7 +257,7 @@ int main (int c, char *argv[]) {
   char infolog[100];
   sprintf(infolog, "Procnanny server: PID %d on node %s, port %d", curpid, hostname, finalpval);
   printServerInfo(curpid, hostname, finalpval);
-  consoleOP(infolog);
+  //consoleOP(infolog);
 
   while (1) {
     /* Block until input arrives on one or more active sockets. */
@@ -330,6 +330,9 @@ int main (int c, char *argv[]) {
 void sighupProcess() {
   //reread process
   //printf("reached sighup...\n");
+  char[150] sighupread;
+  strcpy(sighupread, "Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
+  genericOP(sighupread);
   readProcnanny(filepathmain);
   sendNewData();
   SHFLAG = 0;
@@ -420,7 +423,7 @@ void killClients() {
   //timedif.tv_sec = 2;
   //timedif.tv_usec = 0;
 
-  consoleOP("Killing procnanny clients.");
+  //consoleOP("Killing procnanny clients.");
   for (i = 0; i < clientCount; i++) {
     // send signal
     // read response
@@ -466,7 +469,7 @@ void killClients() {
     }
   }
   strcat(endMsg, ".");
-  consoleOP(endMsg); // have to specify which nodes removed.
+  //consoleOP(endMsg); // have to specify which nodes removed.
   genericOP(endMsg);
 }
 
@@ -488,14 +491,14 @@ void writeEndProcesses() {
     }
   }
   strcat(endproc, ".");
-  consoleOP(endproc); // have to specify which nodes removed.
+  //consoleOP(endproc); // have to specify which nodes removed.
   genericOP(endproc);
 }
 
 void setupProcnanny(char * filepath) {
   deleteProcnannies();
   getParentPID();
-  initialisationOP();
+  //initialisationOP();
   readProcnanny(filepath);
   return;
 }
@@ -531,7 +534,7 @@ void getParentPID() {
 void initialisationOP() {
     char strPID[1000];
     sprintf(strPID, "Info: Parent process is PID  %d.", parentPID);
-    consoleOP(strPID);
+    //consoleOP(strPID);
     return;
 }
 

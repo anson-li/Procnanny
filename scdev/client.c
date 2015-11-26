@@ -465,7 +465,7 @@ int monitorProcesses(int filedes) {
                char test2[280][1000];
                int count2 = 0;
 
-               consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
+               //consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
                genericOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
                 // if there's a new program then search, so search w/ respect to the current appname list
                 //FILE* file2 = fopen ( argv[1], "r" );
