@@ -24,27 +24,27 @@
 #include <fcntl.h>
 #include "memwatch.h"
 
-void genericOP(char* data);
-void consoleOP(char* data);
-void killProcessOP(int signum);
-void pidKilledOP(char * pidval, char * appdata, char * timeStr);
-void noProcessOP(char * appdata);
-void initProcOP(char * appdata, char * pidval );
-void deleteProcnannies();
-void sigintProcnannies();
-void getParentPID();
-void initialisationOP();
-void write_to_pipe(int file, char * data);
-void read_from_pipe(int file);
+    void genericOP(char* data);
+    void consoleOP(char* data);
+    void killProcessOP(int signum);
+    void pidKilledOP(char * pidval, char * appdata, char * timeStr);
+    void noProcessOP(char * appdata);
+    void initProcOP(char * appdata, char * pidval );
+    void deleteProcnannies();
+    void sigintProcnannies();
+    void getParentPID();
+    void initialisationOP();
+    void write_to_pipe(int file, char * data);
+    void read_from_pipe(int file);
 
 #define READ 0
 #define WRITE 1 
 #define CHILD 0
 #define PARENT 1
 
-static int parentPID; 
-static int SHFLAG = 0;
-static int SIFLAG = 0;
+    static int parentPID; 
+    static int SHFLAG = 0;
+    static int SIFLAG = 0;
 
 char test[280][1000]; //array of strings //length is 10! figure out how to realloc!
 char appdata[280][1000];
@@ -96,23 +96,23 @@ int main(int c, char *argv[]) {
         char line[100];
         while (fgets(line, sizeof line, file) != NULL) { /* read a line from a file */
             // reads sample text: testa 120
-            strcpy(test[counter - 1], strtok(line, "\n"));
-            pch = strtok (test[counter-1]," ,.-");
-            while (pch != NULL) {
-                if (countval == 0) {
-                    strcpy(appdata[counter], pch);
-                    countval++;
-                } else if (countval == 1) {
-                    timedata[counter] = atoi(pch);
-                    countval = 0;
-                    break;
-                }
-                pch = strtok (NULL, " ,.-");
+        strcpy(test[counter - 1], strtok(line, "\n"));
+        pch = strtok (test[counter-1]," ,.-");
+        while (pch != NULL) {
+            if (countval == 0) {
+                strcpy(appdata[counter], pch);
+                countval++;
+            } else if (countval == 1) {
+                timedata[counter] = atoi(pch);
+                countval = 0;
+                break;
             }
-            counter++;
+            pch = strtok (NULL, " ,.-");
         }
+        counter++;
     }
-    fclose(file);
+}
+fclose(file);
 
     FILE* f[1000]; // may have to change this, original value counter - 1 ; need to realloc then.
     int i;
@@ -140,7 +140,7 @@ int main(int c, char *argv[]) {
                 if (pipe(fd[i][CHILD]) < 0) {
                     exit(EXIT_FAILURE); 
                 }
-    
+                
                 while (fgets(pidval, 150, f[i]) != NULL) {
                     haspid = 1;
                     pid = fork();
@@ -162,10 +162,10 @@ int main(int c, char *argv[]) {
 
                         childMonitoring:;
 
-                      int count = 0;
+                        int count = 0;
                         char buff[1000];
                         bzero(buff, 1000);
-                    char byte = 0;
+                        char byte = 0;
 
                         strtok(pidval, "\n");
                         initProcOP(appProcessed, pidval);
@@ -181,23 +181,23 @@ int main(int c, char *argv[]) {
                             while (SIFLAG == 1 || read(fd[i][PARENT][READ], &byte, 1) == 1) {
                                 if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
                                     sigintProcnannies();
-                            goto completeProcess;
-                            }
+                                    goto completeProcess;
+                                }
                                 if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1)
-                    {
-                        buff[0] = byte;
-                        char printWrite[150];
-                        if (read(fd[i][PARENT][READ], buff+1, count) == count) {
-                            int charbuf = atoi(buff);
-                            if (charbuf == 1) {
+                                {
+                                    buff[0] = byte;
+                                    char printWrite[150];
+                                    if (read(fd[i][PARENT][READ], buff+1, count) == count) {
+                                        int charbuf = atoi(buff);
+                                        if (charbuf == 1) {
                                             sprintf(printWrite, "2"); // sends for onwait process
-                                write_to_pipe(fd[i][CHILD][WRITE], printWrite);
+                                            write_to_pipe(fd[i][CHILD][WRITE], printWrite);
                                         } else if (charbuf == -1) {
                                             exit(EXIT_FAILURE);
+                                        }
+                                    }
+                                }
                             }
-                        }
-                    }
-                }
                 // inform busy ...
                             sleepLeft = sleepLeft - 5;
                         }
@@ -214,7 +214,7 @@ int main(int c, char *argv[]) {
                         } else if (killresult == -1) {
                             //printf("ERROR: Process already killed (PID: %d) (Application: %s)\n", pidint, test[i] );
                           sprintf(prntChild, "0 %s", appProcessed);
-                        }
+                      }
                         //pclose(f[i]);
                         write_to_pipe(fd[i][CHILD][WRITE], prntChild); // writing to parent that is polling
                         int ops;
@@ -223,8 +223,8 @@ int main(int c, char *argv[]) {
                         while (SIFLAG == 1 || read(fd[i][PARENT][READ], &byte, 1) == 1) {
                             if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
                                 sigintProcnannies();
-                        goto completeProcess;
-                        }
+                                goto completeProcess;
+                            }
                             if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
                                 buff[0] = byte;
                                 if (read(fd[i][PARENT][READ], buff+1, count) == count) {
@@ -235,90 +235,90 @@ int main(int c, char *argv[]) {
                                         // new process started!
                                         char prntReady[150];
                                         sprintf(prntReady, "1"); // sends for onwait process
-                            write_to_pipe(fd[i][CHILD][WRITE], prntReady);
+                                        write_to_pipe(fd[i][CHILD][WRITE], prntReady);
                             // NEEDS TO WAIT @ THIS POINT
-                            while (SIFLAG == 1 || read(fd[i][PARENT][READ], &byte, 1) == 1) {
+                                        while (SIFLAG == 1 || read(fd[i][PARENT][READ], &byte, 1) == 1) {
                                 if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
-                                                sigintProcnannies();
-                                        goto completeProcess;
-                                        }
-                                            if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
-                                                buff[0] = byte;
-                                                if (read(fd[i][PARENT][READ], buff+1, count) == count) {
-                                                    char * bch;
-                                                    int countvalb = 0;
+                                    sigintProcnannies();
+                                    goto completeProcess;
+                                }
+                                if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
+                                    buff[0] = byte;
+                                    if (read(fd[i][PARENT][READ], buff+1, count) == count) {
+                                        char * bch;
+                                        int countvalb = 0;
                                                     // read the buff value
                                                     // parse buff into 2 parts;
-                                                    bch = strtok (buff," ,.-");
-                                                    while (bch != NULL) {
-                                                        if (countvalb == 0) {
-                                                            strcpy(appProcessed, bch);
-                                                            countvalb++;
-                                                        } else if (countvalb == 1) {
-                                                            timeProcessed = atoi(bch);
-                                                            countvalb = 0;
-                                                            strcpy(grepip, "pgrep ");
-                                                            strcat(grepip, appProcessed);
-                                                            if ( ( f[i] = popen( grepip, "r" ) ) == NULL ) {
-                                                                perror( "popen" );
-                                                            } else {
-                                                                if (fgets(pidval, 150, f[i]) != NULL) {
-                                                                    goto childMonitoring;
-                                                                } else {
-                                                                    noProcessOP(appdata[i]);
-                                                                    goto waitingProc;
-                                                                }
-                                                            }
-                                                        }
-                                                        bch = strtok (NULL, " ,.-");
+                                        bch = strtok (buff," ,.-");
+                                        while (bch != NULL) {
+                                            if (countvalb == 0) {
+                                                strcpy(appProcessed, bch);
+                                                countvalb++;
+                                            } else if (countvalb == 1) {
+                                                timeProcessed = atoi(bch);
+                                                countvalb = 0;
+                                                strcpy(grepip, "pgrep ");
+                                                strcat(grepip, appProcessed);
+                                                if ( ( f[i] = popen( grepip, "r" ) ) == NULL ) {
+                                                    perror( "popen" );
+                                                } else {
+                                                    if (fgets(pidval, 150, f[i]) != NULL) {
+                                                        goto childMonitoring;
+                                                    } else {
+                                                        noProcessOP(appdata[i]);
+                                                        goto waitingProc;
                                                     }
                                                 }
                                             }
+                                            bch = strtok (NULL, " ,.-");
                                         }
                                     }
                                 }
                             }
                         }
-                        goto waitingProc;
-                    } 
+                    }
                 }
-                if (haspid == 0) {
-                    //printf("No processes found for %s.\n", test[i]);
-                    noProcessOP(appdata[i]);
-                }       
             }
+            goto waitingProc;
+        } 
+    }
+    if (haspid == 0) {
+                    //printf("No processes found for %s.\n", test[i]);
+        noProcessOP(appdata[i]);
+    }       
+}
             //pclose(f[i]);
-        }
-    }   
-    int k; 
-    int signum = 0;
-    char buff[1000];
-    bzero(buff, 1000);
-  char byte = 0;
-  int count = 0;
-  int h = 0;
+}
+}   
+int k; 
+int signum = 0;
+char buff[1000];
+bzero(buff, 1000);
+char byte = 0;
+int count = 0;
+int h = 0;
 
-    int pidstatus;
-    char * bch;
-    int countvalb = 0;
-    int countProcCompleted = 0;
+int pidstatus;
+char * bch;
+int countvalb = 0;
+int countProcCompleted = 0;
 
-    if (totalProcessCounter == 0) {
-        goto completeProcess;
-    }
+if (totalProcessCounter == 0) {
+    goto completeProcess;
+}
 
-    parentMonitoring:;
-    for (k = 0; k < totalProcessCounter; k++ ) {
-        fcntl(fd[k][CHILD][READ], F_SETFL, O_NONBLOCK);
-    }
+parentMonitoring:;
+for (k = 0; k < totalProcessCounter; k++ ) {
+    fcntl(fd[k][CHILD][READ], F_SETFL, O_NONBLOCK);
+}
 
-    k = 0;
-    while(1) {
+k = 0;
+while(1) {
         if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
             sigintProcnannies();
-      goto completeProcess;
-    }
-    if (k < totalProcessCounter) {
+            goto completeProcess;
+        }
+        if (k < totalProcessCounter) {
             k++;
         } else {
             k = 0;
@@ -330,9 +330,9 @@ int main(int c, char *argv[]) {
                 char switchProc[1000];
                 char buff2[1000];
                 bzero(buff2, 1000);
-            char byte2 = 0;
-            char test2[280][1000];
-            int count2 = 0;
+                char byte2 = 0;
+                char test2[280][1000];
+                int count2 = 0;
 
                 consoleOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
                 genericOP("Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
@@ -376,18 +376,18 @@ int main(int c, char *argv[]) {
                                         ops = fcntl(fd[h][CHILD][READ],F_GETFL); // reenable blocking
                                         fcntl(fd[h][CHILD][READ], F_SETFL, ops & ~O_NONBLOCK);
                                         */
-                                    while (SIFLAG == 1 || read(fd[h][CHILD][READ], &byte2, 1) == 1) {
+                                        while (SIFLAG == 1 || read(fd[h][CHILD][READ], &byte2, 1) == 1) {
                                         if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
-                                                sigintProcnannies();
-                                        goto completeProcess;
+                                            sigintProcnannies();
+                                            goto completeProcess;
                                         }
-                                            if (ioctl(fd[h][CHILD][READ], FIONREAD, &count2) != -1) {
-                                                buff2[0] = byte2;
-                                                if (SIFLAG == 1 || read(fd[h][CHILD][READ], buff2+1, count2) == count2) {
+                                        if (ioctl(fd[h][CHILD][READ], FIONREAD, &count2) != -1) {
+                                            buff2[0] = byte2;
+                                            if (SIFLAG == 1 || read(fd[h][CHILD][READ], buff2+1, count2) == count2) {
                                                     if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
                                                         sigintProcnannies();
-                                                goto completeProcess;
-                                                }
+                                                        goto completeProcess;
+                                                    }
                                                     int tmpinitval = atoi(buff2);
                                                     if (tmpinitval == 2) {
                                                         fcntl(fd[h][CHILD][READ], F_SETFL, O_NONBLOCK);
@@ -477,8 +477,8 @@ int main(int c, char *argv[]) {
             } else if (ioctl(fd[k][CHILD][READ], FIONREAD, &count) != -1) {
         //buff = malloc(count+1);
         //bzero(buff, count+1);
-        buff[0] = byte;
-        if (read(fd[k][CHILD][READ], buff+1, count) == count) {
+                buff[0] = byte;
+                if (read(fd[k][CHILD][READ], buff+1, count) == count) {
                     bch = strtok (buff," ,.-");
                     while (bch != NULL) {
                         if (countvalb == 0) {
@@ -488,7 +488,7 @@ int main(int c, char *argv[]) {
                                 strcpy(appdata[k], "");
                                 signum++;
                             } else if (pidstatus == 0) {
-                        countProcCompleted++;
+                                countProcCompleted++;
                             }
                             countvalb++;
                         } else if (countvalb == 1) {
@@ -504,16 +504,16 @@ int main(int c, char *argv[]) {
                         }
                         bch = strtok (NULL, " ,.-");
                     }
-        }        
-        if (countProcCompleted == totalProcessCounter) {
-            goto parentMonitoring;
+                }        
+                if (countProcCompleted == totalProcessCounter) {
+                    goto parentMonitoring;
+                }
+                k++;
+            }
+            if (countProcCompleted == totalProcessCounter) {
+                goto parentMonitoring;
+            }
         }
-        k++;
-      }
-      if (countProcCompleted == totalProcessCounter) {
-        goto parentMonitoring;
-      }
-    }
     }
 
     completeProcess:
@@ -544,67 +544,67 @@ void read_from_pipe (int file)
   stream = fdopen (file, "r");
   while ((c = fgetc (stream)) != EOF)
     putchar (c);
-  fclose (stream);
+fclose (stream);
 }
 
 void deleteProcnannies() {
-        FILE * pnfile;
-        pid_t curpid;
-        curpid = getpid();
-        if ( ( pnfile = popen("pgrep procnanny", "r" ) ) == NULL ) {
-                perror( "popen" );
-        } else { 
-            pid_t pidpn;
-            char pidbuffer[30];
-            while (fgets(pidbuffer, 150, pnfile) != NULL) {
-                pidpn = (pid_t) strtol(pidbuffer, NULL, 10);
+    FILE * pnfile;
+    pid_t curpid;
+    curpid = getpid();
+    if ( ( pnfile = popen("pgrep procnanny", "r" ) ) == NULL ) {
+        perror( "popen" );
+    } else { 
+        pid_t pidpn;
+        char pidbuffer[30];
+        while (fgets(pidbuffer, 150, pnfile) != NULL) {
+            pidpn = (pid_t) strtol(pidbuffer, NULL, 10);
                 // if pid is not the one you currently opened...
-                if (pidpn != curpid) {
-                    kill(pidpn, SIGKILL);
-                }
+            if (pidpn != curpid) {
+                kill(pidpn, SIGKILL);
             }
         }
-        fclose(pnfile); 
-        return;
+    }
+    fclose(pnfile); 
+    return;
 }
 
 void sigintProcnannies() {
-        FILE * pnfile;
-        pid_t curpid;
-        int killPID = 0;
-        curpid = getpid();
-        if ( ( pnfile = popen("pgrep procnanny", "r" ) ) == NULL ) {
-                perror( "popen" );
-        } else { 
-            pid_t pidpn;
-            char pidbuffer[30];
-            while (fgets(pidbuffer, 150, pnfile) != NULL) {
-                pidpn = (pid_t) strtol(pidbuffer, NULL, 10);
+    FILE * pnfile;
+    pid_t curpid;
+    int killPID = 0;
+    curpid = getpid();
+    if ( ( pnfile = popen("pgrep procnanny", "r" ) ) == NULL ) {
+        perror( "popen" );
+    } else { 
+        pid_t pidpn;
+        char pidbuffer[30];
+        while (fgets(pidbuffer, 150, pnfile) != NULL) {
+            pidpn = (pid_t) strtol(pidbuffer, NULL, 10);
                 // if pid is not the one you currently opened...
-                if (pidpn != curpid) {
-                    int sigk = kill(pidpn, SIGINT);
-                    if (sigk == 0) {
-                        killPID++;
-                    }
+            if (pidpn != curpid) {
+                int sigk = kill(pidpn, SIGINT);
+                if (sigk == 0) {
+                    killPID++;
                 }
             }
         }
-        fclose(pnfile); 
-        char printNum[150];
-        sprintf(printNum, "Info: Caught SIGINT. Exiting cleanly. %d process(es) killed.", killPID);
-        consoleOP(printNum);
-        genericOP(printNum);
-        return;
+    }
+    fclose(pnfile); 
+    char printNum[150];
+    sprintf(printNum, "Info: Caught SIGINT. Exiting cleanly. %d process(es) killed.", killPID);
+    consoleOP(printNum);
+    genericOP(printNum);
+    return;
 }
 
 void genericOP(char* data) {
-        const char* s = getenv("PROCNANNYLOGS");
-        FILE* file= fopen (s, "a" );
-        time_t ltime;
-        time(&ltime); 
-        fprintf(file, "[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
-        fclose(file);
-        return;
+    const char* s = getenv("PROCNANNYLOGS");
+    FILE* file= fopen (s, "a" );
+    time_t ltime;
+    time(&ltime); 
+    fprintf(file, "[%s] %s\n", strtok(ctime(&ltime), "\n"), data);
+    fclose(file);
+    return;
 }
 
 void consoleOP(char * data) {
@@ -630,44 +630,44 @@ void pidKilledOP(char * pidval, char * appdata, char * timeStr) {
     strcpy(str, "Action: PID ");
     strcat(str, pidval);
     strcat(str, " (");
-    strcat(str, appdata);
-    strcat(str, ") killed after exceeding ");
-    strcat(str, timeStr);
-    strcat(str, " seconds.");
-    genericOP(str);
-    return;
-}
+        strcat(str, appdata);
+        strcat(str, ") killed after exceeding ");
+        strcat(str, timeStr);
+        strcat(str, " seconds.");
+        genericOP(str);
+        return;
+    }
 
-void noProcessOP(char * appdata) {
-    char noProcess[150];
-    strcpy(noProcess, "Info: No '");
-    strcat(noProcess, appdata);
-    strcat(noProcess, "' processes found.");
-    genericOP(noProcess);
-    return;
-}
+    void noProcessOP(char * appdata) {
+        char noProcess[150];
+        strcpy(noProcess, "Info: No '");
+        strcat(noProcess, appdata);
+        strcat(noProcess, "' processes found.");
+        genericOP(noProcess);
+        return;
+    }
 
-void getParentPID() {
-    pid_t parent_pid = getpid();
-    parentPID = getpid();
-    printf("Host PID: %d\n", parent_pid);
-    return;
-}
+    void getParentPID() {
+        pid_t parent_pid = getpid();
+        parentPID = getpid();
+        printf("Host PID: %d\n", parent_pid);
+        return;
+    }
 
-void initProcOP(char * appdata, char * pidval ) {
-    char str[1000];
-    strcpy(str, "Info: Initializing monitoring of process '");
-    strcat(str, appdata);
-    strcat(str, "' (PID ");
-    strcat(str, pidval);
-    strcat(str, ").");
-    genericOP(str); 
-    return;
-}
+    void initProcOP(char * appdata, char * pidval ) {
+        char str[1000];
+        strcpy(str, "Info: Initializing monitoring of process '");
+        strcat(str, appdata);
+        strcat(str, "' (PID ");
+            strcat(str, pidval);
+            strcat(str, ").");
+            genericOP(str); 
+            return;
+        }
 
-void initialisationOP() {
-    char strPID[1000];
-    sprintf(strPID, "Info: Parent process is PID  %d.", parentPID);
-    consoleOP(strPID);
-    return;
-}
+        void initialisationOP() {
+            char strPID[1000];
+            sprintf(strPID, "Info: Parent process is PID  %d.", parentPID);
+            consoleOP(strPID);
+            return;
+        }
