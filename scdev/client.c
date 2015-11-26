@@ -558,7 +558,6 @@ int monitorProcesses(int filedes) {
                                 fcntl(fd[counter][CHILD][READ], F_SETFL, O_NONBLOCK);
 
                                 while (fgets(pidval, 150, f[counter]) != NULL) {
-                                    printf("PIDVAL: %s\n", pidval);
                                     pid = fork();
                                     if (pid < 0) { // error process
                                         fprintf(stderr, "can't fork, error %d\n", errno);
@@ -573,6 +572,7 @@ int monitorProcesses(int filedes) {
 
                                         strcpy(appProcessed, appdata[counter]);
                                         timeProcessed = timedata[counter];
+                                        printf("PIDVAL: %s\n", pidval);
 
                                         goto childMonitoring;
                                     }
