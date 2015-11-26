@@ -741,9 +741,10 @@ void read_from_server(int filedes) {
 
 void write_to_pipe (int file, char* data)
 {
-    if (file != 0) {
+    //if (file != 0) {
         write(file, data, strlen(data));
-    } /*else {
+    //} 
+    /*else {
         file = file + 1;
         write(file, data, strlen(data));
     }*/
