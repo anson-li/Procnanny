@@ -121,7 +121,7 @@ int main(int cv, char *argv[]) {
  server.sin_family = host->h_addrtype;
  server.sin_port = htons (MY_PORT);
 
- printf("MY_PORT: %d, SERVNAME: %s\n", MY_PORT, SERVNAME);
+ //printf("MY_PORT: %d, SERVNAME: %s\n", MY_PORT, SERVNAME);
  if (connect (s, (struct sockaddr*) & server, sizeof (server))) {
   perror ("Producer: cannot connect to server");
   exit (1);
@@ -168,7 +168,7 @@ int getConfig(int filedes) {
     timedif.tv_usec = 0;
     counter = 0;
 
-    printf("Waiting for config file now.\n");
+    //printf("Waiting for config file now.\n");
     while (1) {
 		//char * token;
       FD_ZERO (&read_fd_set);
@@ -796,7 +796,7 @@ void sigintProcnannies() {
     fclose(pnfile); 
     char printNum[150];
     sprintf(printNum, "2 %d", killPID);
-    consoleOP(printNum);
+    //consoleOP(printNum);
     genericOPnotime(printNum);
     return;
 }
@@ -893,6 +893,6 @@ void initProcOP(char * appdata, char * pidval ) {
     void initialisationOP() {
         char strPID[1000];
         sprintf(strPID, "Info: Parent process is PID  %d.", parentPID);
-        consoleOP(strPID);
+        //consoleOP(strPID);
         return;
     }
