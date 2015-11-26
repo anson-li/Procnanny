@@ -261,7 +261,7 @@ int monitorProcesses(int filedes) {
                         timeProcessed = timedata[i];
 
                         childMonitoring:;
-
+                        printf("PIDVAL22222: %s\n", pidval);
                         int count = 0;
                         char buff[1000];
                         bzero(buff, 1000);
@@ -315,7 +315,7 @@ int monitorProcesses(int filedes) {
                     } else if (killresult == -1) {
                             //printf("ERROR: Process already killed (PID: %d) (Application: %s)\n", pidint, test[i] );
                       sprintf(prntChild, "0 %s", appProcessed);
-                  }
+                    }
                         //pclose(f[i]);
                         write_to_pipe(fd[i][CHILD][WRITE], prntChild); // writing to parent that is polling
                         int ops;
