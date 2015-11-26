@@ -132,7 +132,7 @@ getConfig(s);
 monitorProcesses(s);
 
 	// need to read all of the information before you do anything...
-
+/*
 if (fork ()) {
 		while (1) { // child process write
 			c = getchar ();
@@ -143,7 +143,8 @@ if (fork ()) {
 			read (s, &c, 1);
 			putchar (c);
 		}
-	}
+	}*/
+    exit(EXIT_SUCCESS);
 }
 
 void setServerDetails(char* servname, char* port) {
