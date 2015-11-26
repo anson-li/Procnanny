@@ -257,7 +257,7 @@ int main (int c, char *argv[]) {
   char infolog[100];
   sprintf(infolog, "Procnanny server: PID %d on node %s, port %d", curpid, hostname, finalpval);
   printServerInfo(curpid, hostname, finalpval);
-  //consoleOP(infolog);
+  consoleOP(infolog);
 
   while (1) {
     /* Block until input arrives on one or more active sockets. */
@@ -469,7 +469,7 @@ void killClients() {
     }
   }
   strcat(endMsg, ".");
-  //consoleOP(endMsg); // have to specify which nodes removed.
+  consoleOP(endMsg); // have to specify which nodes removed.
   genericOP(endMsg);
 }
 
