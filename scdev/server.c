@@ -330,7 +330,7 @@ int main (int c, char *argv[]) {
 void sighupProcess() {
   //reread process
   //printf("reached sighup...\n");
-  char[150] sighupread;
+  char sighupread[150];
   strcpy(sighupread, "Info: Caught SIGHUP. Configuration file 'nanny.config' re-read.");
   genericOP(sighupread);
   readProcnanny(filepathmain);
