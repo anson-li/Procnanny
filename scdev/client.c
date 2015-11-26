@@ -281,26 +281,25 @@ int monitorProcesses(int filedes) {
                             while (SIFLAG == 1 || read(fd[i][PARENT][READ], &byte, 1) == 1) {
                                 if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
                                     sigintProcnannies();
-                            goto completeProcess;
-                            }
-                       if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1)
-                    {
-                        buff[0] = byte;
-                        char printWrite[150];
-                        if (read(fd[i][PARENT][READ], buff+1, count) == count) {
-                            int charbuf = atoi(buff);
-                            if (charbuf == 1) {
-                                sprintf(printWrite, "2"); // sends for onwait process
-                                write_to_pipe(fd[i][CHILD][WRITE], printWrite);
-                            } else if (charbuf == -1) {
-                                exit(EXIT_FAILURE);
+                                    goto completeProcess;
+                                }
+                                if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
+                                buff[0] = byte;
+                                char printWrite[150];
+                                if (read(fd[i][PARENT][READ], buff+1, count) == count) {
+                                    int charbuf = atoi(buff);
+                                    if (charbuf == 1) {
+                                        sprintf(printWrite, "2"); // sends for onwait process
+                                        write_to_pipe(fd[i][CHILD][WRITE], printWrite);
+                                    } else if (charbuf == -1) {
+                                        exit(EXIT_FAILURE);
+                                    }
+                                }
                             }
                         }
+                        // inform busy ...
+                        sleepLeft = sleepLeft - 5;
                     }
-                }
-                // inform busy ...
-                sleepLeft = sleepLeft - 5;
-                        }
 
                         pidint = (pid_t) strtol(pidval, NULL, 10);
                         char timeStr[30];
@@ -323,8 +322,8 @@ int monitorProcesses(int filedes) {
                         while (SIFLAG == 1 || read(fd[i][PARENT][READ], &byte, 1) == 1) {
                             if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
                                 sigintProcnannies();
-                        goto completeProcess;
-                        }
+                                goto completeProcess;
+                            }
                             if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
                                 buff[0] = byte;
                                 if (read(fd[i][PARENT][READ], buff+1, count) == count) {
@@ -335,13 +334,13 @@ int monitorProcesses(int filedes) {
                                         // new process started!
                                         char prntReady[150];
                                         sprintf(prntReady, "1"); // sends for onwait process
-                            write_to_pipe(fd[i][CHILD][WRITE], prntReady);
-                            // NEEDS TO WAIT @ THIS POINT
-                            while (SIFLAG == 1 || read(fd[i][PARENT][READ], &byte, 1) == 1) {
-                                if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
+                                        write_to_pipe(fd[i][CHILD][WRITE], prntReady);
+                                        // NEEDS TO WAIT @ THIS POINT
+                                        while (SIFLAG == 1 || read(fd[i][PARENT][READ], &byte, 1) == 1) {
+                                            if (SIFLAG == 1) { //setup to prevent early completion via sighup... 
                                                 sigintProcnannies();
-                                        goto completeProcess;
-                                        }
+                                                goto completeProcess;
+                                            }
                                             if (ioctl(fd[i][PARENT][READ], FIONREAD, &count) != -1) {
                                                 buff[0] = byte;
                                                 if (read(fd[i][PARENT][READ], buff+1, count) == count) {
@@ -515,6 +514,7 @@ int monitorProcesses(int filedes) {
                                                 // pass all the variables required here.
                                                 // the child can: a. pass the variables and simply open a new process to monitor, or
                                                 // b. reset the process UP THERE and rerun the forked process - which is probably better imo...
+                                                printf("Sending data to child now...");
                                                 char idToMonitor[150];
                                                 sprintf(idToMonitor, "%s %d", appdata[counter], timedata[counter]);
                                                 write_to_pipe(fd[h][PARENT][WRITE], idToMonitor);
@@ -535,6 +535,7 @@ int monitorProcesses(int filedes) {
                             // set the i value (counter val) as the one you're using
                             // fork here; the child is redirected to the child process UP THERE
                             // the parent is just going to pass and do nothing i guess.
+                            printf("Child not found - sending to new node now");
                             char grepip[1000];
                             strcpy(grepip, "pgrep ");
                             strcat(grepip, appdata[counter]);
