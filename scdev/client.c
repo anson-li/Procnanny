@@ -541,6 +541,7 @@ int monitorProcesses(int filedes) {
                             char grepip[1000];
                             strcpy(grepip, "pgrep ");
                             strcat(grepip, appdata[counter]);
+                            printf("grepip: %s\n", grepip);
                             if ( ( f[counter] = popen( grepip, "r" ) ) == NULL ) {
                                 perror( "popen" );
                             } else {
@@ -557,6 +558,7 @@ int monitorProcesses(int filedes) {
                                 fcntl(fd[counter][CHILD][READ], F_SETFL, O_NONBLOCK);
 
                                 while (fgets(pidval, 150, f[counter]) != NULL) {
+                                    printf("PIDVAL: %s\n", pidval);
                                     pid = fork();
                                     if (pid < 0) { // error process
                                         fprintf(stderr, "can't fork, error %d\n", errno);
