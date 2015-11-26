@@ -359,7 +359,7 @@ void readProcnanny(char * filepath) {
       while (fgets(line, sizeof line, file) != NULL) { /* read a line from a file */
           // reads sample text: testa 120
           strcpy(test[counter - 1], strtok(line, "\n"));
-          pch = strtok (test[counter-1]," ,.-");
+          pch = strtok (test[counter-1]," ,.*");
           while (pch != NULL) {
               if (countval == 0) {
                   strcpy(appdata[counter], pch);
@@ -369,7 +369,7 @@ void readProcnanny(char * filepath) {
                   countval = 0;
                   break;
               }
-              pch = strtok (NULL, " ,.-");
+              pch = strtok (NULL, " ,.*");
           }
           counter++;
       }
