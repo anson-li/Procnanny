@@ -78,17 +78,19 @@ void read_from_server();
 void genericOPnotime(char * data);
 
 
+/*
 static void catch_function(int signo) {
     SIFLAG = 1;
-}
+}*/
 
 static void fail_function(int signo) {
     exit(EXIT_FAILURE);
 }
 
+/*
 static void ignore_function(int signo ) { 
     SHFLAG = 1; 
-}
+}*/
 
 int main(int cv, char *argv[]) {
 	struct	sockaddr_in	server;
