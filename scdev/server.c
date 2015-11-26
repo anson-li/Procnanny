@@ -68,6 +68,7 @@ void getParentPID();
 void initialisationOP();
 void deleteProcnannies();
 void printServerInfo(int curpid, char hostname[255], int finalpval);
+void clearLogfile();
 
 
 static void catch_function(int signo) {
@@ -234,6 +235,7 @@ int main (int c, char *argv[]) {
 
   signal(SIGHUP, ignore_function);
   signal(SIGINT, catch_function);
+  clearLogfile();
   setupProcnanny(argv[1]);
   strcpy(filepathmain, argv[1]);
 
@@ -338,10 +340,13 @@ void sighupProcess() {
   SHFLAG = 0;
 }
 
-void readProcnanny(char * filepath) {
+void clearLogfile() {
   const char* s = getenv("PROCNANNYLOGS"); 
   FILE* logfile = fopen(s, "w");
-  fclose(logfile);   
+  fclose(logfile);  
+}
+
+void readProcnanny(char * filepath) { 
 
   FILE* file = fopen ( filepath, "r" );
 
