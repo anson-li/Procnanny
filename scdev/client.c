@@ -659,6 +659,7 @@ int monitorProcesses(int filedes) {
     completeProcess:
     //consoleOP("Operations have concluded for this process (all iterations have gone through).");
     killProcessOP(signum);
+    exit(EXIT_SUCCESS);
     return 0;
 
     waitingProc:
