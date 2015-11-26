@@ -471,8 +471,10 @@ void killClients() {
     if (j == 0) {
       strcat(endMsg, hostnamelist[j]);
     } else {
-      strcat(endMsg, ", ");
-      strcat(endMsg, hostnamelist[j]);
+      if (hostnamelist[j][0] != '\0') {  // nonempty string
+        strcat(endMsg, ", ");
+        strcat(endMsg, hostnamelist[j]);
+      }
     }
   }
   strcat(endMsg, ".");
