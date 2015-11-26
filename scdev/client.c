@@ -326,7 +326,7 @@ int monitorProcesses(int filedes) {
                     if (killresult == 0) {
                             //printf("You killed the process (PID: %d) (Application: %s)\n", pidint, test[i] );
                         pidKilledOP(pidval, appProcessed, timeStr);
-                        printf("pidkilled");
+                        printf("pidkilled\n");
                         sprintf(prntChild, "1 %s", appProcessed);
                     } else if (killresult == -1) {
                             //printf("ERROR: Process already killed (PID: %d) (Application: %s)\n", pidint, test[i] );
@@ -698,7 +698,7 @@ void read_from_server(int filedes) {
   		//printf("READ: %s\n", token);
   		if (token != NULL) {
 	  		if (strcmp(token, "1") == 0) { //simulate the killprocs
-	  			sigintProcnannies();
+	  		   sigintProcnannies();
                killProcessOP(signum);
                SIFLAG = 1;
            }
