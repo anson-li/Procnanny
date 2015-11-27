@@ -283,7 +283,7 @@ int main (int c, char *argv[]) {
           /* Connection request on original socket. */
           char buffer[MAXMSG];
           size = sizeof (clientname);
-          printf("before accpet\n");
+          printf("before accpet: clientcount: %d\n", clientCount);
           clientsList[clientCount] = accept (sock, (struct sockaddr *) &clientname, (socklen_t *) &size);
           printf("after accpet\n");
           /* Connection accepted at 'clientsList[clientCount]'*/ 
