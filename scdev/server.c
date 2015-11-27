@@ -142,7 +142,7 @@ int read_from_client (int filedes)
     memset(&resultString[0], 0, sizeof(resultString));
     //fprintf (stderr, "Server: got message: '%s'\n", buffer);
     token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
-    //printf("Parsed the following message: %s\n", token);
+    printf("Parsed the following message: %s\n", token);
     if (token != NULL) {
       if (strncmp(token, "[", 1) == 0 ) { // just save these, not necessary
         genOPnotime(token);
