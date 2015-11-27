@@ -143,7 +143,7 @@ int read_from_client (int filedes)
     memset(&resultString[0], 0, sizeof(resultString));
     //fprintf (stderr, "Server: got message: '%s'\n", buffer);
     token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
-    //printf("Parsed the following message: %s\n", token);
+    printf("Parsed the following message: %s\n", token);
     if (token != NULL) {
       if (strncmp(token, "[", 1) == 0 ) { // just save these, not necessary
         genOPnotime(token);
@@ -268,8 +268,8 @@ int main (int c, char *argv[]) {
     read_fd_set = active_fd_set;
     //write_fd_set = active_fd_set;
     if (select (FD_SETSIZE + 1, &read_fd_set, /*&write_fd_set*/ NULL, NULL, NULL) < 0) {
-      //perror ("select");
-      //exit (EXIT_FAILURE);
+      perror ("select");
+      exit (EXIT_FAILURE);
       continue;
     }
     //printf("Connection made!\n");
@@ -277,7 +277,6 @@ int main (int c, char *argv[]) {
     for (i = 0; i < FD_SETSIZE; ++i) {
       //printf("FD is set\n");
       if (FD_ISSET (i, &read_fd_set)) {
-        printf("fd is set\n");
         //printf("finding sock\n");
         if (i == sock) {
           //printf("Connection made on new socket\n");
