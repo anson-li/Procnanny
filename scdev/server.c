@@ -139,12 +139,10 @@ int read_from_client (int filedes)
   }
   else {
     /* Data read. */
-    printf("data read...\n");
     memset(&resultString[0], 0, sizeof(resultString));
     //fprintf (stderr, "Server: got message: '%s'\n", buffer);
     token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
     //printf("Parsed the following message: %s\n", token);
-    printf("token: %s\n", token);
     if (token != NULL) {
       if (strncmp(token, "[", 1) == 0 ) { // just save these, not necessary
         genOPnotime(token);
@@ -198,10 +196,7 @@ int read_from_client (int filedes)
         }
         if (iterflag == 0) {
           strcpy(hostnamelist[hostnamesize], hostname);
-          printf("hostnamelist added: %s\n", hostnamelist[hostnamesize]);
           hostnamesize++;
-        } else {
-          printf("itersize =/= 0...\n");
         }
         pidKilledOP(pidval, appdata, hostname, timeStr);
       }
