@@ -800,7 +800,7 @@ void sigintProcnannies() {
     }
     fclose(pnfile); 
     char printNum[150];
-    sprintf(printNum, "2 %d", killPID + 1); // count yourself too! 
+    sprintf(printNum, "2 %d", killPID); // count yourself too! 
     //consoleOP(printNum);
     genericOPnotime(printNum);
     return;
