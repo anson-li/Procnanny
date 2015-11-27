@@ -819,7 +819,6 @@ void genericOPnotime(char * data) {
 	char printop[150];
 	sprintf(printop, "%s\n", data);    
     write(s, &printop, sizeof(printop));
-    printf("write to: %d\n", s);
     return;
 }
 
@@ -861,7 +860,6 @@ void pidKilledOP(char * pidval, char * appdata, char * timeStr) {
     strcat(str, " killed after exceeding ");
     strcat(str, timeStr);
     strcat(str, " seconds.");*/
-    printf("sending this!: %s\n", str);
     genericOPnotime(str);
     return;
 }

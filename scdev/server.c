@@ -126,7 +126,6 @@ int read_from_client (int filedes)
 
   nbytes = read (filedes, buffer, MAXMSG);
   if (nbytes < 0) {
-      printf("read error\n");
       /* Read error. */
       //perror ("read");
       /**
@@ -136,7 +135,6 @@ int read_from_client (int filedes)
   }
   else if (nbytes == 0) {
     /* End-of-file. */
-    printf("endoffile\n");
     return -1;
   }
   else {
@@ -144,7 +142,7 @@ int read_from_client (int filedes)
     memset(&resultString[0], 0, sizeof(resultString));
     //fprintf (stderr, "Server: got message: '%s'\n", buffer);
     token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
-    printf("Parsed the following message: %s\n", token);
+    //printf("Parsed the following message: %s\n", token);
     if (token != NULL) {
       if (strncmp(token, "[", 1) == 0 ) { // just save these, not necessary
         genOPnotime(token);
@@ -189,7 +187,6 @@ int read_from_client (int filedes)
           subtoken = strtok(NULL, " ");
           subcounter++;
         }
-        printf("Server parsed: %s, %s, %s, %s\n", pidval, appdata, hostname, timeStr);
         int iterh;
         int iterflag = 0;
         for (iterh = 0; iterh < hostnamesize; iterh++) {
@@ -260,11 +257,6 @@ int main (int c, char *argv[]) {
   int curpid;
   curpid = getpid();
 
-  struct timeval timedif;
-  timedif.tv_sec = 1;
-  timedif.tv_usec = 0;
-
-
   char infolog[100];
   sprintf(infolog, "Procnanny server: PID %d on node %s, port %d", curpid, hostname, finalpval);
   printServerInfo(curpid, hostname, finalpval);
@@ -274,7 +266,7 @@ int main (int c, char *argv[]) {
     /* Block until input arrives on one or more active sockets. */
     read_fd_set = active_fd_set;
     //write_fd_set = active_fd_set;
-    if (select (FD_SETSIZE + 1, &read_fd_set, /*&write_fd_set*/ NULL, NULL, &timedif) < 0) {
+    if (select (FD_SETSIZE + 1, &read_fd_set, /*&write_fd_set*/ NULL, NULL, NULL) < 0) {
       //perror ("select");
       //exit (EXIT_FAILURE);
       continue;
