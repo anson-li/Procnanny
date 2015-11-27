@@ -819,7 +819,7 @@ void genericOPnotime(char * data) {
 	char printop[150];
 	sprintf(printop, "%s\n", data);    
     write(s, &printop, sizeof(printop));
-    printf("write to: %s\n", printop);
+    printf("write to: %s\n", s);
     return;
 }
 
