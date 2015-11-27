@@ -782,7 +782,7 @@ void sigintProcnannies() {
     pid_t curpid;
     int killPID = 0;
     curpid = getpid();
-    if ( ( pnfile = popen("pgrep procnanny.client", "r" ) ) == NULL ) {
+    if ( ( pnfile = popen("pgrep procnanny.c", "r" ) ) == NULL ) {
         perror( "popen" );
     } else { 
         pid_t pidpn;
