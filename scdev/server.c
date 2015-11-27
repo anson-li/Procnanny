@@ -274,9 +274,11 @@ int main (int c, char *argv[]) {
     }
     //printf("Connection made!\n");
     /* Service all the sockets with input pending. */
-    for (i = 0; i < FD_SETSIZE; ++i) {
+    for (i = 0; i < FD_SETSIZE; i++) {
       //printf("FD is set\n");
+      printf("i: %s\n", i);
       if (FD_ISSET (i, &read_fd_set)) {
+        printf("fd is set!");
         //printf("finding sock\n");
         if (i == sock) {
           //printf("Connection made on new socket\n");
