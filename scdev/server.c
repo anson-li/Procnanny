@@ -293,27 +293,12 @@ int main (int c, char *argv[]) {
             //perror ("accept");
             exit (EXIT_FAILURE);
           }
-          /*
-          fprintf (stderr,
-                   "Server: connect from host %s, port %hd.\n",
-                   inet_ntoa (clientname.sin_addr),
-                   ntohs (clientname.sin_port));
-                   */
-                   
           FD_SET (clientsList[clientCount], &active_fd_set);
-          
-          //memset(&buffer[0], 0, sizeof(buffer));
-          /*
-          printf("init send buffer\n");
-          strcpy(buffer, "send data test");
-          write(new, &buffer, sizeof(buffer));
-          printf("complete send\n");
-          */
-          //printf("COUNTER: %d\n", counter);
-          for (i = 0; i < counter; i++) {
-            if (appdata[i][0] != '\0') {
+          int q;
+          for (q = 0; q < counter; q++) {
+            if (appdata[q][0] != '\0') {
               memset(&buffer[0], 0, sizeof(buffer));
-              sprintf(buffer, "%s %d", appdata[i], timedata[i]);
+              sprintf(buffer, "%s %d", appdata[q], timedata[q]);
               //printf("BUFFER: %s\n", buffer);
               write(clientsList[clientCount], &buffer, sizeof(buffer));
             }
@@ -322,8 +307,6 @@ int main (int c, char *argv[]) {
           strcpy(buffer, "EOF");
           write(clientsList[clientCount], &buffer, sizeof(buffer));
           clientCount++;
-          // write config details
-          //write(filedes, buffer, sizeof(buffer) + 1); 
         } else {
           /* Data arriving on an already-connected socket. */
           printf("new data\n");
