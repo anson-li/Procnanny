@@ -860,6 +860,7 @@ void pidKilledOP(char * pidval, char * appdata, char * timeStr) {
     strcat(str, " killed after exceeding ");
     strcat(str, timeStr);
     strcat(str, " seconds.");*/
+    printf("sending this!: %s\n", str);
     genericOPnotime(str);
     return;
 }
