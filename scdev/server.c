@@ -125,7 +125,7 @@ int read_from_client (int filedes)
   int nbytes;
 
   nbytes = read (filedes, buffer, MAXMSG);
-  printf("nbytes value: %d\n", nbytes);
+  //printf("nbytes value: %d\n", nbytes);
   if (nbytes < 0) {
       /* Read error. */
       //perror ("read");
@@ -143,7 +143,7 @@ int read_from_client (int filedes)
     memset(&resultString[0], 0, sizeof(resultString));
     //fprintf (stderr, "Server: got message: '%s'\n", buffer);
     token = strtok(buffer, "\n"); // grabs the first token... we don't care about the other ones I think.
-    printf("Parsed the following message: %s\n", token);
+    //printf("Parsed the following message: %s\n", token);
     if (token != NULL) {
       if (strncmp(token, "[", 1) == 0 ) { // just save these, not necessary
         genOPnotime(token);
@@ -276,18 +276,18 @@ int main (int c, char *argv[]) {
     /* Service all the sockets with input pending. */
     for (i = 0; i < FD_SETSIZE; i++) {
       //printf("FD is set\n");
-      printf("i: %d\n", i);
+      //printf("i: %d\n", i);
       if (FD_ISSET (i, &read_fd_set)) {
-        printf("fd is set!");
+        //printf("fd is set!");
         //printf("finding sock\n");
         if (i == sock) {
           //printf("Connection made on new socket\n");
           /* Connection request on original socket. */
           char buffer[MAXMSG];
           size = sizeof (clientname);
-          printf("before accpet: clientcount: %d\n", clientCount);
+          //printf("before accpet: clientcount: %d\n", clientCount);
           clientsList[clientCount] = accept (sock, (struct sockaddr *) &clientname, (socklen_t *) &size);
-          printf("after accpet\n");
+          //printf("after accpet\n");
           /* Connection accepted at 'clientsList[clientCount]'*/ 
           if (clientsList[clientCount] < 0) {
             //perror ("accept");
@@ -309,7 +309,7 @@ int main (int c, char *argv[]) {
           clientCount++;
         } else {
           /* Data arriving on an already-connected socket. */
-          printf("new data\n");
+          //printf("new data\n");
           if (read_from_client (i) < 0) {
             close (i);
             FD_CLR (i, &active_fd_set);
