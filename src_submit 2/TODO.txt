@@ -1,5 +1,0 @@
-1. Add PROCNANNYCONFIG file with two values
-ug15
-2222
-
-The first one sets the server name, the second one describes the port number.

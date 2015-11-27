@@ -125,6 +125,7 @@ int read_from_client (int filedes)
   int nbytes;
 
   nbytes = read (filedes, buffer, MAXMSG);
+  //printf("nbytes value: %d\n", nbytes);
   if (nbytes < 0) {
       /* Read error. */
       //perror ("read");
@@ -273,41 +274,31 @@ int main (int c, char *argv[]) {
     }
     //printf("Connection made!\n");
     /* Service all the sockets with input pending. */
-    for (i = 0; i < FD_SETSIZE; ++i) {
+    for (i = 0; i < FD_SETSIZE; i++) {
       //printf("FD is set\n");
+      //printf("i: %d\n", i);
       if (FD_ISSET (i, &read_fd_set)) {
+        //printf("fd is set!");
         //printf("finding sock\n");
         if (i == sock) {
           //printf("Connection made on new socket\n");
           /* Connection request on original socket. */
           char buffer[MAXMSG];
           size = sizeof (clientname);
+          //printf("before accpet: clientcount: %d\n", clientCount);
           clientsList[clientCount] = accept (sock, (struct sockaddr *) &clientname, (socklen_t *) &size);
+          //printf("after accpet\n");
           /* Connection accepted at 'clientsList[clientCount]'*/ 
           if (clientsList[clientCount] < 0) {
             //perror ("accept");
             exit (EXIT_FAILURE);
           }
-          /*
-          fprintf (stderr,
-                   "Server: connect from host %s, port %hd.\n",
-                   inet_ntoa (clientname.sin_addr),
-                   ntohs (clientname.sin_port));
-                   */
           FD_SET (clientsList[clientCount], &active_fd_set);
-          
-          //memset(&buffer[0], 0, sizeof(buffer));
-          /*
-          printf("init send buffer\n");
-          strcpy(buffer, "send data test");
-          write(new, &buffer, sizeof(buffer));
-          printf("complete send\n");
-          */
-          //printf("COUNTER: %d\n", counter);
-          for (i = 0; i < counter; i++) {
-            if (appdata[i][0] != '\0') {
+          int q;
+          for (q = 0; q < counter; q++) {
+            if (appdata[q][0] != '\0') {
               memset(&buffer[0], 0, sizeof(buffer));
-              sprintf(buffer, "%s %d", appdata[i], timedata[i]);
+              sprintf(buffer, "%s %d", appdata[q], timedata[q]);
               //printf("BUFFER: %s\n", buffer);
               write(clientsList[clientCount], &buffer, sizeof(buffer));
             }
@@ -316,10 +307,9 @@ int main (int c, char *argv[]) {
           strcpy(buffer, "EOF");
           write(clientsList[clientCount], &buffer, sizeof(buffer));
           clientCount++;
-          // write config details
-          //write(filedes, buffer, sizeof(buffer) + 1); 
         } else {
           /* Data arriving on an already-connected socket. */
+          //printf("new data\n");
           if (read_from_client (i) < 0) {
             close (i);
             FD_CLR (i, &active_fd_set);

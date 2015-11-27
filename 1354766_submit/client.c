@@ -782,7 +782,7 @@ void sigintProcnannies() {
     pid_t curpid;
     int killPID = 0;
     curpid = getpid();
-    if ( ( pnfile = popen("pgrep procnanny", "r" ) ) == NULL ) {
+    if ( ( pnfile = popen("pgrep procnanny.client", "r" ) ) == NULL ) {
         perror( "popen" );
     } else { 
         pid_t pidpn;
@@ -800,7 +800,7 @@ void sigintProcnannies() {
     }
     fclose(pnfile); 
     char printNum[150];
-    sprintf(printNum, "2 %d", killPID);
+    sprintf(printNum, "2 %d", killPID); // count yourself too! 
     //consoleOP(printNum);
     genericOPnotime(printNum);
     return;
