@@ -187,6 +187,7 @@ int read_from_client (int filedes)
           subtoken = strtok(NULL, " ");
           subcounter++;
         }
+        printf("Server parsed: %s, %s, %s, %s\n", pidval, appdata, hostname, timeStr);
         int iterh;
         int iterflag = 0;
         for (iterh = 0; iterh < hostnamesize; iterh++) {
