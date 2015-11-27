@@ -277,6 +277,7 @@ int main (int c, char *argv[]) {
     for (i = 0; i < FD_SETSIZE; ++i) {
       //printf("FD is set\n");
       if (FD_ISSET (i, &read_fd_set)) {
+        printf("fd is set\n");
         //printf("finding sock\n");
         if (i == sock) {
           //printf("Connection made on new socket\n");
@@ -322,6 +323,7 @@ int main (int c, char *argv[]) {
           //write(filedes, buffer, sizeof(buffer) + 1); 
         } else {
           /* Data arriving on an already-connected socket. */
+          printf("new data\n");
           if (read_from_client (i) < 0) {
             close (i);
             FD_CLR (i, &active_fd_set);
