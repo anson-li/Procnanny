@@ -260,6 +260,11 @@ int main (int c, char *argv[]) {
   int curpid;
   curpid = getpid();
 
+  struct timeval timedif;
+  timedif.tv_sec = 1;
+  timedif.tv_usec = 0;
+
+
   char infolog[100];
   sprintf(infolog, "Procnanny server: PID %d on node %s, port %d", curpid, hostname, finalpval);
   printServerInfo(curpid, hostname, finalpval);
@@ -269,7 +274,7 @@ int main (int c, char *argv[]) {
     /* Block until input arrives on one or more active sockets. */
     read_fd_set = active_fd_set;
     //write_fd_set = active_fd_set;
-    if (select (FD_SETSIZE + 1, &read_fd_set, /*&write_fd_set*/ NULL, NULL, NULL) < 0) {
+    if (select (FD_SETSIZE + 1, &read_fd_set, /*&write_fd_set*/ NULL, NULL, &timedif) < 0) {
       //perror ("select");
       //exit (EXIT_FAILURE);
       continue;
