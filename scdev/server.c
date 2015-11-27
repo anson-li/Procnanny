@@ -268,15 +268,9 @@ int main (int c, char *argv[]) {
     read_fd_set = active_fd_set;
     //write_fd_set = active_fd_set;
     if (select (FD_SETSIZE + 1, &read_fd_set, /*&write_fd_set*/ NULL, NULL, NULL) < 0) {
-      perror ("select");
-      exit (EXIT_FAILURE);
+      //perror ("select");
+      //exit (EXIT_FAILURE);
       continue;
-    }
-    int b;
-    for (b = 0; b < clientCount; b++) {
-      FD_ZERO (&read_fd_set);
-      FD_SET (clientsList[b], &read_fd_set);
-      read_from_client(b);
     }
     //printf("Connection made!\n");
     /* Service all the sockets with input pending. */
@@ -289,7 +283,7 @@ int main (int c, char *argv[]) {
           /* Connection request on original socket. */
           char buffer[MAXMSG];
           size = sizeof (clientname);
-          clientsList[clientCount] = accept (sock, (struct sockaddr *) &clientname, (socklen_t *) &size);
+          clientsList[clientCount] = accept (sock, (struct sockaddr *) &clientname, /*(socklen_t *)*/ &size);
           /* Connection accepted at 'clientsList[clientCount]'*/ 
           if (clientsList[clientCount] < 0) {
             //perror ("accept");
