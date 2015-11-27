@@ -276,7 +276,7 @@ int main (int c, char *argv[]) {
     /* Service all the sockets with input pending. */
     for (i = 0; i < FD_SETSIZE; i++) {
       //printf("FD is set\n");
-      printf("i: %s\n", i);
+      printf("i: %d\n", i);
       if (FD_ISSET (i, &read_fd_set)) {
         printf("fd is set!");
         //printf("finding sock\n");
