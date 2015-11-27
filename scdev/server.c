@@ -272,6 +272,12 @@ int main (int c, char *argv[]) {
       exit (EXIT_FAILURE);
       continue;
     }
+    int b;
+    for (b = 0; b < clientCount; b++) {
+      FD_ZERO (&read_fd_set);
+      FD_SET (clientsList[b], &read_fd_set);
+      read_from_client(b);
+    }
     //printf("Connection made!\n");
     /* Service all the sockets with input pending. */
     for (i = 0; i < FD_SETSIZE; ++i) {
