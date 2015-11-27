@@ -126,6 +126,7 @@ int read_from_client (int filedes)
 
   nbytes = read (filedes, buffer, MAXMSG);
   if (nbytes < 0) {
+      printf("read error\n");
       /* Read error. */
       //perror ("read");
       /**
@@ -135,6 +136,7 @@ int read_from_client (int filedes)
   }
   else if (nbytes == 0) {
     /* End-of-file. */
+    printf("endoffile\n")
     return -1;
   }
   else {
