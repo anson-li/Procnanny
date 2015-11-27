@@ -136,7 +136,7 @@ int read_from_client (int filedes)
   }
   else if (nbytes == 0) {
     /* End-of-file. */
-    printf("endoffile\n")
+    printf("endoffile\n");
     return -1;
   }
   else {
