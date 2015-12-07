@@ -1,12 +1,5 @@
-# CMPUT 291 Assignment 2 - PROCNANNY
+# PROCNANNY
 Procnanny is an application in which processes are monitored and killed if it exceeds a predetermined time limit. If a program exceeds its time limit, it is killed. The resulting data and information is stored within the logfile.
-
-## Name & Descriptor:
-* Anson Li, 1354766
-* Unix ID: amli
-* Lecture Section: EA1
-* Lab Section: ED04
-* TA: Soham Sinha, <soham@ualberta.ca>
 
 ## How to use:
 * Delete MEMWATCH.h and MEMWATCH.c as is in the current directory system and place your own.
@@ -14,10 +7,6 @@ Procnanny is an application in which processes are monitored and killed if it ex
 * Set environment variable as export PROCNANNYSERVERINFO="../tmp/logfile.info"
 * Then run make.
 * Then run ./procnanny nanny.config.
-
-## Collaborators:
-* Referenced lab materials, as well as materials provided via eclass, to create project.
-* Discussed details of the project with Jake Davidson, Mohamed Salim Ben Khaled
 
 ## Paths to use:
 * ../tmp/logfile.txt has the logfile data
